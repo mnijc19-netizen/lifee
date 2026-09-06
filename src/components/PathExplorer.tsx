@@ -171,10 +171,11 @@ export const PathExplorer: React.FC<PathExplorerProps> = ({
                 </div>
 
                 <div className="pt-3 border-t border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+                  <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] font-mono text-slate-400">
                     <span>预估花费: ¥{route.estimatedCostRmb.toLocaleString()}</span>
                     <span>落地周期: {route.estimatedMonths} 个月</span>
-                    <span className="text-emerald-400">信号量: {route.communitySignalsCount} 条</span>
+                    <span className="text-indigo-400">关联证据: {route.linkedEvidenceIds.length > 0 ? `${route.linkedEvidenceIds.length} 项官方/行业条目` : '待实证补充'}</span>
+                    <span className="text-slate-500">基准核验: {route.lastVerifiedAt}</span>
                   </div>
 
                   <button

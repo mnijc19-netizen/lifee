@@ -369,7 +369,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               跨设备迁移与数据主权 (Local-First Sync)
             </span>
             <p className="text-slate-400 text-[11px] leading-relaxed">
-              本项目坚持纯 Local-First 隐私理念，所有修改与便签仅保存于当前浏览器。如需在手机与电脑间无缝同步，使用下方 JSON 导入/导出即可。
+              本项目坚持纯 Local-First 隐私理念，所有数据仅明文保存在当前浏览器 LocalStorage 中（Stored locally in plaintext，未采用密码学加密）。如需在手机与电脑间同步，使用下方 JSON 文件进行导入/导出即可。导出的 JSON 为明文备份，请妥善保管。
             </p>
 
             <div className="flex flex-wrap gap-2 pt-1">

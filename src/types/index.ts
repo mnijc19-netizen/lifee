@@ -240,7 +240,25 @@ export interface UserProfile {
   weights: UserWeights;
 }
 
-export type SourceStatus = 'live' | 'cached' | 'manual' | 'stale' | 'failed' | 'blocked' | 'unsupported';
+export type SourceStatus = 
+  | 'LIVE_DATA' 
+  | 'REACHABLE' 
+  | 'CACHED' 
+  | 'STATIC' 
+  | 'MANUAL' 
+  | 'BLOCKED' 
+  | 'FAILED' 
+  | 'STALE' 
+  | 'UNKNOWN';
+
+export type FunctionStatus = 
+  | 'IMPLEMENTED' 
+  | 'PARTIAL' 
+  | 'STUB' 
+  | 'MOCK' 
+  | 'STATIC_FALLBACK' 
+  | 'BLOCKED' 
+  | 'NOT_IMPLEMENTED';
 
 export interface ManifestSourceItem {
   id: string;
@@ -253,6 +271,10 @@ export interface ManifestSourceItem {
   httpStatus: number | null;
   latencyMs: number;
   lastCheck: string;
+  sourcePublishedAt?: string;
+  fetchedAt?: string;
+  parsedAt?: string;
+  lastVerifiedAt?: string;
   contentHash?: string;
   extractedFact?: string;
   error?: string;
@@ -262,12 +284,14 @@ export interface ManifestSourceItem {
 export interface SourceManifest {
   updatedAt: string;
   totalSources: number;
-  liveCount: number;
+  liveDataCount: number;
+  reachableCount: number;
   cachedCount: number;
   manualCount: number;
-  failedCount: number;
   blockedCount: number;
-  unsupportedCount: number;
+  failedCount: number;
+  staticCount: number;
+  unknownCount: number;
   sources: ManifestSourceItem[];
 }
 
@@ -283,20 +307,28 @@ export interface DiscoveryRoute {
   whyEmerging: string;
   unverifiedRisks: string[];
   investigationSteps: string[];
-  communitySignalsCount: number;
-  lastUpdated: string;
+  linkedEvidenceIds: string[];
+  lastVerifiedAt: string;
 }
 
 export interface ResearchDiffResult {
   targetId: string;
   targetType: 'country' | 'occupation' | 'pathway';
   title: string;
+  status: FunctionStatus;
+  evidenceMode: 'LIVE_DATA' | 'STATIC_FALLBACK' | 'CACHED';
   baselineSummary: string;
   latestFactSummary: string;
   policyChanges: { aspect: string; before: string; after: string; impact: 'positive' | 'neutral' | 'negative' }[];
   feasibilityDelta: number;
   riskAudit: string[];
   recommendedAction: string;
-  researchedAt: string;
+  sourcePublishedAt?: string;
+  fetchedAt?: string;
+  parsedAt?: string;
+  lastVerifiedAt: string;
+  verificationSourceUrl?: string;
+  verificationSourceName?: string;
+  fallbackNotice?: string;
 }
 

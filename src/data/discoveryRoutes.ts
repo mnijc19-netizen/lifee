@@ -21,8 +21,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '测算在海外平台稳定月入 $3,000 USD 的达成概率与连续银行流水证明方式',
       '咨询已获批案例关于大专学历加作品集行业年限证明的公证双认证细节'
     ],
-    communitySignalsCount: 14,
-    lastUpdated: '2026-09-07'
+    linkedEvidenceIds: ['ev-upwork-3d-market'],
+    lastVerifiedAt: '2026-08-15'
   },
   {
     id: 'disc-jp-ssw2-it',
@@ -44,8 +44,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '对比特定技能与传统赴日 IT 派遣的实际劳动报酬与工时保障',
       '评估先考取日语 N3 证书的时间成本'
     ],
-    communitySignalsCount: 28,
-    lastUpdated: '2026-09-06'
+    linkedEvidenceIds: [],
+    lastVerifiedAt: '2026-08-15'
   },
   {
     id: 'disc-pt-d8',
@@ -66,8 +66,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '持续观测社区关于 AIMA 实际发卡时效反馈',
       '待个人月度自由职业收入突破 $3,500 美元后再行实质推进'
     ],
-    communitySignalsCount: 9,
-    lastUpdated: '2026-09-05'
+    linkedEvidenceIds: [],
+    lastVerifiedAt: '2026-08-15'
   },
   {
     id: 'disc-ee-e-residency',
@@ -88,7 +88,7 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '作为海外独立接单年营收突破 10 万元时的备用出海架构',
       '完成个人技术主页的国际支付接口设计'
     ],
-    communitySignalsCount: 42,
-    lastUpdated: '2026-09-07'
+    linkedEvidenceIds: ['ev-upwork-3d-market'],
+    lastVerifiedAt: '2026-08-15'
   }
 ];

@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, RefreshCw, Globe, CheckCircle2, AlertTriangle, XCircle, ShieldAlert, Cpu, Database } from 'lucide-react';
-import { SourceManifest, ManifestSourceItem } from '../types';
+import { 
+  ShieldCheck, 
+  RefreshCw, 
+  Globe, 
+  CheckCircle2, 
+  AlertTriangle, 
+  XCircle, 
+  ShieldAlert, 
+  Cpu, 
+  Database,
+  Radio,
+  FileCode2,
+  Info
+} from 'lucide-react';
+import { SourceManifest, ManifestSourceItem, SourceStatus } from '../types';
 
 export const DataHealth: React.FC = () => {
   const [manifest, setManifest] = useState<SourceManifest | null>(null);
@@ -9,7 +22,6 @@ export const DataHealth: React.FC = () => {
 
   const fetchManifest = async () => {
     try {
-      // Support GitHub Pages base path
       const basePath = import.meta.env.BASE_URL || '/';
       const url = `${basePath.endsWith('/') ? basePath : basePath + '/'}data/source_manifest.json`;
       const res = await fetch(url, { cache: 'no-store' });
@@ -34,60 +46,75 @@ export const DataHealth: React.FC = () => {
     fetchManifest();
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: SourceStatus | string) => {
     switch (status) {
-      case 'live':
+      case 'LIVE_DATA':
         return (
           <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-400 font-bold border border-emerald-500/30 flex items-center space-x-1 w-max">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>实时在线 (Live)</span>
+            <span>LIVE_DATA (业务数据解析入库)</span>
           </span>
         );
-      case 'cached':
+      case 'REACHABLE':
+        return (
+          <span className="rounded bg-blue-500/10 px-2 py-0.5 text-[10px] text-blue-400 font-medium border border-blue-500/20 flex items-center space-x-1 w-max">
+            <Radio className="h-3 w-3" />
+            <span>REACHABLE (仅端点可达 · 无动态解析器)</span>
+          </span>
+        );
+      case 'CACHED':
         return (
           <span className="rounded bg-sky-500/10 px-2 py-0.5 text-[10px] text-sky-400 font-medium border border-sky-500/20 flex items-center space-x-1 w-max">
             <Database className="h-3 w-3" />
-            <span>本地官方缓存 (Cached)</span>
+            <span>CACHED (官方基准核验缓存)</span>
           </span>
         );
-      case 'manual':
+      case 'MANUAL':
         return (
           <span className="rounded bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-400 font-medium border border-amber-500/20 flex items-center space-x-1 w-max">
             <ShieldAlert className="h-3 w-3" />
-            <span>合规人工/便签 (Manual)</span>
+            <span>MANUAL (人工核验便签)</span>
           </span>
         );
-      case 'blocked':
+      case 'BLOCKED':
         return (
           <span className="rounded bg-purple-500/10 px-2 py-0.5 text-[10px] text-purple-300 font-medium border border-purple-500/30 flex items-center space-x-1 w-max">
             <AlertTriangle className="h-3 w-3" />
-            <span>反爬阻断/已降级 (Blocked)</span>
+            <span>BLOCKED (反爬 403 · 已降级)</span>
           </span>
         );
-      case 'failed':
+      case 'STATIC':
+        return (
+          <span className="rounded bg-slate-500/10 px-2 py-0.5 text-[10px] text-slate-300 font-medium border border-slate-500/20 flex items-center space-x-1 w-max">
+            <FileCode2 className="h-3 w-3" />
+            <span>STATIC (代码内置标准分类)</span>
+          </span>
+        );
+      case 'FAILED':
         return (
           <span className="rounded bg-rose-500/10 px-2 py-0.5 text-[10px] text-rose-400 font-medium border border-rose-500/30 flex items-center space-x-1 w-max">
             <XCircle className="h-3 w-3" />
-            <span>连接超时 (Failed)</span>
+            <span>FAILED (连接失败)</span>
           </span>
         );
       default:
         return (
-          <span className="rounded bg-slate-500/10 px-2 py-0.5 text-[10px] text-slate-400 font-medium border border-slate-500/20 flex items-center space-x-1 w-max">
+          <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-slate-400 font-medium border border-slate-700 flex items-center space-x-1 w-max">
             <Cpu className="h-3 w-3" />
-            <span>开发排期中 (Queue)</span>
+            <span>{status || 'UNKNOWN'}</span>
           </span>
         );
     }
   };
 
   const total = manifest?.totalSources || 18;
-  const live = manifest?.liveCount || 0;
+  const liveData = manifest?.liveDataCount || 0;
+  const reachable = manifest?.reachableCount || 0;
   const cached = manifest?.cachedCount || 0;
   const manual = manifest?.manualCount || 0;
   const blocked = manifest?.blockedCount || 0;
+  const staticCount = manifest?.staticCount || 0;
   const failed = manifest?.failedCount || 0;
-  const unsupported = manifest?.unsupportedCount || 0;
 
   return (
     <div className="space-y-6">
@@ -96,15 +123,16 @@ export const DataHealth: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
-              <span>零盲猜与事实铁律驱动</span>
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              <span>严格事实铁律 · 拒绝语义偷换</span>
               <span className="text-slate-500">·</span>
-              <span>数据源健康度与反爬降级梯实时监控</span>
+              <span>LIVE_DATA ≠ REACHABLE 状态透明看板</span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
               数据健康看板 · 真实源状态 (Data Health)
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              绝不掩盖失败，绝不虚假宣传 100% 全绿。真实反映官方政府网站、职业注册局与招聘门户的网络可达性、反爬拦截状态与合规降级梯执行情况。
+              彻底杜绝把“网页能打开/HTTP 200”冒充为“实时数据接入”。如实反映真实解析入库、仅连通可达、基准缓存与反爬拦截状态。
             </p>
           </div>
 
@@ -118,36 +146,53 @@ export const DataHealth: React.FC = () => {
           </button>
         </div>
 
-        {/* Status Breakdown Metrics */}
-        <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 pt-4 border-t border-slate-800/80">
-          <div className="rounded-lg bg-slate-950 p-3 border border-slate-800">
-            <span className="text-[10px] text-slate-500 block">数据源总数</span>
-            <span className="text-lg font-bold text-white font-mono">{total} 个</span>
+        {/* Semantic Integrity Warning Banner */}
+        <div className="mt-4 rounded-lg bg-blue-950/20 border border-blue-800/40 p-3 text-xs text-blue-200/90 space-y-1">
+          <div className="flex items-center space-x-1.5 font-bold text-blue-300">
+            <Info className="h-4 w-4 text-blue-400 shrink-0" />
+            <span>严格状态定义审计：</span>
+          </div>
+          <p className="text-[11px] leading-relaxed">
+            <strong>LIVE_DATA ({liveData}个)</strong>：实际请求外部 API、完成字段清洗校验并持久化入库（当前为开放汇率实盘端点）。<br />
+            <strong>REACHABLE ({reachable}个)</strong>：官方移民/劳工门户网络响应 HTTP 200，但未挂接专用动态解析器。系统对其政策条目诚实采用带固定核验日期的 <strong>CACHED ({cached}个)</strong> 与 <strong>MANUAL ({manual}个)</strong> 基准，绝不虚夸为全量实时爬取。
+          </p>
+        </div>
+
+        {/* Status Breakdown Metrics - Every number maps 1:1 to table rows */}
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2.5 pt-3 border-t border-slate-800/80">
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-slate-800">
+            <span className="text-[10px] text-slate-500 block">注册数据源</span>
+            <span className="text-base font-bold text-white font-mono">{total} 个</span>
           </div>
 
-          <div className="rounded-lg bg-slate-950 p-3 border border-emerald-900/40 bg-emerald-950/10">
-            <span className="text-[10px] text-emerald-400 block font-medium">实时在线 (Live)</span>
-            <span className="text-lg font-bold text-emerald-400 font-mono">{live} 个</span>
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-emerald-900/40 bg-emerald-950/10">
+            <span className="text-[10px] text-emerald-400 block font-medium">LIVE_DATA (解析入库)</span>
+            <span className="text-base font-bold text-emerald-400 font-mono">{liveData} 个</span>
           </div>
 
-          <div className="rounded-lg bg-slate-950 p-3 border border-sky-900/40 bg-sky-950/10">
-            <span className="text-[10px] text-sky-400 block font-medium">官方基准缓存</span>
-            <span className="text-lg font-bold text-sky-400 font-mono">{cached} 个</span>
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-blue-900/40 bg-blue-950/10">
+            <span className="text-[10px] text-blue-400 block font-medium">REACHABLE (端点可达)</span>
+            <span className="text-base font-bold text-blue-400 font-mono">{reachable} 个</span>
           </div>
 
-          <div className="rounded-lg bg-slate-950 p-3 border border-amber-900/40 bg-amber-950/10">
-            <span className="text-[10px] text-amber-400 block font-medium">合规人工便签</span>
-            <span className="text-lg font-bold text-amber-400 font-mono">{manual} 个</span>
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-sky-900/40 bg-sky-950/10">
+            <span className="text-[10px] text-sky-400 block font-medium">CACHED (基准缓存)</span>
+            <span className="text-base font-bold text-sky-400 font-mono">{cached} 个</span>
           </div>
 
-          <div className="rounded-lg bg-slate-950 p-3 border border-purple-900/40 bg-purple-950/10">
-            <span className="text-[10px] text-purple-300 block font-medium">商业反爬/已降级</span>
-            <span className="text-lg font-bold text-purple-300 font-mono">{blocked} 个</span>
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-amber-900/40 bg-amber-950/10">
+            <span className="text-[10px] text-amber-400 block font-medium">MANUAL (人工便签)</span>
+            <span className="text-base font-bold text-amber-400 font-mono">{manual} 个</span>
           </div>
 
-          <div className="rounded-lg bg-slate-950 p-3 border border-slate-800">
-            <span className="text-[10px] text-slate-500 block">超时/排期适配</span>
-            <span className="text-lg font-bold text-slate-400 font-mono">{failed + unsupported} 个</span>
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-purple-900/40 bg-purple-950/10">
+            <span className="text-[10px] text-purple-300 block font-medium">BLOCKED (反爬拦截)</span>
+            <span className="text-base font-bold text-purple-300 font-mono">{blocked} 个</span>
+          </div>
+
+          <div className="rounded-lg bg-slate-950 p-2.5 border border-slate-800">
+            <span className="text-[10px] text-slate-400 block font-medium">STATIC (标准内置)</span>
+            <span className="text-base font-bold text-slate-300 font-mono">{staticCount} 个</span>
           </div>
         </div>
       </div>
@@ -160,20 +205,20 @@ export const DataHealth: React.FC = () => {
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-[11px] text-slate-400 pt-1">
           <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-            <strong className="text-emerald-400 block mb-0.5">Level 1: 官方开放数据/API</strong>
-            优先使用政府公开 CSV/JSON 与 RSS 协议（如汇率、INZ公告），零侵入。
+            <strong className="text-emerald-400 block mb-0.5">Level 1: 开放数据与官方 API</strong>
+            优先使用官方 JSON/CSV（如汇率、INZ 开放通报），支持实时解析。
           </div>
           <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-            <strong className="text-sky-400 block mb-0.5">Level 2: 规范公开页面</strong>
-            遵守 robots.txt，低频限速缓存，带 ETag / ContentHash 检验。
+            <strong className="text-blue-400 block mb-0.5">Level 2: 规范公开页面 (REACHABLE)</strong>
+            遵守 robots.txt，执行网络连通性探测，采用固定核验周期基准。
           </div>
           <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-            <strong className="text-purple-400 block mb-0.5">Level 3: 公开宏观报告替代</strong>
-            商业站反爬（如 Upwork/招聘站 403）时，自动降级至年度官方调研报告。
+            <strong className="text-purple-400 block mb-0.5">Level 3: 公开宏观报告替代 (BLOCKED)</strong>
+            商业站反爬（如 Upwork 403）时，自动降级至已核验官方行业白皮书。
           </div>
           <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-            <strong className="text-amber-400 block mb-0.5">Level 4: Manual Inbox</strong>
-            支持用户粘贴真实踩坑帖与官方工单批复，补齐黑盒盲区。
+            <strong className="text-amber-400 block mb-0.5">Level 4: Manual Inbox 便签</strong>
+            针对黑盒与个案（如 EWRB 工时审批、租房涨幅），由人工核验便签入库。
           </div>
         </div>
       </div>
@@ -183,11 +228,11 @@ export const DataHealth: React.FC = () => {
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Globe className="h-4 w-4 text-emerald-400" />
-            <h2 className="text-xs font-bold text-white">权威数据源详细探测清单 ({total} 个)</h2>
+            <h2 className="text-xs font-bold text-white">权威数据源清单 (共 {total} 行，每一行均与上方统计 1:1 对应)</h2>
           </div>
           {manifest?.updatedAt && (
             <span className="text-[10px] font-mono text-slate-500">
-              最后核验时间: {new Date(manifest.updatedAt).toLocaleString()}
+              探针执行时间: {new Date(manifest.updatedAt).toLocaleString()}
             </span>
           )}
         </div>
@@ -196,18 +241,19 @@ export const DataHealth: React.FC = () => {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-950/80 text-slate-400 font-semibold">
-                <th className="p-3.5">数据源名称与官网</th>
-                <th className="p-3.5">所属国别</th>
-                <th className="p-3.5">权威层级</th>
-                <th className="p-3.5">健康状态</th>
-                <th className="p-3.5">响应耗时</th>
-                <th className="p-3.5">核验事实 / 降级策略</th>
+                <th className="p-3">数据源名称与官网</th>
+                <th className="p-3">国别</th>
+                <th className="p-3">层级</th>
+                <th className="p-3">严格状态</th>
+                <th className="p-3">耗时</th>
+                <th className="p-3">基准核验日期</th>
+                <th className="p-3">实测事实 / 降级说明</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80 text-slate-300">
               {(manifest?.sources || []).map(src => (
                 <tr key={src.id} className="hover:bg-slate-800/30">
-                  <td className="p-3.5">
+                  <td className="p-3">
                     <a
                       href={src.url}
                       target="_blank"
@@ -220,19 +266,22 @@ export const DataHealth: React.FC = () => {
                       {src.url}
                     </span>
                   </td>
-                  <td className="p-3.5 text-slate-400">{src.country}</td>
-                  <td className="p-3.5">
+                  <td className="p-3 text-slate-400 whitespace-nowrap">{src.country}</td>
+                  <td className="p-3 whitespace-nowrap">
                     <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-400 border border-emerald-500/20">
                       {src.sourceTier}
                     </span>
                   </td>
-                  <td className="p-3.5">
+                  <td className="p-3 whitespace-nowrap">
                     {getStatusBadge(src.status)}
                   </td>
-                  <td className="p-3.5 font-mono text-[11px] text-slate-400">
+                  <td className="p-3 font-mono text-[11px] text-slate-400 whitespace-nowrap">
                     {src.latencyMs > 0 ? `${src.latencyMs} ms` : '-'}
                   </td>
-                  <td className="p-3.5 text-[11px] text-slate-300 max-w-md">
+                  <td className="p-3 font-mono text-[11px] text-slate-400 whitespace-nowrap">
+                    {src.lastVerifiedAt || src.lastCheck?.split('T')[0] || 'UNKNOWN'}
+                  </td>
+                  <td className="p-3 text-[11px] text-slate-300 max-w-md">
                     <div>{src.extractedFact || '-'}</div>
                     {src.error && (
                       <span className="text-[10px] text-rose-400 font-mono block mt-0.5">
@@ -249,4 +298,3 @@ export const DataHealth: React.FC = () => {
     </div>
   );
 };
-

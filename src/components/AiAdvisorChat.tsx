@@ -138,15 +138,15 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               <span className={`inline-block h-2 w-2 rounded-full ${byokConfig.enabled && byokConfig.apiKey.trim() ? 'bg-indigo-400 animate-pulse' : 'bg-emerald-400'}`} />
               <span className={byokConfig.enabled && byokConfig.apiKey.trim() ? 'text-indigo-300 font-semibold' : 'text-emerald-400'}>
                 {byokConfig.enabled && byokConfig.apiKey.trim()
-                  ? `云端大模型直连 (BYOK: ${byokConfig.model}) · 仅保存在本地`
-                  : '本地证据规则引擎 (Local Evidence RAG) · 离线保护隐私 · 零幻觉'}
+                  ? `云端大模型 (AI Model: ${byokConfig.model}) · 浏览器直连 · 密钥仅存本地`
+                  : '本地规则引擎 (Local Rule Engine) · 离线结构化推理 · 零隐私外泄'}
               </span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
-              AI 决策顾问 (Decision Intelligence Advisor)
+              AI 决策顾问与规则引擎 (Decision Intelligence Advisor)
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              所有推论严格遵循六段式闭环：【结论 → 为什么 → 对我有什么关系 → 证据 → 不确定性与风险 → 下一步】。不忽悠、不画饼、有据可查。
+              严禁将规则引擎伪称为大模型：未配置 API Key 时系统以【本地规则引擎】纯离线运行；配置 Key 后方启用【云端 AI 大模型】直连推演。
             </p>
           </div>
 
@@ -164,7 +164,7 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               title="配置您自己的 Gemini 或 OpenAI API Key"
             >
               <Key className="h-3.5 w-3.5 text-amber-400" />
-              <span>{byokConfig.enabled && byokConfig.apiKey.trim() ? `BYOK 激活 (${byokConfig.provider.toUpperCase()})` : '配置云端大模型 (BYOK)'}</span>
+              <span>{byokConfig.enabled && byokConfig.apiKey.trim() ? `AI Model 激活 (${byokConfig.provider.toUpperCase()})` : '配置云端大模型 (BYOK)'}</span>
             </button>
 
             <button
@@ -207,16 +207,16 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
                 <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                   <div className="flex items-center space-x-2 text-emerald-400 font-bold">
                     <Bot className="h-4 w-4" />
-                    <span>Lifee 决策研判闭环 (Evidence-Based Resolution)</span>
+                    <span>决策研判闭环 (Structured Decision Resolution)</span>
                   </div>
                   <div className="flex items-center space-x-1 text-[11px] font-mono text-slate-400">
                     <Cpu className="h-3 w-3 text-slate-500" />
                     <span>
                       {msg.engineUsed === 'byok-gemini'
-                        ? 'Google Gemini API 直连推演'
+                        ? 'Google Gemini 大模型直连推演 (AI Model)'
                         : msg.engineUsed === 'byok-openai'
-                        ? 'OpenAI API 直连推演'
-                        : '本地离线证据 RAG 引擎'}
+                        ? 'OpenAI 大模型直连推演 (AI Model)'
+                        : '本地规则引擎 (Local Rule Engine)'}
                     </span>
                   </div>
                 </div>

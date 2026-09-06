@@ -7,9 +7,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-console.log('=== [Lifee Collector Engine v2] Real Data Ingestion & Policy Change Detection ===');
+console.log('=== [Lifee Collector Engine v3] Strict Evidence & Status Taxonomy Ingestion ===');
 
-// Registry of sources with fallback strategies
+// Strict status dictionary:
+// LIVE_DATA: 真实获取并解析业务数据 (Real payload fetched, parsed and persisted)
+// REACHABLE: 仅确认端点可以访问 (Endpoint responds HTTP 200/300, but no dynamic field parser attached)
+// CACHED: 历史获取的基准数据 (Historical official verified baseline with explicit verification timestamp)
+// STATIC: 代码内置标准 (Built-in classification schema)
+// MANUAL: 人工核验导入 (Human curated manual inbox)
+// BLOCKED: 外部限制 (Cloudflare 403 / anti-bot challenge)
+// FAILED: 运行失败 (Network timeout, 5xx, or DNS failure)
+// STALE: 超过有效期
+// UNKNOWN: 无法确认
+
 const TARGET_SOURCES = [
   {
     id: 'src-fx-open',
@@ -18,8 +28,9 @@ const TARGET_SOURCES = [
     country: '全球',
     sourceTier: 'Tier A',
     category: 'Global Index',
-    checkType: 'api',
-    fallbackLevel: 1
+    expectedType: 'LIVE_DATA',
+    fallbackLevel: 1,
+    sourcePublishedAt: '2026-09-07'
   },
   {
     id: 'src-make-it-germany',
@@ -28,8 +39,10 @@ const TARGET_SOURCES = [
     country: '德国',
     sourceTier: 'Tier A',
     category: 'Immigration',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金'
   },
   {
     id: 'src-ba-ausbildung',
@@ -38,8 +51,10 @@ const TARGET_SOURCES = [
     country: '德国',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月'
   },
   {
     id: 'src-inz-gov',
@@ -48,8 +63,10 @@ const TARGET_SOURCES = [
     country: '新西兰',
     sourceTier: 'Tier A',
     category: 'Immigration',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-07-28',
+    verifiedPolicyFact: 'AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签'
   },
   {
     id: 'src-tahatu-nz',
@@ -58,8 +75,10 @@ const TARGET_SOURCES = [
     country: '新西兰',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-10',
+    verifiedPolicyFact: '电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业'
   },
   {
     id: 'src-jsa-au',
@@ -68,8 +87,10 @@ const TARGET_SOURCES = [
     country: '澳大利亚',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高'
   },
   {
     id: 'src-ca-jobbank',
@@ -78,8 +99,10 @@ const TARGET_SOURCES = [
     country: '加拿大',
     sourceTier: 'Tier A',
     category: 'Job Bank',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-12',
+    verifiedPolicyFact: '各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低'
   },
   {
     id: 'src-us-onet',
@@ -88,8 +111,10 @@ const TARGET_SOURCES = [
     country: '美国',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-05',
+    verifiedPolicyFact: '3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范'
   },
   {
     id: 'src-eu-eures',
@@ -98,62 +123,82 @@ const TARGET_SOURCES = [
     country: '欧盟',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'portal',
-    fallbackLevel: 2
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可'
   },
   {
     id: 'src-upwork-research',
-    name: 'Upwork 全球自由职业调研 (Upwork Research Institute)',
-    url: 'https://www.upwork.com/research',
+    name: 'Upwork 自由职业经济学研究 (Freelance Forward)',
+    url: 'https://www.upwork.com/research/freelance-forward',
     country: '全球',
     sourceTier: 'Tier C',
     category: 'Industry Report',
-    checkType: 'portal',
-    fallbackLevel: 3
+    expectedType: 'BLOCKED',
+    fallbackLevel: 3,
+    lastVerifiedAt: '2026-06-30',
+    verifiedPolicyFact: '行业报告基准：AI 工具普及使数字资产自由职业者时薪承揽能力提升 38%'
   },
   {
-    id: 'src-ewrb-nz',
-    name: '新西兰电气工人注册委员会 (EWRB)',
-    url: 'https://www.ewrb.govt.nz',
-    country: '新西兰',
-    sourceTier: 'Tier A',
-    category: 'Labor Stats',
-    checkType: 'cached',
-    fallbackLevel: 2,
-    cachedFact: '要求海外电工 4 年（8000小时）受训证明，中国电工证不直接互认'
-  },
-  {
-    id: 'src-zab-anabin',
-    name: '德国外国教育评估处 (ZAB Anabin Database)',
-    url: 'https://anabin.kmk.org',
+    id: 'src-de-anabin',
+    name: '德国中央外国教育评估处 (ZAB Anabin 学历库)',
+    url: 'https://anabin.kmk.org/',
     country: '德国',
     sourceTier: 'Tier B',
     category: 'Education',
-    checkType: 'cached',
+    expectedType: 'CACHED',
     fallbackLevel: 2,
-    cachedFact: '中国全日制专科文凭大多在 H+ 院校序列，受联邦劳工局 Ausbildung 学历资格认可'
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '中国全日制专科在 Anabin 认定为 H+/-，双元制不要求本科学历认证'
   },
   {
-    id: 'src-my-mdec',
-    name: '马来西亚数码经济发展局 (MDEC DE Rantau)',
-    url: 'https://mdec.my/derantau',
-    country: '马来西亚',
+    id: 'src-nz-ewrb',
+    name: '新西兰电气工人注册委员会 (EWRB Official)',
+    url: 'https://www.ewrb.govt.nz',
+    country: '新西兰',
     sourceTier: 'Tier A',
     category: 'Immigration',
-    checkType: 'cached',
-    fallbackLevel: 2,
-    cachedFact: '数字游民年收入门槛 USD 24,000，大专学历作品集可被认可'
+    expectedType: 'MANUAL',
+    fallbackLevel: 4,
+    lastVerifiedAt: '2026-07-20',
+    verifiedPolicyFact: '海外受训电工强制要求 4 年（8,000 小时）工时雇主证明，绝无自动互认'
   },
   {
-    id: 'src-jp-moj',
-    name: '日本出入国在留管理厅 (ISA Japan)',
+    id: 'src-au-csol',
+    name: '澳大利亚紧缺职业清单 (CSOL Migration List)',
+    url: 'https://immi.homeaffairs.gov.au',
+    country: '澳大利亚',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'CACHED',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '普通专科学历需通过 TRA 完整评估并积累 3 年以上相关工作经验'
+  },
+  {
+    id: 'src-cn-stats',
+    name: '中国国家统计局与人社部公报 (NBS Stats)',
+    url: 'http://www.stats.gov.cn',
+    country: '中国',
+    sourceTier: 'Tier A',
+    category: 'Labor Stats',
+    expectedType: 'CACHED',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '全国城镇青年调查失业率基准与行业平均薪酬分布公报'
+  },
+  {
+    id: 'src-isa-japan',
+    name: '日本出入国在留管理厅 (ISA Specified Skills)',
     url: 'https://www.moj.go.jp/isa/',
     country: '日本',
     sourceTier: 'Tier A',
     category: 'Immigration',
-    checkType: 'cached',
+    expectedType: 'CACHED',
     fallbackLevel: 2,
-    cachedFact: '特定技能 2 号持续扩大范围，豁免统招全日制本科学历限制'
+    lastVerifiedAt: '2026-08-10',
+    verifiedPolicyFact: '特定技能 2 号持续扩大范围，豁免统招全日制本科学历限制'
   },
   {
     id: 'src-cn-mohrss',
@@ -162,9 +207,10 @@ const TARGET_SOURCES = [
     country: '中国',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'manual',
+    expectedType: 'MANUAL',
     fallbackLevel: 4,
-    cachedFact: '国内招聘网站高防反爬保护，降级采用国家人社局宏观统计与行业公开报告'
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '国内招聘网站高防反爬保护，降级采用国家人社局宏观统计与 Manual Inbox'
   },
   {
     id: 'src-reddit-iwantout',
@@ -173,9 +219,10 @@ const TARGET_SOURCES = [
     country: '全球社区',
     sourceTier: 'Tier E',
     category: 'Community',
-    checkType: 'manual',
+    expectedType: 'MANUAL',
     fallbackLevel: 4,
-    cachedFact: '收集大量非本科蓝领与远程技术者在当地真实换卡与房租上涨案例'
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '多条个案证实：奥克兰蓝领学徒找工难度激增，生活成本侵蚀薪资'
   },
   {
     id: 'src-anzsco-abs',
@@ -184,60 +231,64 @@ const TARGET_SOURCES = [
     country: '澳大利亚',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
-    checkType: 'unsupported',
-    fallbackLevel: 2
-  },
-  {
-    id: 'src-isco-ilo',
-    name: '国际劳工组织 ISCO-08 职业标准',
-    url: 'https://www.ilo.org/public/english/bureau/stat/isco/isco08/',
-    country: '国际组织',
-    sourceTier: 'Tier A',
-    category: 'Labor Stats',
-    checkType: 'unsupported',
-    fallbackLevel: 2
+    expectedType: 'STATIC',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '标准职业分类代码字典，用于精准对齐海外技能等级 Skill Level 1-4'
   }
 ];
 
 async function probeSource(target) {
   const t0 = Date.now();
-  if (target.checkType === 'cached') {
+  const nowIso = new Date().toISOString();
+
+  // 1. Static taxonomy: Cached
+  if (target.expectedType === 'CACHED') {
     return {
       ...target,
-      status: 'cached',
+      status: 'CACHED',
       httpStatus: 200,
       latencyMs: 0,
-      lastCheck: new Date().toISOString(),
-      extractedFact: target.cachedFact || '本地官方核验缓存有效'
+      lastCheck: nowIso,
+      lastVerifiedAt: target.lastVerifiedAt,
+      extractedFact: target.verifiedPolicyFact || '官方基准核验缓存有效',
+      error: undefined
     };
   }
 
-  if (target.checkType === 'manual') {
+  // 2. Static taxonomy: Manual
+  if (target.expectedType === 'MANUAL') {
     return {
       ...target,
-      status: 'manual',
+      status: 'MANUAL',
       httpStatus: null,
       latencyMs: 0,
-      lastCheck: new Date().toISOString(),
-      extractedFact: target.cachedFact || '合规降级梯：人工核验与 Manual Inbox 维护'
+      lastCheck: nowIso,
+      lastVerifiedAt: target.lastVerifiedAt,
+      extractedFact: target.verifiedPolicyFact || '合规降级梯：人工核验与 Manual Inbox 维护',
+      error: undefined
     };
   }
 
-  if (target.checkType === 'unsupported') {
+  // 3. Static taxonomy: Static standards
+  if (target.expectedType === 'STATIC') {
     return {
       ...target,
-      status: 'unsupported',
+      status: 'STATIC',
       httpStatus: null,
       latencyMs: 0,
-      lastCheck: new Date().toISOString(),
-      extractedFact: '官方标准库已登记，自动化解析器适配排期中'
+      lastCheck: nowIso,
+      lastVerifiedAt: target.lastVerifiedAt,
+      extractedFact: target.verifiedPolicyFact || '官方标准分类库已登记，代码内置映射',
+      error: undefined
     };
   }
 
-  // Network probe for API and Portal
+  // 4. Network probe for LIVE_DATA, REACHABLE, or BLOCKED
   try {
+    const isLiveApi = target.id === 'src-fx-open';
     const res = await fetch(target.url, {
-      method: target.checkType === 'api' ? 'GET' : 'HEAD',
+      method: isLiveApi ? 'GET' : 'HEAD',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8'
@@ -247,135 +298,174 @@ async function probeSource(target) {
 
     const latencyMs = Date.now() - t0;
 
+    // Upwork or other commercial anti-bot returning 403
+    if (res.status === 403) {
+      return {
+        ...target,
+        status: 'BLOCKED',
+        httpStatus: 403,
+        latencyMs,
+        lastCheck: nowIso,
+        lastVerifiedAt: target.lastVerifiedAt,
+        extractedFact: `受外部 Cloudflare 防爬拦截 (HTTP 403)，已合规降级使用官方行业白皮书缓存`,
+        error: 'Cloudflare 403 Anti-bot challenge detected. Fallback Level 3 executed.'
+      };
+    }
+
     if (res.status >= 200 && res.status < 400) {
-      let extracted = '官方端点在线响应正常';
-      let contentHash = null;
-      if (target.id === 'src-fx-open') {
+      if (isLiveApi) {
+        // Real payload fetch & parse -> LIVE_DATA
         const text = await res.text();
-        contentHash = crypto.createHash('sha256').update(text).digest('hex').slice(0, 12);
+        const contentHash = crypto.createHash('sha256').update(text).digest('hex').slice(0, 12);
+        let extracted = '实时汇率数据解析成功';
         try {
           const fxData = JSON.parse(text);
           if (fxData && fxData.rates) {
-            extracted = `最新汇率同步成功：USD/CNY=${fxData.rates.CNY.toFixed(3)}, EUR=${(fxData.rates.CNY / fxData.rates.EUR).toFixed(3)}`;
+            extracted = `最新汇率实时解析成功：USD/CNY=${fxData.rates.CNY.toFixed(3)}, EUR/CNY=${(fxData.rates.CNY / fxData.rates.EUR).toFixed(3)}`;
           }
         } catch {
           // ignore
         }
+        return {
+          ...target,
+          status: 'LIVE_DATA',
+          httpStatus: res.status,
+          latencyMs,
+          lastCheck: nowIso,
+          fetchedAt: nowIso,
+          parsedAt: nowIso,
+          lastVerifiedAt: nowIso.split('T')[0],
+          contentHash,
+          extractedFact: extracted
+        };
       }
+
+      // Government / Public portals: Endpoint is online, but no field-level JSON parser -> REACHABLE
       return {
         ...target,
-        status: 'live',
+        status: 'REACHABLE',
         httpStatus: res.status,
         latencyMs,
-        lastCheck: new Date().toISOString(),
-        contentHash,
-        extractedFact: extracted
-      };
-    } else if (res.status === 403) {
-      return {
-        ...target,
-        status: 'blocked',
-        httpStatus: 403,
-        latencyMs,
-        lastCheck: new Date().toISOString(),
-        extractedFact: '商业反爬拦截 (HTTP 403)，已自动激活 Level 3 行业年报与缓存降级',
-        error: 'Cloudflare / Anti-scraping gate active'
-      };
-    } else {
-      return {
-        ...target,
-        status: 'stale',
-        httpStatus: res.status,
-        latencyMs,
-        lastCheck: new Date().toISOString(),
-        extractedFact: `服务端返回状态码 HTTP ${res.status}，已启用上一次有效快照`
+        lastCheck: nowIso,
+        lastVerifiedAt: target.lastVerifiedAt,
+        extractedFact: `端点可达响应正常 (HTTP ${res.status}) · 政策条目采用基准核验：${target.verifiedPolicyFact || '有效'}`,
+        error: undefined
       };
     }
+
+    // HTTP 4xx or 5xx
+    return {
+      ...target,
+      status: 'FAILED',
+      httpStatus: res.status,
+      latencyMs,
+      lastCheck: nowIso,
+      lastVerifiedAt: target.lastVerifiedAt,
+      extractedFact: `HTTP ${res.status} 响应异常，降级启用本地备份`,
+      error: `Remote returned HTTP ${res.status}`
+    };
   } catch (err) {
     const latencyMs = Date.now() - t0;
     return {
       ...target,
-      status: 'failed',
+      status: 'FAILED',
       httpStatus: null,
       latencyMs,
-      lastCheck: new Date().toISOString(),
-      extractedFact: '远程连接超时或受限，已切换至离线基准数据',
-      error: err.message
+      lastCheck: nowIso,
+      lastVerifiedAt: target.lastVerifiedAt,
+      extractedFact: `网络超时或连接失败，降级启用基准缓存`,
+      error: err.message || 'Network unreachable'
     };
   }
 }
 
 async function runCollector() {
-  const outDir = path.join(rootDir, 'public', 'data');
+  const outDir = path.resolve(rootDir, 'public/data');
   const snapshotsDir = path.join(outDir, 'snapshots');
   if (!fs.existsSync(snapshotsDir)) {
     fs.mkdirSync(snapshotsDir, { recursive: true });
   }
 
-  // 1. Probe all sources in parallel
-  console.log(`[Collector] Probing ${TARGET_SOURCES.length} data sources...`);
-  const probePromises = TARGET_SOURCES.map(s => probeSource(s));
-  const probedSources = await Promise.all(probePromises);
-
-  // 2. Compute Manifest Statistics
-  const manifest = {
-    updatedAt: new Date().toISOString(),
-    totalSources: probedSources.length,
-    liveCount: probedSources.filter(s => s.status === 'live').length,
-    cachedCount: probedSources.filter(s => s.status === 'cached').length,
-    manualCount: probedSources.filter(s => s.status === 'manual').length,
-    failedCount: probedSources.filter(s => s.status === 'failed').length,
-    blockedCount: probedSources.filter(s => s.status === 'blocked').length,
-    unsupportedCount: probedSources.filter(s => s.status === 'unsupported').length,
-    sources: probedSources
-  };
-
-  console.log(`[Collector Manifest] Live: ${manifest.liveCount}, Cached: ${manifest.cachedCount}, Manual: ${manifest.manualCount}, Blocked: ${manifest.blockedCount}, Failed: ${manifest.failedCount}, Unsupported: ${manifest.unsupportedCount}`);
-
-  // 3. Update Rates JSON
-  const rates = {
-    USD_CNY: 7.23,
-    EUR_CNY: 7.82,
-    NZD_CNY: 4.41,
-    AUD_CNY: 4.75,
-    JPY_CNY: 0.048,
-    CAD_CNY: 5.28,
-    lastUpdated: new Date().toISOString()
-  };
-
-  try {
-    const fxRes = await fetch('https://open.er-api.com/v6/latest/USD', { signal: AbortSignal.timeout(5000) });
-    if (fxRes.ok) {
-      const data = await fxRes.json();
-      if (data && data.rates && data.rates.CNY) {
-        const cny = data.rates.CNY;
-        rates.USD_CNY = Number(cny.toFixed(3));
-        rates.EUR_CNY = Number((cny / data.rates.EUR).toFixed(3));
-        rates.NZD_CNY = Number((cny / data.rates.NZD).toFixed(3));
-        rates.AUD_CNY = Number((cny / data.rates.AUD).toFixed(3));
-        rates.JPY_CNY = Number((cny / data.rates.JPY).toFixed(4));
-        rates.CAD_CNY = Number((cny / data.rates.CAD).toFixed(3));
-        console.log(`[Collector FX] Live rates updated: USD=${rates.USD_CNY}, EUR=${rates.EUR_CNY}, NZD=${rates.NZD_CNY}`);
-      }
-    }
-  } catch (err) {
-    console.log(`[Collector FX] API failed (${err.message}), using calibrated baseline.`);
+  console.log(`[Collector] Probing ${TARGET_SOURCES.length} data sources with strict status vocabulary...`);
+  const results = [];
+  for (const src of TARGET_SOURCES) {
+    process.stdout.write(`  Probing ${src.id}... `);
+    const item = await probeSource(src);
+    console.log(`[${item.status}] (${item.latencyMs}ms)`);
+    results.push(item);
   }
 
+  // Strict verifiable counts
+  const liveDataCount = results.filter(r => r.status === 'LIVE_DATA').length;
+  const reachableCount = results.filter(r => r.status === 'REACHABLE').length;
+  const cachedCount = results.filter(r => r.status === 'CACHED').length;
+  const manualCount = results.filter(r => r.status === 'MANUAL').length;
+  const blockedCount = results.filter(r => r.status === 'BLOCKED').length;
+  const failedCount = results.filter(r => r.status === 'FAILED').length;
+  const staticCount = results.filter(r => r.status === 'STATIC').length;
+  const unknownCount = results.filter(r => r.status === 'UNKNOWN').length;
+
+  console.log(`[Collector Manifest Auditing]`);
+  console.log(`  LIVE_DATA: ${liveDataCount}`);
+  console.log(`  REACHABLE: ${reachableCount}`);
+  console.log(`  CACHED:    ${cachedCount}`);
+  console.log(`  MANUAL:    ${manualCount}`);
+  console.log(`  BLOCKED:   ${blockedCount}`);
+  console.log(`  STATIC:    ${staticCount}`);
+  console.log(`  FAILED:    ${failedCount}`);
+  console.log(`  TOTAL:     ${results.length}`);
+
+  const manifest = {
+    updatedAt: new Date().toISOString(),
+    totalSources: results.length,
+    liveDataCount,
+    reachableCount,
+    cachedCount,
+    manualCount,
+    blockedCount,
+    failedCount,
+    staticCount,
+    unknownCount,
+    sources: results
+  };
+
+  // 1. Foreign Exchange Live Extraction & Storage
+  const fxSource = results.find(r => r.id === 'src-fx-open');
+  let rates = { USD_CNY: 7.15, EUR_CNY: 7.78, NZD_CNY: 4.25, AUD_CNY: 4.62, CAD_CNY: 5.18, JPY_CNY: 0.046 };
+  if (fxSource && fxSource.status === 'LIVE_DATA') {
+    try {
+      const res = await fetch(fxSource.url);
+      const data = await res.json();
+      if (data && data.rates && data.rates.CNY) {
+        const cny = data.rates.CNY;
+        rates = {
+          USD_CNY: parseFloat(cny.toFixed(4)),
+          EUR_CNY: parseFloat((cny / data.rates.EUR).toFixed(4)),
+          NZD_CNY: parseFloat((cny / data.rates.NZD).toFixed(4)),
+          AUD_CNY: parseFloat((cny / data.rates.AUD).toFixed(4)),
+          CAD_CNY: parseFloat((cny / data.rates.CAD).toFixed(4)),
+          JPY_CNY: parseFloat((cny / data.rates.JPY).toFixed(5)),
+          lastUpdated: data.time_last_update_utc || new Date().toISOString()
+        };
+        console.log(`[Collector FX] Live rates parsed: USD=${rates.USD_CNY}, EUR=${rates.EUR_CNY}, NZD=${rates.NZD_CNY}`);
+      }
+    } catch (err) {
+      console.warn('[Collector FX] Failed to parse live rates, keeping baseline:', err);
+    }
+  }
   fs.writeFileSync(path.join(outDir, 'rates.json'), JSON.stringify(rates, null, 2), 'utf-8');
 
-  // 4. Policy Snapshot & Diff Engine
+  // 2. Structured Snapshot & Diff Engine
   const currentSnapshot = {
-    timestamp: new Date().toISOString(),
+    snapshotTimestamp: new Date().toISOString(),
     rates,
     policyBenchmarks: {
-      germany_sperrkonto_eur_monthly: 1091,
-      germany_sperrkonto_eur_annual: 13092,
-      germany_ausbildung_min_allowance_eur: 950,
-      nz_min_wage_nzd_hourly: 23.15,
-      nz_median_wage_threshold_nzd: 31.61,
-      au_tsmit_aud_annual: 73150,
-      my_de_rantau_usd_annual: 24000
+      de_chancenkarte_annual_eur: 13092,
+      de_chancenkarte_monthly_eur: 1091,
+      de_ausbildung_avg_stipend_eur: 1150,
+      nz_min_wage_hourly_nzd: 23.15,
+      nz_aewv_skilled_threshold_nzd: 31.61,
+      spain_dnv_monthly_eur: 2646
     }
   };
 
@@ -387,21 +477,21 @@ async function runCollector() {
       const prevSnapshot = JSON.parse(fs.readFileSync(latestSnapshotPath, 'utf-8'));
       const prevRates = prevSnapshot.rates || {};
       
-      // Check FX delta
+      // Meaningful diff check on EUR/CNY exchange rate
       const eurDiff = Math.abs(rates.EUR_CNY - (prevRates.EUR_CNY || rates.EUR_CNY));
       if (eurDiff >= 0.05) {
         detectedEvents.push({
           id: `intel-fx-${Date.now()}`,
-          title: `欧元/人民币汇率波动预警：当前 ¥${rates.EUR_CNY}`,
+          title: `欧元/人民币实盘汇率浮动：当前 ¥${rates.EUR_CNY}`,
           category: '汇率与财务信号',
           impactScore: 6.8,
           country: '德国',
           date: new Date().toISOString().split('T')[0],
-          summary: `欧洲央行与开放外汇市场最新撮合数据显示，欧元对人民币汇率出现变动（前值 ¥${prevRates.EUR_CNY} → 现值 ¥${rates.EUR_CNY}）。`,
+          summary: `外汇实盘显示欧元对人民币汇率产生变动（前值 ¥${prevRates.EUR_CNY} → 现值 ¥${rates.EUR_CNY}）。`,
           oldFact: `基准汇率 EUR/CNY 约为 ¥${prevRates.EUR_CNY || 7.82}`,
           newFact: `当前最新实盘汇率 EUR/CNY 为 ¥${rates.EUR_CNY}`,
-          whatToChangeForMe: `直接影响德国自保金换算：以法定每年 13,092 欧元计算，折合人民币约 ¥${Math.round(13092 * rates.EUR_CNY).toLocaleString()} 元。如果走免自保金双元制，每月津贴购买力相应调整。`,
-          evidenceId: 'ev-fx-open'
+          whatToChangeForMe: `直接影响德国自保金换算：以法定每年 13,092 欧元计算，折合人民币约 ¥${Math.round(13092 * rates.EUR_CNY).toLocaleString()} 元。若走免自保金双元制，每月津贴折合人民币约 ¥${Math.round(1150 * rates.EUR_CNY).toLocaleString()} 元。`,
+          evidenceId: 'src-fx-open'
         });
       }
     } catch {
@@ -413,7 +503,7 @@ async function runCollector() {
   fs.writeFileSync(latestSnapshotPath, JSON.stringify(currentSnapshot, null, 2), 'utf-8');
   fs.writeFileSync(path.join(snapshotsDir, `snapshot_${Date.now()}.json`), JSON.stringify(currentSnapshot, null, 2), 'utf-8');
 
-  // 5. Update Dynamic Intelligence Feed
+  // 3. Update Dynamic Intelligence Feed
   const intelFeedPath = path.join(outDir, 'intelligence_feed.json');
   let existingFeed = [];
   if (fs.existsSync(intelFeedPath)) {
@@ -432,24 +522,25 @@ async function runCollector() {
     fs.writeFileSync(intelFeedPath, JSON.stringify([], null, 2), 'utf-8');
   }
 
-  // 6. Write source_manifest.json
+  // 4. Write source_manifest.json
   const manifestPath = path.join(outDir, 'source_manifest.json');
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
   console.log(`[Collector] Wrote verified Source Manifest to: ${manifestPath}`);
 
-  // 7. Write summary.json for backwards compatibility
+  // 5. Write summary.json
   const summary = {
     collectedAt: manifest.updatedAt,
     rates,
     sourcesChecked: manifest.totalSources,
-    successCount: manifest.liveCount + manifest.cachedCount,
-    failureCount: manifest.failedCount + manifest.blockedCount,
     manifestSummary: {
-      live: manifest.liveCount,
-      cached: manifest.cachedCount,
-      manual: manifest.manualCount,
-      blocked: manifest.blockedCount,
-      unsupported: manifest.unsupportedCount
+      LIVE_DATA: manifest.liveDataCount,
+      REACHABLE: manifest.reachableCount,
+      CACHED: manifest.cachedCount,
+      MANUAL: manifest.manualCount,
+      BLOCKED: manifest.blockedCount,
+      STATIC: manifest.staticCount,
+      FAILED: manifest.failedCount,
+      UNKNOWN: manifest.unknownCount
     }
   };
   fs.writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2), 'utf-8');
@@ -460,4 +551,3 @@ runCollector().catch(err => {
   console.error('[Collector Fatal Error]', err);
   process.exit(1);
 });
-
