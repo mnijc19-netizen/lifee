@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-09-06T19:27:44.784Z",
+  "rates": {
+    "USD_CNY": 7.23,
+    "EUR_CNY": 7.82,
+    "NZD_CNY": 4.41,
+    "AUD_CNY": 4.75,
+    "JPY_CNY": 0.048,
+    "CAD_CNY": 5.28,
+    "lastUpdated": "2026-09-06T19:27:39.779Z"
+  },
+  "policyBenchmarks": {
+    "germany_sperrkonto_eur_monthly": 1091,
+    "germany_sperrkonto_eur_annual": 13092,
+    "germany_ausbildung_min_allowance_eur": 950,
+    "nz_min_wage_nzd_hourly": 23.15,
+    "nz_median_wage_threshold_nzd": 31.61,
+    "au_tsmit_aud_annual": 73150,
+    "my_de_rantau_usd_annual": 24000
+  }
+}

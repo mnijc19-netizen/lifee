@@ -1,0 +1,302 @@
+export type SourceTier = 'Tier A' | 'Tier B' | 'Tier C' | 'Tier D' | 'Tier E';
+
+export interface Source {
+  id: string;
+  name: string;
+  country: string;
+  category: 'Immigration' | 'Labor Stats' | 'Job Bank' | 'Education' | 'Industry Report' | 'Community' | 'Global Index';
+  sourceTier: SourceTier;
+  url: string;
+  accessType: 'Official Open Data' | 'Official Portal' | 'Public RSS / Feed' | 'Public Web Page' | 'Manual Inbox';
+  updateFrequency: 'Daily' | '2-3 Days' | 'Weekly' | 'Monthly' | 'Quarterly';
+  parser: string;
+  robotsStatus: 'Allowed' | 'Public Read Only' | 'User Contributed';
+  termsStatus: 'Compliant' | 'Public Domain / Open Data' | 'Fair Use / Attribution';
+  lastSuccess: string;
+  lastFailure: string | null;
+  freshness: 'Fresh' | 'Normal' | 'Stale' | 'Checking';
+}
+
+export interface EightQuestionsCareer {
+  q1_currentEligibility: string;
+  q2_missingPrerequisites: string;
+  q3_fastestTimeToEntry: string;
+  q4_financialCost: string;
+  q5_chinaEarningPotential: string;
+  q6_overseasUsability: string;
+  q7_overseasRecertificationBurden: string;
+  q8_topFailureReason: string;
+}
+
+export interface EightQuestionsCountry {
+  q1_realEntryPoints: string;
+  q2_minimumStartupCapital: string;
+  q3_languageRequirements: string;
+  q4_associateDegreeLimitations: string;
+  q5_mostRealisticJobs: string;
+  q6_permanentResidenceChain: string;
+  q7_biggestRisk: string;
+  q8_failureCostTimeAndMoney: string;
+}
+
+export interface SkillFrequency {
+  name: string;
+  frequencyPercent: number;
+  isCore: boolean;
+}
+
+export interface Occupation {
+  id: string;
+  title: string;
+  titleEn: string;
+  category: 'AI & Software' | 'Digital & 3D' | 'Trades & Engineering' | 'Logistics & Transport' | 'Healthcare & Services' | 'Green Energy';
+  iscoCode: string;
+  anzscoCode?: string;
+  socCode?: string;
+  nocCode?: string;
+  cnSalaryGrossMonthly: number;
+  cnSalaryHourlyEstimate: number;
+  cnTypicalHoursWeekly: number;
+  cnOvertimeRisk: '低' | '中' | '高' | '极高';
+  overseasSalaryGrossAnnual: string;
+  overseasSalaryHourlyEstimate: string;
+  overseasTypicalHoursWeekly: number;
+  remotePossibility: '全远程' | '混合远程' | '低' | '不可/必须现场';
+  entryDegree: '无需学历' | '大专可入' | '本科优先' | '必须本科及以上';
+  learningMonths: number;
+  learningCostRmb: number;
+  licenseRequired: boolean;
+  qualificationFriction: 'Low' | 'Medium' | 'High' | 'Very High';
+  overseasRecertificationCostRmb: number;
+  englishRequirement: string;
+  secondLanguageRequirement: string;
+  aiReplacementRisk: '极低' | '低' | '中' | '高' | '极高';
+  aiEnhancementLeverage: '极高' | '高' | '中' | '低' | '极低';
+  fiveYearDemandTrend: '快速增长' | '稳步增长' | '平稳' | '面临替代/萎缩';
+  foreignerHiringReality: '容易' | '中等' | '较难' | '极难/有硬性身份壁垒';
+  visaCorrelation: '极强(在多国紧缺清单)' | '中等' | '弱(需特殊豁免)' | '无直接工签';
+  prCorrelation: '高' | '中' | '低' | '无直接可能';
+  globalMobility: '极高' | '高' | '中' | '低';
+  topSkills: SkillFrequency[];
+  eightQuestions: EightQuestionsCareer;
+  feasibilityScore: number;
+  confidence: '高' | '中' | '低' | '数据不足';
+  summaryVerdict: string;
+}
+
+export interface Country {
+  id: string;
+  name: string;
+  nameEn: string;
+  flag: string;
+  region: 'English-Speaking' | 'Western/Northern Europe' | 'Southern/Eastern Europe' | 'Asia' | 'Middle East';
+  primaryLanguage: string;
+  secondLanguageCost: '无/英语母语' | '低' | '中(需德语/日语等初阶)' | '高(需达B2/C1)';
+  foreignerWorkDifficulty: '低' | '中等' | '较高' | '极高';
+  visaRoutesSummary: string[];
+  prRouteSummary: string;
+  associateDegreeFriendliness: '极高' | '高' | '中等' | '低(需认证或专升本)' | '极低(必须全日制本硕)';
+  tradesViability: '优' | '良' | '需高壁垒本地资格' | '极难工签';
+  itViability: '优' | '良' | '中等' | '需本地大厂担保';
+  minStartupCapitalRmb: number;
+  monthlyRentRmbEstimate: number;
+  monthlyLivingCostRmbEstimate: number;
+  minWageHourlyRmbEstimate: number;
+  medianWageMonthlyRmbEstimate: number;
+  typicalWeeklyHours: number;
+  paidLeaveDaysYear: number;
+  laborProtectionScore: number;
+  taxBurden: '低' | '中' | '高';
+  safetyRank: string;
+  internetFreedomScore: number;
+  aiServiceAccessibility: '完全自由' | '有轻微合规审查' | '受限';
+  netHourlyPurchasingPowerIndex: number;
+  eightQuestions: EightQuestionsCountry;
+  summaryVerdict: string;
+}
+
+export interface PathwayNode {
+  id: string;
+  title: string;
+  stage: string;
+  durationMonths: number;
+  costRmb: number;
+  cashflowType: '持续自给自足' | '轻微支出' | '重度资本消耗' | '带薪补贴/免学费';
+  prerequisites: string[];
+  skillsToLearn: string[];
+  certsToAcquire: string[];
+  englishMilestone: string;
+  risk: string;
+  killCriteria: string;
+  fallbackPlan: string;
+  rationale: string;
+}
+
+export interface Pathway {
+  id: string;
+  name: string;
+  title?: string;
+  category: 'AI & Remote Launch' | 'Dual Vocational / Ausbildung' | 'Stepping Stone' | 'Specified Skills' | 'Working Holiday' | 'Skilled Tech';
+  targetCountry: string;
+  totalMonthsEst: number;
+  minCapitalRmb: number;
+  feasibilityScore: number;
+  confidenceScore: number;
+  whyRecommended: string;
+  mainRisk: string;
+  nextImmediateStep: string;
+  killCriteria: string;
+  nodes: PathwayNode[];
+}
+
+export interface Evidence {
+  id: string;
+  title: string;
+  sourceId: string;
+  sourceName: string;
+  sourceTier: SourceTier;
+  url: string;
+  publishDate: string;
+  fetchDate: string;
+  lastCheckDate: string;
+  country: string;
+  occupationId?: string;
+  isOfficial: boolean;
+  summary: string;
+  keyFactQuotes: string[];
+  confidence: '高' | '中' | '未完全确认' | '数据不足';
+  expiredRisk: '有效' | '政策变动期' | '可能过期';
+}
+
+export interface IntelligenceEvent {
+  id: string;
+  title: string;
+  category: '签证政策' | '紧缺名单' | '工资门槛' | '资格认证' | 'AI与自动化趋势' | '国内就业信号';
+  impactScore: number;
+  country: string;
+  date: string;
+  summary: string;
+  oldFact: string;
+  newFact: string;
+  whatToChangeForMe: string;
+  evidenceId: string;
+}
+
+export interface LowRegretSkill {
+  id: string;
+  name: string;
+  category: string;
+  estimatedHoursToProficiency: number;
+  whyLowRegret: string;
+  crossRouteValue: string;
+  immediateMonetization: string;
+  recommendedAction: string;
+}
+
+export interface MiniExperiment {
+  id: string;
+  title: string;
+  durationDays: 7 | 14 | 30;
+  goal: string;
+  actionSteps: string[];
+  successMetric: string;
+  killCriteria: string;
+  linkedCareerId?: string;
+}
+
+export interface UserPlanTask {
+  id: string;
+  title: string;
+  period: 'today' | 'week' | '30d' | '90d';
+  status: 'todo' | 'in_progress' | 'completed' | 'abandoned';
+  whyNow: string;
+  linkedPathwayId?: string;
+  deadline?: string;
+}
+
+export interface UserWeights {
+  cashflowWeight: number;
+  freeTimeWeight: number;
+  hourlyWageWeight: number;
+  mobilityWeight: number;
+  prWeight: number;
+  learningCostWeight: number;
+}
+
+export interface UserProfile {
+  name: string;
+  birthYear: number;
+  education: string;
+  school: string;
+  major: string;
+  gpa: number;
+  englishVocabEstimate: number;
+  currentSavingsRmb: number;
+  monthlyRentRmb: number;
+  monthlyFoodAndLifeRmb: number;
+  currentMonthlyIncomeRmb: number;
+  currentRemoteHoursPerWeek: number;
+  targetDateBaseline: string;
+  weights: UserWeights;
+}
+
+export type SourceStatus = 'live' | 'cached' | 'manual' | 'stale' | 'failed' | 'blocked' | 'unsupported';
+
+export interface ManifestSourceItem {
+  id: string;
+  name: string;
+  url: string;
+  country: string;
+  sourceTier: SourceTier;
+  category: string;
+  status: SourceStatus;
+  httpStatus: number | null;
+  latencyMs: number;
+  lastCheck: string;
+  contentHash?: string;
+  extractedFact?: string;
+  error?: string;
+  fallbackLevel: 1 | 2 | 3 | 4;
+}
+
+export interface SourceManifest {
+  updatedAt: string;
+  totalSources: number;
+  liveCount: number;
+  cachedCount: number;
+  manualCount: number;
+  failedCount: number;
+  blockedCount: number;
+  unsupportedCount: number;
+  sources: ManifestSourceItem[];
+}
+
+export interface DiscoveryRoute {
+  id: string;
+  title: string;
+  targetCountry: string;
+  category: string;
+  status: 'unverified' | 'due_diligence' | 'validated';
+  estimatedCostRmb: number;
+  estimatedMonths: number;
+  summary: string;
+  whyEmerging: string;
+  unverifiedRisks: string[];
+  investigationSteps: string[];
+  communitySignalsCount: number;
+  lastUpdated: string;
+}
+
+export interface ResearchDiffResult {
+  targetId: string;
+  targetType: 'country' | 'occupation' | 'pathway';
+  title: string;
+  baselineSummary: string;
+  latestFactSummary: string;
+  policyChanges: { aspect: string; before: string; after: string; impact: 'positive' | 'neutral' | 'negative' }[];
+  feasibilityDelta: number;
+  riskAudit: string[];
+  recommendedAction: string;
+  researchedAt: string;
+}
+

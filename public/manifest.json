@@ -1,0 +1,16 @@
+{
+  "name": "Lifee 决策情报系统",
+  "short_name": "Lifee",
+  "description": "个人职业与全球人生路径决策情报系统",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

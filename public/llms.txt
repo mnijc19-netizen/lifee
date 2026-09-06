@@ -1,0 +1,11 @@
+﻿# Lifee - Personal Career & Global Life Decision Intelligence System
+> An evidence-grounded decision intelligence application for global career and emigration pathways.
+
+## Core Directives
+- Universal Zero-Hallucination & Evidence-First Rule
+- Source Tiers: Tier A (Official Gov/Immigration/Laws) to Tier E (Community Ground Truth)
+- Target Baseline Profile: Associate Degree (3D Digital Media), ~1500 English vocabulary, ~$0 startup capital, needs immediate remote cashflow.
+- Top Pathways: German Dual Vocational (Ausbildung), Malaysia DE Rantau Nomad, Japan SSW, NZ WHV, Domestic Remote Studio.
+
+## Data Endpoints
+- /data/summary.json: Compact machine-readable snapshot of occupations, countries, and verified policy citations.
