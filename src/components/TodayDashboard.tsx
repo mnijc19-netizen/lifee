@@ -272,6 +272,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
           {topPathways.slice(0, 3).map((pathway, idx) => (
             <div
               key={pathway.id}
+              data-pathway-card="true"
               onClick={() => onSelectPathway(pathway)}
               className="group cursor-pointer rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 hover:border-emerald-500/40 hover:bg-slate-900/80 transition-all"
             >

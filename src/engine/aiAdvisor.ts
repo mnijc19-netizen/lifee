@@ -137,6 +137,27 @@ export function localEvidenceRag(query: string, profile: UserProfile): AiRespons
     };
   }
 
+  // Route 5: Unknown / Unverified Policy Inquiries (Constitutional Rule: Zero Hallucination)
+  const policyKeywords = ['签证', '移民', '政策', '永居', '工签', '免签', '护照', '绿卡', '门槛', '法案', '税率', '免税'];
+  const isKnownTopic = ['德国', '新西兰', '澳大利亚', '澳洲', '马来西亚', '日本', '3d', 'ai', '电工', '叉车', '双元制', '机会卡', '外包', '现金流'].some(k => q.includes(k));
+  if (policyKeywords.some(k => q.includes(k)) && !isKnownTopic) {
+    return {
+      conclusion: '【未收录/官方待确证】当前 Lifee 官方证据库中未收录此项政策的一手权威证据，系统严格拒绝凭空臆断。',
+      why: '根据最高认知宪法之“零盲猜与事实铁律”：未经过抓取、清洗、验证与官方快照持久化的政策声明，一律判定为待确证 (Unknown)。严禁将非官方流传信息当作事实。',
+      relevanceToUser: '防止因缺乏官方凭证的政策传闻而做出不可逆的沉没成本投入或资金浪费。',
+      evidenceQuotes: [
+        {
+          title: '官方证据库未收录告警',
+          tier: 'Unknown (无一手证据)',
+          text: '当前系统证据库暂无此项政策的官方公报收录。若需研判，请前往【数据健康】提交官方端点或通过人工核验录入。',
+          source: 'Lifee Evidence Base'
+        }
+      ],
+      uncertaintiesAndRisks: '该事项处于数据盲区，政策真实性未经验证，存在被不法中介利用信息差误导的极高风险。',
+      nextImmediateAction: '暂停对该未经证实政策的投入，向官方移民局门户或【数据健康】提交抓取请求。'
+    };
+  }
+
   // Default Fallback
   return {
     conclusion: `基于当前 2026-09-07 官方证据库，系统建议你采取“以守为攻”策略：先以居家 AI+3D 资产拆分保障现金流，同时系统突破英语（高频3000词）或德语（B1标准）。`,

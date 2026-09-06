@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Radio, AlertTriangle, ArrowRight, Filter, Search, Sparkles, FileText, CheckCircle2 } from 'lucide-react';
 import { IntelligenceEvent } from '../types';
 
@@ -96,9 +96,22 @@ export const IntelligenceFeed: React.FC<IntelligenceFeedProps> = ({
             className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-slate-700 hover:bg-slate-900/80 transition-all space-y-4"
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap gap-1">
                 <span className="rounded bg-amber-500/10 px-2 py-0.5 text-xs font-bold text-amber-400 border border-amber-500/20">
                   影响分 {event.impactScore}
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
+                  event.eventOrigin === 'LIVE_DETECTED'
+                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/30 animate-pulse'
+                    : event.eventOrigin === 'MANUAL'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                    : 'bg-slate-800 text-slate-400 border-slate-700'
+                }`}>
+                  {event.eventOrigin === 'LIVE_DETECTED'
+                    ? '⚡ LIVE_DETECTED (快照差分实时捕获)'
+                    : event.eventOrigin === 'MANUAL'
+                    ? '✍ MANUAL (人工核验便签)'
+                    : '🏛 HISTORICAL_SEED (历史基准事件)'}
                 </span>
                 <span className="rounded bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
                   {event.category}

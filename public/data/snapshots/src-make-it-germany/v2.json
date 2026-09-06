@@ -1,0 +1,44 @@
+{
+  "sourceId": "src-make-it-germany",
+  "version": 2,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-08-15",
+  "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+  "contentHash": "4ef386e22fa2",
+  "parserVersion": "1.0.0",
+  "normalizedFacts": {
+    "opportunityCard": {
+      "monthlyBlockedFundsEur": 1091,
+      "annualBlockedFundsEur": 13092,
+      "partTimeWorkAllowedHoursWeekly": 20,
+      "currency": "EUR"
+    },
+    "ausbildung": {
+      "stipendExemptionSperrkonto": true,
+      "minLanguageLevel": "B1",
+      "typicalMonthlyStipendRangeEur": [
+        950,
+        1350
+      ],
+      "tuitionFree": true
+    }
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev-de-chancenkarte-blocked",
+      "claim": "2026 年度德国机会卡求职签证要求限制性账户每月 1,091 欧元，全年 13,092 欧元。",
+      "quotes": [
+        "For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account."
+      ],
+      "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card"
+    },
+    {
+      "evidenceId": "ev-de-ausbildung-stipend",
+      "claim": "德国双元制职业培训由企业全额资助免学费，按月领取培训津贴（950~1350欧），免除自保金要求。",
+      "quotes": [
+        "Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich."
+      ],
+      "sourceUrl": "https://www.arbeitsagentur.de/bildung/ausbildung"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "version": 1,
+    "file": "v1.json",
+    "fetchedAt": "2025-10-01T00:00:00.000Z",
+    "contentHash": "d5116811177e",
+    "summary": "Pre-reform AEWV threshold"
+  },
+  {
+    "version": 2,
+    "file": "v2.json",
+    "fetchedAt": "2026-09-06T19:00:00.000Z",
+    "contentHash": "304e26ae9c68",
+    "summary": "2026 AEWV Wage Threshold and Low Skill restrictions update"
+  },
+  {
+    "version": 3,
+    "file": "v3.json",
+    "fetchedAt": "2026-09-06T20:15:16.176Z",
+    "contentHash": "beee49f76697",
+    "summary": "AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签"
+  }
+]

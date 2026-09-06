@@ -1,0 +1,31 @@
+{
+  "sourceId": "src-inz-gov",
+  "version": 2,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-07-28",
+  "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+  "contentHash": "304e26ae9c68",
+  "parserVersion": "1.0.0",
+  "normalizedFacts": {
+    "aewv": {
+      "medianWageHourlyNzd": 31.61,
+      "minGuaranteedHoursWeekly": 30,
+      "currency": "NZD"
+    },
+    "anzscoLevel45Restrictions": {
+      "maxContinuousStayYears": 3,
+      "minEnglishIelts": 4,
+      "directGreenListPathway": false
+    }
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev-nz-forklift-anzsco",
+      "claim": "新西兰 AEWV 政策规定：ANZSCO Skill Level 4 与 5 的岗位（如叉车驾驶员 721211）要求具备至少雅思 4.0 英语，工签压缩至 2~3 年，无直接技术永居通道。",
+      "quotes": [
+        "ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent."
+      ],
+      "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa"
+    }
+  ]
+}

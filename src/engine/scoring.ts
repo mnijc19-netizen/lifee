@@ -1,4 +1,4 @@
-﻿import { UserProfile, Occupation, Pathway } from '../types';
+import { UserProfile, Occupation, Pathway } from '../types';
 
 export function calculateOccupationMatchScore(occupation: Occupation, profile: UserProfile): number {
   let score = 50;
@@ -63,12 +63,46 @@ export function calculateOccupationMatchScore(occupation: Occupation, profile: U
   return Math.min(99, Math.max(15, Math.round(score)));
 }
 
+export function calculateDynamicPathwayFeasibility(pathway: Pathway, profile: UserProfile): number {
+  let score = pathway.feasibilityScore;
+  const savings = profile.currentSavingsRmb || 0;
+  
+  // 1. Capital adequacy penalty/bonus
+  if (savings < pathway.minCapitalRmb) {
+    const deficitRatio = (pathway.minCapitalRmb - savings) / pathway.minCapitalRmb;
+    score -= Math.min(30, Math.round(deficitRatio * 25));
+  } else if (savings >= pathway.minCapitalRmb * 2) {
+    score += 5;
+  }
+
+  // 2. Monthly Runway buffer
+  const monthlyRent = profile.monthlyRentRmb || 0;
+  const monthlyLiving = profile.monthlyFoodAndLifeRmb || 0;
+  const monthlyIncome = profile.currentMonthlyIncomeRmb || 0;
+  const monthlyBurn = monthlyRent + monthlyLiving - monthlyIncome;
+  if (monthlyBurn > 0) {
+    const runwayMonths = savings / monthlyBurn;
+    if (runwayMonths < 3) {
+      score -= 8;
+    }
+  }
+
+  // 3. User preference weights
+  if (profile.weights?.cashflowWeight >= 8 && pathway.minCapitalRmb <= 5000) {
+    score += 5;
+  }
+  if (profile.weights?.mobilityWeight >= 8 && pathway.targetCountry !== '中国') {
+    score += 4;
+  }
+
+  return Math.min(99, Math.max(10, score));
+}
+
 export function rankPathways(pathways: Pathway[], profile: UserProfile): Pathway[] {
-  return [...pathways].sort((a, b) => {
-    const aGating = a.minCapitalRmb <= profile.currentSavingsRmb ? 15 : 0;
-    const bGating = b.minCapitalRmb <= profile.currentSavingsRmb ? 15 : 0;
-    const aScore = a.feasibilityScore + aGating;
-    const bScore = b.feasibilityScore + bGating;
-    return bScore - aScore;
-  });
+  return [...pathways]
+    .map(p => ({
+      ...p,
+      feasibilityScore: calculateDynamicPathwayFeasibility(p, profile)
+    }))
+    .sort((a, b) => b.feasibilityScore - a.feasibilityScore);
 }

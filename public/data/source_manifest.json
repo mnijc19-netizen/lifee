@@ -1,12 +1,13 @@
 {
-  "updatedAt": "2026-09-06T19:58:05.780Z",
+  "updatedAt": "2026-09-06T20:15:34.239Z",
   "totalSources": 18,
-  "liveDataCount": 1,
-  "reachableCount": 8,
+  "liveDataCount": 4,
+  "reachableCount": 4,
   "cachedCount": 4,
   "manualCount": 3,
   "blockedCount": 1,
-  "failedCount": 0,
+  "failedCount": 1,
+  "failedParserCount": 0,
   "staticCount": 1,
   "unknownCount": 0,
   "sources": [
@@ -22,10 +23,10 @@
       "sourcePublishedAt": "2026-09-07",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 890,
-      "lastCheck": "2026-09-06T19:57:48.048Z",
-      "fetchedAt": "2026-09-06T19:57:48.048Z",
-      "parsedAt": "2026-09-06T19:57:48.048Z",
+      "latencyMs": 878,
+      "lastCheck": "2026-09-06T20:15:12.276Z",
+      "fetchedAt": "2026-09-06T20:15:12.276Z",
+      "parsedAt": "2026-09-06T20:15:12.276Z",
       "lastVerifiedAt": "2026-09-06",
       "contentHash": "49b37b24e567",
       "extractedFact": "最新汇率实时解析成功：USD/CNY=6.734, EUR/CNY=7.821"
@@ -41,11 +42,14 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-15",
       "verifiedPolicyFact": "2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金",
-      "status": "REACHABLE",
+      "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 1386,
-      "lastCheck": "2026-09-06T19:57:48.940Z",
-      "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金"
+      "latencyMs": 1504,
+      "lastCheck": "2026-09-06T20:15:13.158Z",
+      "fetchedAt": "2026-09-06T20:15:13.158Z",
+      "parsedAt": "2026-09-06T20:15:13.158Z",
+      "contentHash": "7055ce9e303f",
+      "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金"
     },
     {
       "id": "src-ba-ausbildung",
@@ -60,8 +64,8 @@
       "verifiedPolicyFact": "双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 1260,
-      "lastCheck": "2026-09-06T19:57:50.326Z",
+      "latencyMs": 1246,
+      "lastCheck": "2026-09-06T20:15:14.929Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月"
     },
     {
@@ -75,11 +79,14 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-07-28",
       "verifiedPolicyFact": "AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签",
-      "status": "REACHABLE",
+      "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 3210,
-      "lastCheck": "2026-09-06T19:57:51.586Z",
-      "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签"
+      "latencyMs": 2775,
+      "lastCheck": "2026-09-06T20:15:16.176Z",
+      "fetchedAt": "2026-09-06T20:15:16.176Z",
+      "parsedAt": "2026-09-06T20:15:16.176Z",
+      "contentHash": "beee49f76697",
+      "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签"
     },
     {
       "id": "src-tahatu-nz",
@@ -94,8 +101,8 @@
       "verifiedPolicyFact": "电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 3040,
-      "lastCheck": "2026-09-06T19:57:54.796Z",
+      "latencyMs": 3136,
+      "lastCheck": "2026-09-06T20:15:19.473Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业"
     },
     {
@@ -109,11 +116,14 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-01",
       "verifiedPolicyFact": "国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高",
-      "status": "REACHABLE",
+      "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 1649,
-      "lastCheck": "2026-09-06T19:57:57.836Z",
-      "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高"
+      "latencyMs": 1252,
+      "lastCheck": "2026-09-06T20:15:22.610Z",
+      "fetchedAt": "2026-09-06T20:15:22.610Z",
+      "parsedAt": "2026-09-06T20:15:22.610Z",
+      "contentHash": "b50f29faaeab",
+      "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高"
     },
     {
       "id": "src-ca-jobbank",
@@ -126,11 +136,12 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-12",
       "verifiedPolicyFact": "各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低",
-      "status": "REACHABLE",
-      "httpStatus": 200,
-      "latencyMs": 2510,
-      "lastCheck": "2026-09-06T19:57:59.485Z",
-      "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低"
+      "status": "FAILED",
+      "httpStatus": null,
+      "latencyMs": 6000,
+      "lastCheck": "2026-09-06T20:15:23.865Z",
+      "extractedFact": "网络超时或连接失败，降级启用基准缓存",
+      "error": "The operation was aborted due to timeout"
     },
     {
       "id": "src-us-onet",
@@ -145,8 +156,8 @@
       "verifiedPolicyFact": "3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 1143,
-      "lastCheck": "2026-09-06T19:58:01.996Z",
+      "latencyMs": 1087,
+      "lastCheck": "2026-09-06T20:15:29.866Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范"
     },
     {
@@ -162,8 +173,8 @@
       "verifiedPolicyFact": "欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 1828,
-      "lastCheck": "2026-09-06T19:58:03.139Z",
+      "latencyMs": 2418,
+      "lastCheck": "2026-09-06T20:15:30.953Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可"
     },
     {
@@ -179,8 +190,8 @@
       "verifiedPolicyFact": "行业报告基准：AI 工具普及使数字资产自由职业者时薪承揽能力提升 38%",
       "status": "BLOCKED",
       "httpStatus": 403,
-      "latencyMs": 813,
-      "lastCheck": "2026-09-06T19:58:04.967Z",
+      "latencyMs": 868,
+      "lastCheck": "2026-09-06T20:15:33.371Z",
       "extractedFact": "受外部 Cloudflare 防爬拦截 (HTTP 403)，已合规降级使用官方行业白皮书缓存",
       "error": "Cloudflare 403 Anti-bot challenge detected. Fallback Level 3 executed."
     },
@@ -198,7 +209,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "中国全日制专科在 Anabin 认定为 H+/-，双元制不要求本科学历认证"
     },
     {
@@ -215,7 +226,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "海外受训电工强制要求 4 年（8,000 小时）工时雇主证明，绝无自动互认"
     },
     {
@@ -232,7 +243,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "普通专科学历需通过 TRA 完整评估并积累 3 年以上相关工作经验"
     },
     {
@@ -249,7 +260,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "全国城镇青年调查失业率基准与行业平均薪酬分布公报"
     },
     {
@@ -266,7 +277,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "特定技能 2 号持续扩大范围，豁免统招全日制本科学历限制"
     },
     {
@@ -283,7 +294,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "国内招聘网站高防反爬保护，降级采用国家人社局宏观统计与 Manual Inbox"
     },
     {
@@ -300,7 +311,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "多条个案证实：奥克兰蓝领学徒找工难度激增，生活成本侵蚀薪资"
     },
     {
@@ -317,7 +328,7 @@
       "status": "STATIC",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T19:58:05.780Z",
+      "lastCheck": "2026-09-06T20:15:34.239Z",
       "extractedFact": "标准职业分类代码字典，用于精准对齐海外技能等级 Skill Level 1-4"
     }
   ]

@@ -90,6 +90,13 @@ export const DataHealth: React.FC = () => {
             <span>STATIC (代码内置标准分类)</span>
           </span>
         );
+      case 'FAILED_PARSER':
+        return (
+          <span className="rounded bg-rose-500/10 px-2 py-0.5 text-[10px] text-rose-300 font-medium border border-rose-500/30 flex items-center space-x-1 w-max">
+            <XCircle className="h-3 w-3 text-rose-400" />
+            <span>FAILED_PARSER (解析失败 · 拒绝虚标)</span>
+          </span>
+        );
       case 'FAILED':
         return (
           <span className="rounded bg-rose-500/10 px-2 py-0.5 text-[10px] text-rose-400 font-medium border border-rose-500/30 flex items-center space-x-1 w-max">
@@ -132,7 +139,7 @@ export const DataHealth: React.FC = () => {
               数据健康看板 · 真实源状态 (Data Health)
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              彻底杜绝把“网页能打开/HTTP 200”冒充为“实时数据接入”。如实反映真实解析入库、仅连通可达、基准缓存与反爬拦截状态。
+              彻底杜绝把“网页能打开/HTTP 200”冒充为“实时数据接入”。可访问 (REACHABLE) ≠ 数据已实时接入 (LIVE_DATA)。
             </p>
           </div>
 
@@ -150,10 +157,10 @@ export const DataHealth: React.FC = () => {
         <div className="mt-4 rounded-lg bg-blue-950/20 border border-blue-800/40 p-3 text-xs text-blue-200/90 space-y-1">
           <div className="flex items-center space-x-1.5 font-bold text-blue-300">
             <Info className="h-4 w-4 text-blue-400 shrink-0" />
-            <span>严格状态定义审计：</span>
+            <span>严格状态定义审计：可访问 ≠ 数据已实时接入</span>
           </div>
           <p className="text-[11px] leading-relaxed">
-            <strong>LIVE_DATA ({liveData}个)</strong>：实际请求外部 API、完成字段清洗校验并持久化入库（当前为开放汇率实盘端点）。<br />
+            <strong>LIVE_DATA ({liveData}个)</strong>：实际请求外部官方页面/API、经专有解析器清洗校验并持久化入库（当前重点接通：德国 Make it in Germany、新西兰移民局 INZ、澳大利亚 JSA、开放外汇实盘）。<br />
             <strong>REACHABLE ({reachable}个)</strong>：官方移民/劳工门户网络响应 HTTP 200，但未挂接专用动态解析器。系统对其政策条目诚实采用带固定核验日期的 <strong>CACHED ({cached}个)</strong> 与 <strong>MANUAL ({manual}个)</strong> 基准，绝不虚夸为全量实时爬取。
           </p>
         </div>

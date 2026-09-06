@@ -12,7 +12,8 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     oldFact: '旧规自保金要求为每月约 1,027 欧元（年计 12,324 欧元）。',
     newFact: '现行最新要求为每月 1,091 欧元（年计 13,092 欧元，折合人民币约 102,000 元）。',
     whatToChangeForMe: '明确排除了当前阶段自费申请机会卡求职的可行性（需预先锁定逾 10 万元自保金）；将德国低资金路径聚焦在【免自保金带薪双元制 Ausbildung】上，降低资金沉没成本。',
-    evidenceId: 'ev-de-chancenkarte-blocked'
+    evidenceId: 'ev-de-chancenkarte-blocked',
+    eventOrigin: 'HISTORICAL_SEED'
   },
   {
     id: 'intel-02',
@@ -25,7 +26,8 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     oldFact: '过去部分中介宣称可通过雇主担保让叉车司机工签无限续签并等待政策大赦。',
     newFact: '移民局正式确立此类岗位最高停留 2-3 年且必须考雅思 4.0，绝不纳入 Green List。',
     whatToChangeForMe: '坚决打消“去新西兰开叉车移民”的幻想，严防被不良劳务中介骗走数万元安置费。',
-    evidenceId: 'ev-nz-forklift-anzsco'
+    evidenceId: 'ev-nz-forklift-anzsco',
+    eventOrigin: 'HISTORICAL_SEED'
   },
   {
     id: 'intel-03',
@@ -38,7 +40,8 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     oldFact: '特定技能 1 号以往被视为最长 5 年的“纯廉价打工过渡”，到期必须离境。',
     newFact: '机械加工、食品制造、外食、造船等行业特定技能 2 号考核常态化，享有事实上永居通道。',
     whatToChangeForMe: '将【日本特定技能】从原先的“纯临时打工”提升为“高确定性保底长期出国路线”，特别是在大专学历匹配的机械加工制造方向。',
-    evidenceId: 'ev-jp-ssw-framework'
+    evidenceId: 'ev-jp-ssw-framework',
+    eventOrigin: 'HISTORICAL_SEED'
   },
   {
     id: 'intel-04',
@@ -51,7 +54,8 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     oldFact: '以往要求提供跨国企业签订的 12 个月固定劳动合同。',
     newFact: '只要过去连续 3 个月平台提现流水折合年化达到 24,000 美元即可通过审核。',
     whatToChangeForMe: '大幅降低了数字游民出境门槛。你只要在国内利用 AI+3D 外包把月流水做到 1.4 万元人民币，即可申请赴马旅居。',
-    evidenceId: 'ev-my-derantau-rules'
+    evidenceId: 'ev-my-derantau-rules',
+    eventOrigin: 'HISTORICAL_SEED'
   },
   {
     id: 'intel-05',
@@ -64,6 +68,7 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     oldFact: '大专毕业生传统出路是去大城市游戏外包公司高工时坐班当切图工。',
     newFact: '大厂全职坐班岗位竞争激烈且性价比走低，但针对高效外部供应商的计件订单总量稳步增长。',
     whatToChangeForMe: '证明避开低性价比长工时坐班是正确的战术判断。不要去挤死板的初级坐班岗，而要抓住居家承接计件业务的自由度与自研技能时间。',
-    evidenceId: 'ev-upwork-3d-market'
+    evidenceId: 'ev-upwork-3d-market',
+    eventOrigin: 'HISTORICAL_SEED'
   }
 ];

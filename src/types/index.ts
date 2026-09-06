@@ -180,6 +180,9 @@ export interface IntelligenceEvent {
   newFact: string;
   whatToChangeForMe: string;
   evidenceId: string;
+  eventOrigin?: 'LIVE_DETECTED' | 'HISTORICAL_SEED' | 'MANUAL' | 'CACHED';
+  sourceUrl?: string;
+  affectedPathways?: string[];
 }
 
 export interface LowRegretSkill {
@@ -248,6 +251,7 @@ export type SourceStatus =
   | 'MANUAL' 
   | 'BLOCKED' 
   | 'FAILED' 
+  | 'FAILED_PARSER'
   | 'STALE' 
   | 'UNKNOWN';
 
@@ -301,6 +305,8 @@ export interface DiscoveryRoute {
   targetCountry: string;
   category: string;
   status: 'unverified' | 'due_diligence' | 'validated';
+  originType?: 'STATIC_SEED' | 'AUTOMATED_CANDIDATE';
+  validation_status?: 'UNVERIFIED' | 'VALIDATED';
   estimatedCostRmb: number;
   estimatedMonths: number;
   summary: string;
@@ -309,6 +315,42 @@ export interface DiscoveryRoute {
   investigationSteps: string[];
   linkedEvidenceIds: string[];
   lastVerifiedAt: string;
+}
+
+export interface NormalizedSnapshot {
+  sourceId: string;
+  version: number;
+  fetchedAt: string;
+  sourcePublishedAt?: string;
+  url: string;
+  contentHash: string;
+  parserVersion: string;
+  normalizedFacts: Record<string, any>;
+  evidence: {
+    evidenceId: string;
+    claim: string;
+    quotes: string[];
+    sourceUrl: string;
+  }[];
+}
+
+export interface SemanticDiffChange {
+  field: string;
+  oldValue: any;
+  newValue: any;
+  summary: string;
+  impact?: 'positive' | 'neutral' | 'negative';
+}
+
+export interface SemanticDiffResult {
+  hasChange: boolean;
+  changeType: 'NO_MEANINGFUL_CHANGE' | 'POLICY_CHANGE' | 'CRITERIA_UPDATE';
+  sourceId: string;
+  oldSnapshotVersion?: number;
+  newSnapshotVersion?: number;
+  changes: SemanticDiffChange[];
+  detectedAt: string;
+  affectedPathways?: string[];
 }
 
 export interface ResearchDiffResult {
@@ -323,10 +365,18 @@ export interface ResearchDiffResult {
   feasibilityDelta: number;
   riskAudit: string[];
   recommendedAction: string;
-  sourcePublishedAt?: string;
+  // Rigorous 4-category evidence segregation
+  verifiedFacts: { claim: string; evidenceId?: string; sourceUrl?: string; quote?: string }[];
+  systemInference: string[];
+  communitySignals: string[];
+  dataGapsUnknown: string[];
+  // Rigorous timestamps
+  requestedAt: string;
+  lastSourceFetchedAt: string;
+  lastSourcePublishedAt: string;
+  lastMeaningfulChange: string;
+  lastVerifiedAt?: string;
   fetchedAt?: string;
-  parsedAt?: string;
-  lastVerifiedAt: string;
   verificationSourceUrl?: string;
   verificationSourceName?: string;
   fallbackNotice?: string;

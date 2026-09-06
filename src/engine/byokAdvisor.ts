@@ -9,9 +9,11 @@ export interface ByokConfig {
   model: string;
   customEndpoint?: string;
   enabled: boolean;
+  sessionOnly?: boolean; // Default true, stored only in sessionStorage
 }
 
-const STORAGE_KEY = 'lifee_byok_config';
+const SESSION_STORAGE_KEY = 'lifee_byok_session_config';
+const LEGACY_STORAGE_KEY = 'lifee_byok_config';
 
 export const DEFAULT_BYOK_CONFIG: ByokConfig = {
   provider: 'gemini',
@@ -19,55 +21,85 @@ export const DEFAULT_BYOK_CONFIG: ByokConfig = {
   model: 'gemini-2.5-flash',
   customEndpoint: '',
   enabled: false,
+  sessionOnly: true,
 };
+
+// In-memory fallback if sessionStorage is restricted
+let memoryConfig: ByokConfig = { ...DEFAULT_BYOK_CONFIG };
 
 export function loadByokConfig(): ByokConfig {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_BYOK_CONFIG;
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_BYOK_CONFIG, ...parsed };
+    // Purge any legacy plaintext from localStorage for security hygiene
+    if (typeof localStorage !== 'undefined' && localStorage.getItem(LEGACY_STORAGE_KEY)) {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
+    
+    if (typeof sessionStorage !== 'undefined') {
+      const raw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        memoryConfig = { ...DEFAULT_BYOK_CONFIG, ...parsed, sessionOnly: true };
+        return memoryConfig;
+      }
+    }
   } catch {
-    return DEFAULT_BYOK_CONFIG;
+    // Fall back to in-memory config
   }
+  return memoryConfig;
 }
 
 export function saveByokConfig(config: ByokConfig): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    memoryConfig = { ...config, sessionOnly: true };
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(memoryConfig));
+    }
   } catch (err) {
-    console.warn('Failed to persist BYOK config:', err);
+    console.warn('Failed to persist BYOK config to sessionStorage, using memory only:', err);
+  }
+}
+
+export function clearByokConfig(): void {
+  memoryConfig = { ...DEFAULT_BYOK_CONFIG };
+  try {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore
   }
 }
 
 function buildSystemPrompt(profile: UserProfile): string {
   const context = generateExportableAiContext(profile, PATHWAYS);
-  const sampleEvidence = EVIDENCE_BASE.slice(0, 8).map(e => `[${e.sourceTier}] ${e.title} (${e.url}): ${e.keyFactQuotes.join('; ')}`).join('\n');
+  const sampleEvidence = EVIDENCE_BASE.map(e => `[Evidence ID: ${e.id} | Tier: ${e.sourceTier} | 来源: ${e.sourceName} (${e.url})]: ${e.keyFactQuotes.join('; ')}`).join('\n');
 
   return `你是一个遵循【全领域最高认知与工程宪法】的严谨人生与职业决策顾问。
-严禁凭记忆幻觉最新移民政策与海外资格互认。
-必须基于客观硬核事实推演，坚决杜绝给用户画饼。
+【绝对铁律：严禁编造政策事实】
+如果可用参考证据库中没有某项具体的最新签证条件、工资标准、永居通道、语言分数、学历要求：
+绝对不允许凭模型训练记忆补全冒充官方政策事实！
+必须在 conclusion 或 why 中明确陈述：“当前 Lifee Evidence 证据库中没有足够的新鲜证据，需要重新抓取/人工核验，结论为待验证 (Unknown)”。
 
 用户真实背景画像与约束：
 ${context}
 
-可用参考证据库条目：
+可用官方已核验参考证据库条目：
 ${sampleEvidence}
 
 请务必直接输出合法的 JSON 格式（不要包含 markdown 代码块包裹），JSON 必须严格包含以下 6 个键：
 {
-  "conclusion": "一句话核心研判结论（明确指出可行性、死穴或关键阻碍）",
-  "why": "底层依据与客观数据（政策法规、薪资工时、真实招聘要求）",
+  "conclusion": "一句话核心研判结论（明确指出可行性、死穴或数据盲区）",
+  "why": "底层依据与客观数据。如果是推理推测，必须标明【推论】；如果是证据支持，必须引用来源",
   "relevanceToUser": "对该用户的具体影响（结合其当前学历、资金、英语、工时偏好）",
   "evidenceQuotes": [
     {
       "title": "证据标题或法条/统计名称",
       "tier": "Tier A / Tier B / Tier C / Tier D / Tier E",
-      "text": "关键引用原文",
+      "text": "关键引用原文或数据。若无对应证据库条目则填 'AI 推理生成 (未挂接官方证据库)'",
       "source": "来源机构或链接"
     }
   ],
-  "uncertaintiesAndRisks": "不确定性、未知盲区与潜在死穴",
+  "uncertaintiesAndRisks": "不确定性、未知盲区与潜在死穴。凡证据库中缺乏数据的内容必须在此处列出",
   "nextImmediateAction": "未来 24-72 小时内最务实、杠杆最高的行动动作"
 }`;
 }

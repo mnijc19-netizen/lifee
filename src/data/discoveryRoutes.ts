@@ -7,6 +7,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
     targetCountry: '西班牙',
     category: 'Digital Nomad',
     status: 'due_diligence',
+    originType: 'STATIC_SEED',
+    validation_status: 'UNVERIFIED',
     estimatedCostRmb: 22000,
     estimatedMonths: 6,
     summary: '西班牙初创企业法案下的数字游民签证。允许受雇或自雇远程人员居留，官方认可 3 年以上行业实操履历替代本科文凭。',
@@ -21,7 +23,7 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '测算在海外平台稳定月入 $3,000 USD 的达成概率与连续银行流水证明方式',
       '咨询已获批案例关于大专学历加作品集行业年限证明的公证双认证细节'
     ],
-    linkedEvidenceIds: ['ev-upwork-3d-market'],
+    linkedEvidenceIds: ['ev-es-dnv-smi', 'ev-upwork-3d-market'],
     lastVerifiedAt: '2026-08-15'
   },
   {
@@ -30,6 +32,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
     targetCountry: '日本',
     category: 'Skilled Trades',
     status: 'due_diligence',
+    originType: 'STATIC_SEED',
+    validation_status: 'UNVERIFIED',
     estimatedCostRmb: 15000,
     estimatedMonths: 12,
     summary: '日本出入国在留管理厅逐步放宽特定技能 2 号领域。2 号无在留期限上限，可携家属，且不要求统招全日制本科文凭。',
@@ -44,7 +48,7 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '对比特定技能与传统赴日 IT 派遣的实际劳动报酬与工时保障',
       '评估先考取日语 N3 证书的时间成本'
     ],
-    linkedEvidenceIds: [],
+    linkedEvidenceIds: ['ev-jp-ssw-framework'],
     lastVerifiedAt: '2026-08-15'
   },
   {
@@ -53,6 +57,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
     targetCountry: '葡萄牙',
     category: 'Digital Nomad',
     status: 'unverified',
+    originType: 'STATIC_SEED',
+    validation_status: 'UNVERIFIED',
     estimatedCostRmb: 28000,
     estimatedMonths: 8,
     summary: '面向非欧盟远程工作者的居留许可，要求月收入达到葡萄牙最低工资 4 倍（约 €3,280 / 月）。',
@@ -75,6 +81,8 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
     targetCountry: '爱沙尼亚 / 欧盟',
     category: 'Global Freelance Infrastructure',
     status: 'validated',
+    originType: 'STATIC_SEED',
+    validation_status: 'VALIDATED',
     estimatedCostRmb: 4500,
     estimatedMonths: 1,
     summary: '虽然不直接赋予居住权，但允许中国公民 100% 线上开设合规的欧盟一人有限责任公司，打通 Stripe / Wise 国际收汇通道。',
@@ -88,7 +96,7 @@ export const DISCOVERY_ROUTES: DiscoveryRoute[] = [
       '作为海外独立接单年营收突破 10 万元时的备用出海架构',
       '完成个人技术主页的国际支付接口设计'
     ],
-    linkedEvidenceIds: ['ev-upwork-3d-market'],
+    linkedEvidenceIds: ['ev-ee-eresidency-official', 'ev-upwork-3d-market'],
     lastVerifiedAt: '2026-08-15'
   }
 ];

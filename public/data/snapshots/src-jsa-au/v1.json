@@ -1,0 +1,38 @@
+{
+  "sourceId": "src-jsa-au",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-08-01",
+  "url": "https://www.jobsandskills.gov.au/data/skills-shortage-som",
+  "contentHash": "0f20b3582002",
+  "parserVersion": "1.0.0",
+  "normalizedFacts": {
+    "monitoredShortages": {
+      "electrician_341111": {
+        "anzscoCode": "341111",
+        "title": "Electrician (General)",
+        "nationalShortage": true,
+        "assessingAuthority": "Trades Recognition Australia (TRA)"
+      },
+      "software_engineer_261313": {
+        "anzscoCode": "261313",
+        "title": "Software Engineer",
+        "nationalShortage": true,
+        "assessingAuthority": "Australian Computer Society (ACS)"
+      }
+    },
+    "legalBoundaryDisclaimer": {
+      "domesticShortageVsVisaGrant": "Domestic shortage does not equal automatic visa grant."
+    }
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev-acs-rpl-barrier",
+      "claim": "澳大利亚计算机协会 (ACS) 规定：非对口专科需通过 RPL 认定并扣除 5~6 年全职工作经验。",
+      "quotes": [
+        "Non-ICT Diploma qualifications require 6 years of full-time professional ICT work experience plus an RPL project report."
+      ],
+      "sourceUrl": "https://www.acs.org.au/msa.html"
+    }
+  ]
+}

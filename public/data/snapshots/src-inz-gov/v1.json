@@ -1,0 +1,22 @@
+{
+  "sourceId": "src-inz-gov",
+  "version": 1,
+  "fetchedAt": "2025-10-01T00:00:00.000Z",
+  "sourcePublishedAt": "2025-09-15",
+  "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+  "contentHash": "d5116811177e",
+  "parserVersion": "1.0.0",
+  "normalizedFacts": {
+    "aewv": {
+      "medianWageHourlyNzd": 29.66,
+      "minGuaranteedHoursWeekly": 30,
+      "currency": "NZD"
+    },
+    "anzscoLevel45Restrictions": {
+      "maxContinuousStayYears": 5,
+      "minEnglishIelts": 0,
+      "directGreenListPathway": false
+    }
+  },
+  "evidence": []
+}

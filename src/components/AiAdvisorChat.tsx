@@ -138,7 +138,7 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               <span className={`inline-block h-2 w-2 rounded-full ${byokConfig.enabled && byokConfig.apiKey.trim() ? 'bg-indigo-400 animate-pulse' : 'bg-emerald-400'}`} />
               <span className={byokConfig.enabled && byokConfig.apiKey.trim() ? 'text-indigo-300 font-semibold' : 'text-emerald-400'}>
                 {byokConfig.enabled && byokConfig.apiKey.trim()
-                  ? `云端大模型 (AI Model: ${byokConfig.model}) · 浏览器直连 · 密钥仅存本地`
+                  ? `云端大模型 (AI Model: ${byokConfig.model}) · 浏览器直连 · 会话级临时保存 (关闭即清空)`
                   : '本地规则引擎 (Local Rule Engine) · 离线结构化推理 · 零隐私外泄'}
               </span>
             </div>
@@ -146,7 +146,7 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               AI 决策顾问与规则引擎 (Decision Intelligence Advisor)
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              严禁将规则引擎伪称为大模型：未配置 API Key 时系统以【本地规则引擎】纯离线运行；配置 Key 后方启用【云端 AI 大模型】直连推演。
+              严禁将规则引擎冒充为大模型：未配置 API Key 时系统以【本地规则引擎】纯离线运行；配置 Key 后仅在当前浏览器会话内存/sessionStorage 暂存，关闭页面自动物理擦除，严禁虚假宣传加密。
             </p>
           </div>
 
@@ -263,12 +263,18 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
                       <span className="text-[10px] text-slate-500 font-semibold uppercase block">
                         四、所引用之官方证据库条目 (Evidence Citation)
                       </span>
-                      {msg.structured.evidenceQuotes.map((eq, i) => (
-                        <div key={i} className="pl-2.5 border-l-2 border-emerald-500/50 font-mono text-[11px] text-emerald-300/90">
-                          <span className="text-slate-400">[{eq.tier}] {eq.title}: </span>
-                          <span>"{eq.text}"</span>
-                        </div>
-                      ))}
+                      {msg.structured.evidenceQuotes.map((eq, i) => {
+                        const isAiInference = eq.text.includes('AI 推理') || eq.text.includes('未挂接官方证据库');
+                        return (
+                          <div key={i} className={`pl-2.5 border-l-2 font-mono text-[11px] ${isAiInference ? 'border-amber-500/50 text-amber-300/90' : 'border-emerald-500/50 text-emerald-300/90'}`}>
+                            <div className="flex items-center space-x-1.5 mb-0.5">
+                              <span>{isAiInference ? '💭 [AI 推论]' : '✅ [官方已验证]'}</span>
+                              <span className="text-slate-400">[{eq.tier}] {eq.title}: </span>
+                            </div>
+                            <span className="italic">"{eq.text}"</span>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {/* Uncertainties & Risks */}
@@ -356,10 +362,10 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
             <div className="rounded-lg bg-emerald-950/20 border border-emerald-900/40 p-3 text-xs text-emerald-300 space-y-1">
               <div className="flex items-center space-x-1.5 font-bold">
                 <Lock className="h-3.5 w-3.5 text-emerald-400" />
-                <span>零泄漏隐私保护铁律</span>
+                <span>会话级安全与威胁模型 (Threat Model)</span>
               </div>
               <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-                您的 API Key 仅保存在当前浏览器的 LocalStorage 中。查询请求将直接由您的浏览器端发起，绝不经过任何后端服务器，保证个人财务与背景数据 100% 本地闭环。
+                您的 API Key <strong>仅在当前浏览器会话内存 / sessionStorage 中暂存（明文无虚假加密）</strong>。关闭标签页或浏览器后物理自动清空。所有推演请求由当前浏览器直连大模型官方接口，绝不上报或经过任何第三方代理服务器。
               </p>
             </div>
 

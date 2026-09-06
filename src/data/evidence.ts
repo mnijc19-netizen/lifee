@@ -1,4 +1,4 @@
-﻿import { Evidence } from '../types';
+import { Evidence } from '../types';
 
 export const EVIDENCE_BASE: Evidence[] = [
   {
@@ -187,6 +187,46 @@ export const EVIDENCE_BASE: Evidence[] = [
       'Without an existing network or local residency, you are competing against locals who started high school apprenticeships.'
     ],
     confidence: '中',
+    expiredRisk: '有效'
+  },
+  {
+    id: 'ev-es-dnv-smi',
+    title: '西班牙初创企业法数字游民居留 (Ley 28/2022) 官方薪酬与学历替代条款',
+    sourceId: 'src-eu-eures',
+    sourceName: '西班牙国家官方公报 (BOE) & 移民局官方公报',
+    sourceTier: 'Tier A',
+    url: 'https://prie.comercio.gob.es/es-es/Paginas/Teletrabajadores-caracter-internacional.aspx',
+    publishDate: '2026-01-01',
+    fetchDate: '2026-09-07',
+    lastCheckDate: '2026-09-07',
+    country: '西班牙',
+    isOfficial: true,
+    summary: '根据西班牙第 28/2022 号法律，国际远程工作者需证明拥有至少西班牙最低工资 (SMI) 200% 的稳定月收入（2026 年度基准约每月 2,646 欧元）。申请人若不具备统招大学本科文凭，官方明确允许提供至少 3 年可核验的同行业资深专业从业经验进行替代。',
+    keyFactQuotes: [
+      'Acreditar ingresos mensuales que superen el 200% del Salario Mínimo Interprofesional (SMI).',
+      'Experiencia profesional demostrable de al menos 3 años en el sector relacionada con el puesto remoto.'
+    ],
+    confidence: '高',
+    expiredRisk: '有效'
+  },
+  {
+    id: 'ev-ee-eresidency-official',
+    title: '爱沙尼亚官方电子居民 (e-Residency) 设立欧盟法人与资金合规准则',
+    sourceId: 'src-eu-eures',
+    sourceName: 'Republic of Estonia e-Residency Official Gateway',
+    sourceTier: 'Tier A',
+    url: 'https://www.e-resident.gov.ee/',
+    publishDate: '2026-01-10',
+    fetchDate: '2026-09-07',
+    lastCheckDate: '2026-09-07',
+    country: '爱沙尼亚 / 欧盟',
+    isOfficial: true,
+    summary: '爱沙尼亚政府为全球自由职业者提供的国家级数字身份，支持 100% 线上注册欧盟有限责任公司 (OÜ) 并接入全球支付网关。官方明确指出该身份不构成税务居民身份，亦不赋予申根签证或欧盟居住权。',
+    keyFactQuotes: [
+      'e-Residency provides access to Estonia transparent digital business environment.',
+      'It does not grant citizenship, tax residency, physical residence or permission to enter Estonia or the EU.'
+    ],
+    confidence: '高',
     expiredRisk: '有效'
   }
 ];

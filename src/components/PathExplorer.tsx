@@ -129,10 +129,10 @@ export const PathExplorer: React.FC<PathExplorerProps> = ({
           <div className="rounded-xl border border-indigo-900/40 bg-indigo-950/20 p-4 text-xs space-y-1">
             <span className="font-bold text-indigo-300 flex items-center space-x-1.5">
               <Sparkles className="h-4 w-4 text-amber-400" />
-              <span>发现池定位说明 (Discovery Pipeline Protocol)</span>
+              <span>发现池定位说明 (Discovery Pool Protocol · STATIC_SEED / CANDIDATE)</span>
             </span>
             <p className="text-indigo-200/80 text-[11px] leading-relaxed">
-              发现池收录全球范围内近期涌现、非统招本科学历友好、但尚未被系统 100% 完整确证的潜在前沿通道。每个项目均列明未知盲区与尽调步骤，供你在合适时机主动穿透调研。
+              根据宪法规定：以下前沿路线属于<strong>系统预设研究候选 (STATIC_SEED / CANDIDATE)</strong>，绝非自动化爬虫实时凭空发现。每个项目均标明待穿透盲区与关联证据，严禁虚假宣传“全自动挖掘”。
             </p>
           </div>
 
