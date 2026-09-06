@@ -14,6 +14,13 @@ export const PATHWAYS: Pathway[] = [
     mainRisk: '德语在 9~12 个月内能否达到 B1 沟通标准。',
     nextImmediateStep: '今天：确认并保持手头远程 3D 资产外包；下载 Anki 与多邻国启动德语 A1 基础发音与高频词记忆（每天 45 分钟）。',
     killCriteria: '如果在持续学习 6 个月后，德语仍无法通过 A2 模拟测试，则果断放弃德国路线，自动降级切换至【路线 C：日本特定技能】或【路线 B：马来西亚数字游民跳板】。',
+    nextGate: {
+      title: '德语 A1 核心 500 词与发音规则通关',
+      targetMetric: 'Anki 德语核心词库连续打卡 21 天，A1 基础发音与 500 词模考达标',
+      deadlineMonths: 1,
+      whyThisGateNow: '德语 B1 是带薪 Ausbildung 签证法定义务门槛，前期攻破前 500 词可快速确认个人小语种适应性。',
+      recommendedDailyAction: '早起 30 分钟背诵 Anki 德语词库 + 晚间 15 分钟多邻国发音跟读'
+    },
     nodes: [
       {
         id: 'node-de-1',
@@ -94,6 +101,13 @@ export const PATHWAYS: Pathway[] = [
     mainRisk: '自由职业收入出现大幅波动导致生活不稳。',
     nextImmediateStep: '在 Upwork / Fiverr 开设个人 3D 资产服务主页，开始用 AI 辅助起草英文提案，尝试接下第一个海外外包单。',
     killCriteria: '连续 3 个月海外远程收入无法达到 1,000 美元/月。',
+    nextGate: {
+      title: 'Upwork/Fiverr 3D 资产首单交付与美元入账',
+      targetMetric: '成功交付 1 个海外 3D 模型外包订单，收入 >= $50 USD 并获 5 星好评',
+      deadlineMonths: 1,
+      whyThisGateNow: '验证美元远程获客与跨国结算真实可行性，为申请 DE Rantau 游民签积累流水底仓。',
+      recommendedDailyAction: '每天用 AI 辅助定制并发送 1 份针对海外客户痛点的 3D 资产竞标提案'
+    },
     nodes: [
       {
         id: 'node-my-1',
@@ -158,6 +172,13 @@ export const PATHWAYS: Pathway[] = [
     mainRisk: '需要从事 1~2 年偏蓝领体力或工厂机械操作工作，心理预期需调适。',
     nextImmediateStep: '了解日本特定技能机械加工或食品制造的考试大纲，开始背五十音图与《大家都学日本语》初级。',
     killCriteria: '6 个月内未能通过 JLPT N4 或 JFT-Basic 考试。',
+    nextGate: {
+      title: '五十音图速通与 JLPT N4 核心语法突破',
+      targetMetric: '学完《大家的日语》初级前 15 课，五十音图听写正确率 100%',
+      deadlineMonths: 1,
+      whyThisGateNow: '日本特定技能 1 号法定义务语言线为 N4/A2。大专汉字基础利好，前期突破最快。',
+      recommendedDailyAction: '每日 40 分钟日语听力与文法练习，利用汉字优势做双向联想记忆'
+    },
     nodes: [
       {
         id: 'node-jp-1',
@@ -222,6 +243,13 @@ export const PATHWAYS: Pathway[] = [
     mainRisk: '抽签制运气成分极大，且境内转长期技术工签难度在 2024-2026 年政策收紧后成倍提升。',
     nextImmediateStep: '报考雅思 A/G 类并拿下总分 5.5；提前准备好大专学信网认证与 4200 纽币存款证明。',
     killCriteria: '如果到 2027 年仍未抽中 WHV，或者雅思未达到 5.5，绝不等待，立即全面转向【路线 A：德国】。',
+    nextGate: {
+      title: '雅思 5.5 达标与学信网专科认证就绪',
+      targetMetric: '剑桥真题模考听力/阅读达到 5.5 分 + 学信网专科英文认证报告完成',
+      deadlineMonths: 2,
+      whyThisGateNow: '新西兰 WHV 抢签与抵纽工签法定硬指标，必须在递签前具备不可篡改有效成绩单。',
+      recommendedDailyAction: '每日 45 分钟雅思听力精听跟读 + 专项核心生存词汇打卡'
+    },
     nodes: [
       {
         id: 'node-nz-1',
@@ -286,6 +314,13 @@ export const PATHWAYS: Pathway[] = [
     mainRisk: '长期居家缺乏社交导致的自我孤立与自律松懈。',
     nextImmediateStep: '梳理手头数字资产外包接单接口，与上游合作伙伴确认持续承接单量；设定每天 6 小时专注产出与 2 小时学习时间表。',
     killCriteria: '如果月收入连续 3 个月低于 2,000 元，则必须暂时接受一份本地弹性兼职平衡开支。',
+    nextGate: {
+      title: '自动化资产拆分流水线建立与月结净结余达标',
+      targetMetric: '编写 Python/Blender 批处理脚本节省 30% 制作用时，当月自由留存净现金流 >= 2,000 元',
+      deadlineMonths: 1,
+      whyThisGateNow: '先让本土远程自给自足，摆脱坐班与房租焦虑，方有充足自由时间备战语言与海外路线。',
+      recommendedDailyAction: '每日保持 5 小时稳定交付产出 + 1 小时工具链脚本编写调优'
+    },
     nodes: [
       {
         id: 'node-cn-1',

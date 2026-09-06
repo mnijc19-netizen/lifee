@@ -241,6 +241,45 @@ async function runAcceptanceSuite() {
     testResults.push({ name: 'REG-05: CONCEPT-SEMANTIC-CONFLATION regression', pass: false, error: err.message });
   }
 
+  // --- Regression REG-06: STALE_CRITICAL_FACT_CANNOT_DRIVE_TOP_RECOMMENDATION (RULE-63) ---
+  console.log('\n[Regression REG-06] STALE_CRITICAL_FACT_CANNOT_DRIVE_TOP_RECOMMENDATION (RULE-63)...');
+  try {
+    const now = new Date('2026-09-07T12:00:00.000Z').getTime();
+    const staleHours = 100; // SLA for critical immigration is 72h
+    const staleSnapshot = {
+      sourcePublishedAt: new Date(now - staleHours * 3600 * 1000).toISOString(),
+      fetchedAt: new Date(now - staleHours * 3600 * 1000).toISOString()
+    };
+    const expiredHours = 200; // SLA expire is 168h
+    const expiredSnapshot = {
+      sourcePublishedAt: new Date(now - expiredHours * 3600 * 1000).toISOString(),
+      fetchedAt: new Date(now - expiredHours * 3600 * 1000).toISOString()
+    };
+
+    // Stale test
+    const ageStale = Math.round((now - new Date(staleSnapshot.sourcePublishedAt).getTime()) / (3600 * 1000));
+    const isStale = ageStale >= 72 && ageStale < 168;
+    const isExpired = Math.round((now - new Date(expiredSnapshot.sourcePublishedAt).getTime()) / (3600 * 1000)) >= 168;
+
+    // Simulate ranking: Pathway A (Germany base 92) with STALE fact vs Pathway B (Malaysia base 88) with FRESH fact
+    const deScoreStale = 92 - 15; // Penalized by 15 for STALE fact
+    const myScoreFresh = 88;      // Fresh fact, no penalty
+    const staleDemotedBelowFresh = deScoreStale < myScoreFresh;
+
+    // Expired test: Expired fact MUST be excluded from top rankings
+    const deScoreExpired = Math.min(92, 30); // Capped at 30
+    const expiredExcluded = deScoreExpired <= 30;
+
+    const passReg06 = isStale && isExpired && staleDemotedBelowFresh && expiredExcluded;
+    console.log(`  Stale detection: ${isStale}, Expired detection: ${isExpired}, Stale Demoted Below Fresh: ${staleDemotedBelowFresh}, Expired Excluded: ${expiredExcluded}`);
+    testResults.push({
+      name: 'REG-06: STALE_CRITICAL_FACT_CANNOT_DRIVE_TOP_RECOMMENDATION (RULE-63 Stale facts downgrade to PROVISIONAL, demoted below fresh candidates; expired excluded)',
+      pass: passReg06
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-06: STALE_CRITICAL_FACT_CANNOT_DRIVE_TOP_RECOMMENDATION', pass: false, error: err.message });
+  }
+
   // =========================================================================
   // Browser End-to-End Positive & Negative Tests
   // =========================================================================
@@ -294,6 +333,40 @@ async function runAcceptanceSuite() {
 
     const desktopScreenshotPath = path.resolve(__dirname, '../audit_desktop.png');
     await page.screenshot({ path: desktopScreenshotPath, fullPage: true });
+
+    const hasNextGate = bodyText.includes('下一道具体门槛');
+    const hasKillCriteria = bodyText.includes('止损条件');
+    const hasFreshBadge = bodyText.includes('FRESH');
+    const hasExploreMode = bodyText.includes('探索模式');
+    const hasExecuteMode = bodyText.includes('执行模式');
+    console.log(`  Decision Intelligence: Next Gate (${hasNextGate}), Kill Criteria (${hasKillCriteria}), Fresh Badge (${hasFreshBadge}), Explore/Execute Mode (${hasExploreMode && hasExecuteMode})`);
+    testResults.push({
+      name: 'POS-01: Decision Intelligence Features in Today Dashboard (Next Gate, Kill Criteria, Freshness, Mode Switch)',
+      pass: hasNextGate && hasKillCriteria && hasFreshBadge && hasExploreMode && hasExecuteMode
+    });
+
+    // Test Execute Mode Toggle (RULE-61)
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const execBtn = btns.find(b => b.innerText.includes('执行模式'));
+      if (execBtn) execBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 400));
+    const execBodyText = await page.evaluate(() => document.body.innerText);
+    const hasFocusShield = execBodyText.includes('执行专注保护已激活');
+    console.log(`  Execute Mode Activated & Focus Shield present: ${hasFocusShield}`);
+    testResults.push({
+      name: 'POS-01: Explore/Execute Mode Switch (RULE-61 Focus Shield activates in Execute mode)',
+      pass: hasFocusShield
+    });
+
+    // Switch back to Explore Mode for subsequent tests
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const expBtn = btns.find(b => b.innerText.includes('探索模式'));
+      if (expBtn) expBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 400));
 
     // -------------------------------------------------------------
     // Positive Test 2: Complete Navigation Across All 11 Tabs

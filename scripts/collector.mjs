@@ -453,13 +453,58 @@ async function runCollector() {
     fs.mkdirSync(snapshotsDir, { recursive: true });
   }
 
-  console.log(`[Collector] Probing ${TARGET_SOURCES.length} data sources with strict status vocabulary...`);
-  const results = [];
-  for (const src of TARGET_SOURCES) {
+  // Tiered Scheduling Support (Section C & RULE-47, 51, 52)
+  const args = process.argv.slice(2);
+  let tierFilter = null;
+  for (const arg of args) {
+    if (arg.startsWith('--tier=')) {
+      tierFilter = parseInt(arg.replace('--tier=', ''), 10);
+    } else if (arg === '--all') {
+      tierFilter = null;
+    }
+  }
+
+  const TIER_1_IDS = new Set(['src-fx-open', 'src-make-it-germany', 'src-ba-ausbildung', 'src-inz-gov']);
+  const TIER_2_IDS = new Set(['src-tahatu-nz', 'src-jsa-au', 'src-ca-jobbank', 'src-eu-eures']);
+
+  let sourcesToProbe = TARGET_SOURCES;
+  if (tierFilter === 1) {
+    sourcesToProbe = TARGET_SOURCES.filter(s => TIER_1_IDS.has(s.id));
+    console.log(`[Collector Scheduler] Running Tier 1 Critical Watch (${sourcesToProbe.length} sources)...`);
+  } else if (tierFilter === 2) {
+    sourcesToProbe = TARGET_SOURCES.filter(s => TIER_2_IDS.has(s.id));
+    console.log(`[Collector Scheduler] Running Tier 2 Candidate Routes (${sourcesToProbe.length} sources)...`);
+  } else if (tierFilter === 3) {
+    sourcesToProbe = TARGET_SOURCES.filter(s => !TIER_1_IDS.has(s.id) && !TIER_2_IDS.has(s.id));
+    console.log(`[Collector Scheduler] Running Tier 3 Background Intel (${sourcesToProbe.length} sources)...`);
+  } else {
+    console.log(`[Collector Scheduler] Running All Tiers (${TARGET_SOURCES.length} sources)...`);
+  }
+
+  console.log(`[Collector] Probing ${sourcesToProbe.length} data sources with strict status vocabulary...`);
+  const probedResults = [];
+  for (const src of sourcesToProbe) {
     process.stdout.write(`  Probing ${src.id}... `);
     const item = await probeSource(src);
     console.log(`[${item.status}] (${item.latencyMs}ms)`);
-    results.push(item);
+    probedResults.push(item);
+  }
+
+  // Merge probed results with existing manifest if partial tier run
+  const manifestPath = path.join(outDir, 'source_manifest.json');
+  let results = probedResults;
+  if (tierFilter && fs.existsSync(manifestPath)) {
+    try {
+      const existingManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+      const probedMap = new Map(probedResults.map(r => [r.id, r]));
+      results = existingManifest.sources.map(s => probedMap.has(s.id) ? probedMap.get(s.id) : s);
+      // Append any newly added sources
+      for (const pr of probedResults) {
+        if (!results.some(r => r.id === pr.id)) results.push(pr);
+      }
+    } catch {
+      results = probedResults;
+    }
   }
 
   // Strict verifiable counts
@@ -593,7 +638,6 @@ async function runCollector() {
   }
 
   // 4. Write source_manifest.json
-  const manifestPath = path.join(outDir, 'source_manifest.json');
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
   console.log(`[Collector] Wrote verified Source Manifest to: ${manifestPath}`);
 

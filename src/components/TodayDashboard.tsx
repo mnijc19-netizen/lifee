@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   CheckCircle2, 
   ArrowRight, 
@@ -10,11 +10,16 @@ import {
   Sparkles, 
   Clock, 
   Coins, 
-  FileText,
   ChevronRight,
-  ExternalLink
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  Compass,
+  Lock,
+  Target,
+  Info
 } from 'lucide-react';
-import { UserProfile, Pathway, IntelligenceEvent } from '../types';
+import { UserProfile, Pathway, IntelligenceEvent, DecisionMode, FreshnessStatus } from '../types';
 import { RunwayAnalysis } from '../engine/runway';
 
 interface TodayDashboardProps {
@@ -36,7 +41,11 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   onNavigateTab,
   onOpenAiContext
 }) => {
-  // Section A: Top 3 Immediate Actions for Today & This Week
+  // Decision Mode: Explore Mode vs Execute Mode (RULE-61)
+  const [mode, setMode] = useState<DecisionMode>(profile.activeDecisionMode || 'EXPLORE');
+  const [expandedExplanationId, setExpandedExplanationId] = useState<string | null>(null);
+
+  // Immediate Action Cards (Section A)
   const topActions = [
     {
       id: 1,
@@ -48,8 +57,8 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
     },
     {
       id: 2,
-      title: '执行今日 45 分钟实用语言攻坚（英语3000高频词 / 德语A1）',
-      reason: '当前英语处于 1500 词汇量短板，是当前 Top 5 候选路线中 4 条海外路线（出海接单、德国、新西兰、马来西亚）的共用元技能，属于 0 后悔投资。',
+      title: '执行今日 45 分钟实用语言攻坚（德语 A1 / 英语 3000 高频词）',
+      reason: '外语是所有高阶出海路线（德国双元制、出海接单、WHV、数字游民）的通用底层杠杆，每日 45 分钟属于零后悔高复利投资。',
       badge: '低后悔投资',
       badgeColor: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
       actionTab: 'lowregret'
@@ -57,43 +66,128 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
     {
       id: 3,
       title: '启动【7天小实验】：用 Python 批处理优化 3D 资产拆分工作流',
-      reason: '不要盲目开始学 10 门新技术。先验证能否把现有资产制作与切分的单位耗时减少 40%，有效提升到手小时收益。',
+      reason: '拒绝假大空式的学习。先验证能否把现有资产制作与切分的单位耗时减少 40%，直接将有效时薪拉升至更高收益区间。',
       badge: '敏捷验证',
       badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
       actionTab: 'myplan'
     }
   ];
 
+  const primaryPathway = topPathways[0] || null;
+
+  const renderFreshnessBadge = (status?: FreshnessStatus, isProvisional?: boolean) => {
+    switch (status) {
+      case 'FRESH':
+        return (
+          <span className="inline-flex items-center space-x-1 rounded bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/30">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>🟢 FRESH (官方核验)</span>
+          </span>
+        );
+      case 'AGING':
+        return (
+          <span className="inline-flex items-center space-x-1 rounded bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-400 border border-blue-500/30">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+            <span>🟡 AGING (在有效周期内)</span>
+          </span>
+        );
+      case 'STALE':
+        return (
+          <span className="inline-flex items-center space-x-1 rounded bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400 border border-amber-500/30">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            <span>🟠 STALE {isProvisional ? '[PROVISIONAL 临时研判]' : ''}</span>
+          </span>
+        );
+      case 'EXPIRED':
+        return (
+          <span className="inline-flex items-center space-x-1 rounded bg-rose-500/10 px-2 py-0.5 text-[10px] font-semibold text-rose-400 border border-rose-500/30">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+            <span>🔴 EXPIRED [超期排除]</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center space-x-1 rounded bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-400 border border-slate-700">
+            <span>⚪ UNKNOWN</span>
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome & Directive Headline */}
-      <div className="rounded-xl border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-5 sm:p-6">
+      <div className="rounded-xl border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-5 sm:p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>当前决策基准日期: {profile.targetDateBaseline}</span>
+              <span>决策基准日期: {profile.targetDateBaseline}</span>
               <span className="text-slate-500">·</span>
-              <span>个人状态：{profile.education || '大专学历'} / ¥{profile.currentSavingsRmb || 0} 启动储备</span>
+              <span>画像状态：{profile.education || '大专学历'} / ¥{profile.currentSavingsRmb || 0} 可用储蓄</span>
             </div>
             <h1 className="mt-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-white">
               我现在最应该做什么？
             </h1>
             <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-3xl">
-              系统已根据你的设定条件（{profile.education || '大专学历'}、¥{profile.currentSavingsRmb}存款、¥{profile.monthlyRentRmb}房租、{profile.englishVocabEstimate}词汇量）完成全局政策与市场交叉验证。拒绝假大空的规划，直达今日执行闭环。
+              系统已根据你的设定条件（{profile.education || '大专学历'}、¥{profile.currentSavingsRmb}储蓄、¥{profile.monthlyRentRmb}房租、{profile.englishVocabEstimate}词汇量）完成全局政策与市场交叉验证。拒绝假大空的规划，直达今日执行闭环。
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            {/* Explore Mode vs Execute Mode Toggle (RULE-61) */}
+            <div className="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-1">
+              <button
+                type="button"
+                onClick={() => setMode('EXPLORE')}
+                className={`flex items-center space-x-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  mode === 'EXPLORE'
+                    ? 'bg-slate-800 text-white shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Compass className="h-3.5 w-3.5 text-sky-400" />
+                <span>探索模式 (Explore)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('EXECUTE')}
+                className={`flex items-center space-x-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  mode === 'EXECUTE'
+                    ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-950'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Lock className="h-3.5 w-3.5 text-emerald-300" />
+                <span>执行模式 (Execute)</span>
+              </button>
+            </div>
+
             <button
               onClick={onOpenAiContext}
-              className="flex items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-950"
+              className="flex items-center space-x-2 rounded-lg bg-emerald-600/90 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-950"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>一键提取 AI 决策上下文</span>
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>一键提取 AI 上下文</span>
             </button>
           </div>
         </div>
+
+        {/* Execute Mode Focus Shield Banner (RULE-61) */}
+        {mode === 'EXECUTE' && primaryPathway && (
+          <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3.5 text-xs text-emerald-200/90 flex items-start space-x-3">
+            <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div className="font-semibold text-emerald-300 flex items-center space-x-2">
+                <span>🔒 执行专注保护已激活：当前锁定主攻【{primaryPathway.name.slice(0, 32)}...】</span>
+                <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300">RULE-61 专注保障</span>
+              </div>
+              <p className="text-slate-300 leading-relaxed">
+                根据宪法 RULE-61，在执行模式下系统自动过滤微弱外部噪音，不让无休止的信息搜集推迟行动。除非当前路线触发<strong>止损条件 (Kill Criteria)</strong>或<strong>核心移民法规发生重大实质变动</strong>，否则请心无旁骛攻坚当期唯一的 Next Gate。
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* A. Top 3 Immediate Actions */}
@@ -101,7 +195,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <Zap className="h-4 w-4 text-emerald-400" />
-            <h2 className="text-base font-semibold text-white">A. 当前最重要的 3 件事 (今日与本周)</h2>
+            <h2 className="text-base font-semibold text-white">A. 当前最重要的 3 件事 (今日与本周执行)</h2>
           </div>
           <button 
             onClick={() => onNavigateTab('myplan')}
@@ -190,11 +284,11 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
           </button>
         </div>
 
-        {/* User Profile Snapshot Grid */}
+        {/* User Profile Snapshot Grid (RULE-57 Separation) */}
         <div className="lg:col-span-3 rounded-xl border border-slate-800 bg-slate-900/50 p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-slate-400">B. 我的当前底层状态 (System State Matrix)</span>
-            <span className="text-[10px] text-slate-500 font-mono">无本地假想 / 零盲猜锚定</span>
+            <span className="text-xs font-medium text-slate-400">B. 我的当前底层状态 (System State Matrix · 客观刚性约束)</span>
+            <span className="text-[10px] text-slate-500 font-mono">RULE-57 刚性约束校验</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -239,7 +333,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             <div className="flex items-center space-x-2">
               <ShieldAlert className="h-4 w-4 text-emerald-400 shrink-0" />
               <span>
-                <strong>系统裁决：</strong>目前绝对不具备直接自费留学（需20万+）或离岸技术移民条件；首要战略是<strong>“居家低消耗做远程现金流 + 定向攻关语言”</strong>。
+                <strong>系统裁决：</strong>目前不具备直接自费留学（需20万+）或离岸技术移民条件；首要战略是<strong>“居家低消耗做远程现金流 + 定向攻关外语门槛”</strong>。
               </span>
             </div>
             <button
@@ -252,12 +346,14 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </div>
       </div>
 
-      {/* C. Current Optimal Pathways Top 3 */}
+      {/* C. Current Optimal Pathways (Profile-Conditional & Explainable) */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-4 w-4 text-emerald-400" />
-            <h2 className="text-base font-semibold text-white">C. 动态评估当前最优路线 Top 3 (基于真实官方数据)</h2>
+            <h2 className="text-base font-semibold text-white">
+              C. 动态评估当前最优路线 {mode === 'EXECUTE' ? '（当前执行锚定）' : 'Top 3 (基于真实官方数据与时效门禁)'}
+            </h2>
           </div>
           <button 
             onClick={() => onNavigateTab('pathways')}
@@ -269,83 +365,183 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </div>
 
         <div className="space-y-3">
-          {topPathways.slice(0, 3).map((pathway, idx) => (
-            <div
-              key={pathway.id}
-              data-pathway-card="true"
-              onClick={() => onSelectPathway(pathway)}
-              className="group cursor-pointer rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 hover:border-emerald-500/40 hover:bg-slate-900/80 transition-all"
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-400 border border-emerald-500/30">
-                      {idx + 1}
-                    </span>
-                    <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                      {pathway.category}
-                    </span>
-                    <span className="text-slate-500">·</span>
-                    <span className="text-xs text-slate-300">目标国: {pathway.targetCountry}</span>
+          {(mode === 'EXECUTE' ? topPathways.slice(0, 1) : topPathways.slice(0, 3)).map((pathway, idx) => {
+            const isExplanationOpen = expandedExplanationId === pathway.id;
+            const explanation = pathway.scoreExplanation;
+
+            return (
+              <div
+                key={pathway.id}
+                data-pathway-card="true"
+                className="group rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 hover:border-emerald-500/40 hover:bg-slate-900/80 transition-all"
+              >
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                  <div className="space-y-1.5 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-400 border border-emerald-500/30">
+                        {idx + 1}
+                      </span>
+                      <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                        {pathway.category}
+                      </span>
+                      <span className="text-slate-500">·</span>
+                      <span className="text-xs text-slate-300">目标国: {pathway.targetCountry}</span>
+                      {renderFreshnessBadge(pathway.freshnessStatus, pathway.isProvisional)}
+                    </div>
+
+                    <h3 
+                      onClick={() => onSelectPathway(pathway)}
+                      className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors cursor-pointer"
+                    >
+                      {pathway.name}
+                    </h3>
+
+                    {/* Profile Conditional Statement (RULE-56) */}
+                    <p className="text-xs text-slate-300 bg-slate-950/50 rounded px-2.5 py-1.5 border border-slate-800/80">
+                      <span className="text-emerald-400 font-medium">📌 画像条件化判定 (RULE-56)：</span>
+                      {pathway.profileConditionalStatement || `以当前画像（${profile.education || '大专'} / ${profile.englishVocabEstimate || 2000}词汇 / ¥${profile.currentSavingsRmb}储蓄）与最新已核验证据，综合排序第 ${idx + 1} 位`}
+                    </p>
+
+                    <p className="text-xs text-slate-400 line-clamp-2">
+                      {pathway.whyRecommended}
+                    </p>
                   </div>
-                  <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
-                    {pathway.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 line-clamp-2">
-                    {pathway.whyRecommended}
-                  </p>
+
+                  <div className="flex items-center space-x-4 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
+                    <div className="text-right">
+                      <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end">
+                        <Coins className="h-3.5 w-3.5 text-amber-400" />
+                        <span>最低资金: ¥{pathway.minCapitalRmb.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end mt-0.5">
+                        <Clock className="h-3.5 w-3.5 text-indigo-400" />
+                        <span>预计周期: {pathway.totalMonthsEst} 个月</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <div className="text-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5">
+                        <span className="block text-[10px] text-slate-400">可行性评分</span>
+                        <span className="text-sm font-bold text-emerald-400 font-mono">{pathway.feasibilityScore}%</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center space-x-4 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
-                  <div className="text-right">
-                    <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end">
-                      <Coins className="h-3.5 w-3.5 text-amber-400" />
-                      <span>最低资金: ¥{pathway.minCapitalRmb.toLocaleString()}</span>
+                {/* Concrete Next Gate (RULE-60) & Kill Criteria (RULE-59) */}
+                <div className="mt-3.5 pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                  {/* Next Gate (RULE-60) */}
+                  <div className="rounded-lg border border-sky-500/30 bg-sky-950/20 p-2.5 text-sky-200">
+                    <div className="flex items-center space-x-1.5 font-semibold text-sky-300 mb-1">
+                      <Target className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                      <span>下一道具体门槛 (Next Gate · RULE-60)：</span>
+                      <span className="text-white">{pathway.nextGate?.title || pathway.nextImmediateStep}</span>
                     </div>
-                    <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end mt-0.5">
-                      <Clock className="h-3.5 w-3.5 text-indigo-400" />
-                      <span>预计周期: {pathway.totalMonthsEst} 个月</span>
-                    </div>
+                    {pathway.nextGate && (
+                      <div className="space-y-0.5 text-[11px] text-sky-300/80">
+                        <div><strong className="text-sky-200">衡量指标：</strong>{pathway.nextGate.targetMetric}</div>
+                        <div><strong className="text-sky-200">每日动作：</strong>{pathway.nextGate.recommendedDailyAction}</div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <div className="text-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5">
-                      <span className="block text-[10px] text-slate-400">可行性</span>
-                      <span className="text-sm font-bold text-emerald-400 font-mono">{pathway.feasibilityScore}%</span>
+                  {/* Kill Criteria (RULE-59) */}
+                  <div className="rounded-lg border border-rose-500/30 bg-rose-950/20 p-2.5 text-rose-200">
+                    <div className="flex items-center space-x-1.5 font-semibold text-rose-300 mb-1">
+                      <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
+                      <span>止损条件 (Kill Criteria · RULE-59)：</span>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                    <p className="text-[11px] text-rose-300/90 leading-relaxed">
+                      {pathway.killCriteria}
+                    </p>
                   </div>
                 </div>
+
+                {/* Score Explanation Toggle (RULE-58) */}
+                <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedExplanationId(isExplanationOpen ? null : pathway.id)}
+                    className="flex items-center space-x-1 text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    <Info className="h-3.5 w-3.5 text-slate-400" />
+                    <span>{isExplanationOpen ? '收起评分归因拆解' : '查看评分归因拆解 (RULE-58 可解释性)'}</span>
+                    {isExplanationOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                  </button>
+
+                  <button
+                    onClick={() => onSelectPathway(pathway)}
+                    className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-medium"
+                  >
+                    <span>查看路线阶段节点</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </button>
+                </div>
+
+                {/* Expanded Score Explanation Box (RULE-58) */}
+                {isExplanationOpen && explanation && (
+                  <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/80 p-3.5 text-xs space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-semibold text-white">评分归因构成：</span>
+                        <span className="font-mono text-slate-400">基准 {explanation.baseScore} 分 → 最终 {explanation.finalScore} 分</span>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                        explanation.hardConstraintsPassed
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                          : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                      }`}>
+                        {explanation.hardConstraintsPassed ? '✅ 刚性约束达标' : '⚠️ 存在资金/年龄硬约束差距'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Positive Drivers */}
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-semibold text-emerald-400">🟢 正向加分因素：</span>
+                        {explanation.positiveDrivers.map((driver, dIdx) => (
+                          <div key={dIdx} className="text-slate-300 text-[11px] flex items-start space-x-1.5">
+                            <span className="text-emerald-400 shrink-0">✓</span>
+                            <span>{driver}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Negative Drivers */}
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-semibold text-amber-400">🔴 约束降权与风险：</span>
+                        {explanation.negativeDrivers.length > 0 ? (
+                          explanation.negativeDrivers.map((driver, dIdx) => (
+                            <div key={dIdx} className="text-slate-300 text-[11px] flex items-start space-x-1.5">
+                              <span className="text-amber-400 shrink-0">✕</span>
+                              <span>{driver}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-slate-500 text-[11px]">无重大负向扣分项</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Kill Criteria & Next Step Quick Peek */}
-              <div className="mt-3 pt-3 border-t border-slate-800/60 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                <div className="flex items-start space-x-1.5 text-rose-300/90 bg-rose-950/20 rounded p-1.5 border border-rose-900/30">
-                  <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0 mt-0.5" />
-                  <span><strong>失效条件 (Kill Criteria)：</strong>{pathway.killCriteria}</span>
-                </div>
-                <div className="flex items-start space-x-1.5 text-emerald-300/90 bg-emerald-950/20 rounded p-1.5 border border-emerald-900/30">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>当前第一步：</strong>{pathway.nextImmediateStep}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* D. Major Policy & Market Changes */}
+      {/* D. Major Policy & Market Changes (RULE-54 "What it means to me") */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <AlertTriangle className="h-4 w-4 text-amber-400" />
-            <h2 className="text-base font-semibold text-white">D. 最近发生的重大变化 (真正改变决策的硬核情报)</h2>
+            <h2 className="text-base font-semibold text-white">D. 重大政策情报与个人决策关联 (RULE-54 回答“与我有什么关系”)</h2>
           </div>
           <button 
             onClick={() => onNavigateTab('intelligence')}
             className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
           >
-            <span>查看全部情报流</span>
+            <span>查看完整情报流</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -359,18 +555,21 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                     {intel.category}
                   </span>
                   <span className="text-xs text-slate-400">{intel.country}</span>
+                  <span className="rounded bg-emerald-500/10 px-1.5 py-0.2 text-[9px] text-emerald-400 font-mono">
+                    今日优先
+                  </span>
                 </div>
                 <span className="text-[11px] font-mono text-slate-500">{intel.date}</span>
               </div>
 
               <h4 className="text-sm font-semibold text-white">{intel.title}</h4>
 
-              <div className="text-xs space-y-1 bg-slate-950/60 p-2.5 rounded border border-slate-800">
+              <div className="text-xs space-y-1.5 bg-slate-950/60 p-2.5 rounded border border-slate-800">
                 <div className="text-slate-400">
-                  <span className="text-slate-500">最新实情：</span>{intel.newFact}
+                  <span className="text-slate-500 font-medium">变动事实：</span>{intel.newFact}
                 </div>
-                <div className="text-emerald-400/90 pt-1 border-t border-slate-800/80">
-                  <span className="font-semibold text-emerald-400">对我的直接决策影响：</span>
+                <div className="text-emerald-400/90 pt-1.5 border-t border-slate-800/80">
+                  <span className="font-semibold text-emerald-400">对我的直接决策影响 (RULE-54)：</span>
                   {intel.whatToChangeForMe}
                 </div>
               </div>

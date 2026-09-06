@@ -3,7 +3,7 @@ import { diffSnapshots } from './diffEngine';
 import { EVIDENCE_BASE } from '../data/evidence';
 
 // Target to bound primary Source mapping
-const TARGET_SOURCE_MAP: Record<string, { sourceId: string; title: string; defaultSourceUrl: string; sourceName: string }> = {
+export const TARGET_SOURCE_MAP: Record<string, { sourceId: string; title: string; defaultSourceUrl: string; sourceName: string }> = {
   'path-de-ausbildung': {
     sourceId: 'src-make-it-germany',
     title: '德国双元制带薪培训与技术移民路径研判',
@@ -58,6 +58,12 @@ const TARGET_SOURCE_MAP: Record<string, { sourceId: string; title: string; defau
     defaultSourceUrl: 'https://www.upwork.com/research',
     sourceName: 'Upwork Global Economic Research (已合规降级行业白皮书)'
   },
+  'path-jp-ssw': {
+    sourceId: 'src-moj-jp',
+    title: '日本特定技能 1 号法务省出入国在留管理厅基准研判',
+    defaultSourceUrl: 'https://www.moj.go.jp/isa/applications/ssw/index.html',
+    sourceName: '日本出入国在留管理厅 (ISA / MOJ)'
+  },
   'occ-ai-3d-asset': {
     sourceId: 'src-upwork-index',
     title: 'AI 增强 3D 数字资产制作师全球供需研判',
@@ -67,7 +73,7 @@ const TARGET_SOURCE_MAP: Record<string, { sourceId: string; title: string; defau
 };
 
 // Fallback baseline snapshots embedded in code to ensure zero crashing offline
-const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: NormalizedSnapshot }> = {
+export const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: NormalizedSnapshot }> = {
   'src-make-it-germany': {
     v1: {
       sourceId: 'src-make-it-germany',
@@ -343,6 +349,108 @@ const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: Normal
             labour_market_status: { nationalShortage: true, rating: 'National Shortage', evidenceText: 'Software engineers are in national shortage in select specialisations.' },
             visa_relevance: { isAutomaticVisaGrant: false, assessingAuthority: 'Australian Computer Society (ACS)' }
           }
+        }
+      },
+      evidence: []
+    }
+  },
+  'src-upwork-index': {
+    v1: {
+      sourceId: 'src-upwork-index',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-08-20',
+      url: 'https://www.upwork.com/research',
+      contentHash: 'upwork_3d_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        freelance3D: {
+          medianHourlyRateUsd: 28,
+          aiAdoptionGrowthPercent: 42
+        }
+      },
+      evidence: []
+    },
+    latest: {
+      sourceId: 'src-upwork-index',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-08-20',
+      url: 'https://www.upwork.com/research',
+      contentHash: 'upwork_3d_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        freelance3D: {
+          medianHourlyRateUsd: 28,
+          aiAdoptionGrowthPercent: 42
+        }
+      },
+      evidence: []
+    }
+  },
+  'src-my-mdec': {
+    v1: {
+      sourceId: 'src-my-mdec',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-07-15',
+      url: 'https://mdec.my/derantau',
+      contentHash: 'mdec_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        nomadPass: {
+          minAnnualIncomeUsd: 24000,
+          stayDurationMonths: 12
+        }
+      },
+      evidence: []
+    },
+    latest: {
+      sourceId: 'src-my-mdec',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-07-15',
+      url: 'https://mdec.my/derantau',
+      contentHash: 'mdec_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        nomadPass: {
+          minAnnualIncomeUsd: 24000,
+          stayDurationMonths: 12
+        }
+      },
+      evidence: []
+    }
+  },
+  'src-moj-jp': {
+    v1: {
+      sourceId: 'src-moj-jp',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-06-01',
+      url: 'https://www.moj.go.jp/isa/applications/ssw/index.html',
+      contentHash: 'moj_ssw_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        ssw: {
+          minJapaneseLevel: 'N4',
+          visaValidityYears: 5
+        }
+      },
+      evidence: []
+    },
+    latest: {
+      sourceId: 'src-moj-jp',
+      version: 1,
+      fetchedAt: '2026-09-06T20:00:00.000Z',
+      sourcePublishedAt: '2026-06-01',
+      url: 'https://www.moj.go.jp/isa/applications/ssw/index.html',
+      contentHash: 'moj_ssw_v1',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        ssw: {
+          minJapaneseLevel: 'N4',
+          visaValidityYears: 5
         }
       },
       evidence: []

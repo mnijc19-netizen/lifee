@@ -74,10 +74,10 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
   ]);
 
   const quickChips = [
-    '去新西兰做电工现实吗？中国证书能转吗？',
-    '德国双元制对我这种大专零积蓄有什么死穴？',
-    '朋友说出国开叉车工资高，能办工签移民吗？',
-    '居家 AI + 3D 外包如何最快提升时薪并维持现金流？'
+    '帮我严格做减法：以当前大专+零存款，哪些国家必须直接排除？',
+    '分析当前首选路线（德国双元制）的最关键未知项与死穴',
+    '为我当前的下一道门槛设计一个 7 天低成本敏捷小实验',
+    '核验止损条件 (Kill Criteria)：德语学到什么程度必须果断放弃？'
   ];
 
   const handleSend = async (textToSend?: string) => {
@@ -174,6 +174,20 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               <Sparkles className="h-4 w-4" />
               <span>提取 Markdown 上下文</span>
             </button>
+          </div>
+        </div>
+
+        {/* RULE-62 Anti-Anxiety Directive Banner */}
+        <div className="mt-4 rounded-lg border border-sky-500/30 bg-sky-950/20 p-3 text-xs text-sky-200/90 flex items-start space-x-2.5">
+          <ShieldCheck className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <div className="font-semibold text-sky-300 flex items-center space-x-1.5">
+              <span>🛡️ RULE-62 决策防焦虑铁律：做减法、找盲区、锁门槛、防沉没</span>
+              <span className="rounded bg-sky-500/20 px-1.5 py-0.2 text-[10px] text-sky-300">宪法强制</span>
+            </div>
+            <p className="text-slate-300 text-[11px] leading-relaxed">
+              AI 顾问的使命是帮您【排除不可行路线】、定位【官方关键未知盲区】、聚焦【当期唯一的 Next Gate】并设计【7 天最小验证实验】，坚决不向您兜售更多制造信息过载与行动瘫痪的空洞选择。
+            </p>
           </div>
         </div>
 

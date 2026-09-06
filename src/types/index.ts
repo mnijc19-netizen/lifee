@@ -132,6 +132,55 @@ export interface PathwayNode {
   rationale: string;
 }
 
+export type FreshnessStatus = 'FRESH' | 'AGING' | 'STALE' | 'EXPIRED' | 'UNKNOWN';
+
+export interface FreshnessPolicy {
+  dataType: string;
+  targetRefreshHours: number;
+  agingAfterHours: number;
+  staleAfterHours: number;
+  expireAfterHours: number;
+  expectedSourceCadence: string;
+  isNonOfficial?: boolean;
+}
+
+export interface FreshnessEvaluation {
+  status: FreshnessStatus;
+  ageHours: number;
+  sourcePublishedAt?: string | null;
+  effectiveAt?: string | null;
+  fetchedAt: string;
+  lastVerifiedAt?: string;
+  policy: FreshnessPolicy;
+  isProvisional: boolean;
+  excludeFromScoring: boolean;
+  historicalNotice?: string;
+}
+
+export type DecisionMode = 'EXPLORE' | 'EXECUTE';
+
+export interface NextGate {
+  title: string;
+  targetMetric: string;
+  deadlineMonths: number;
+  whyThisGateNow: string;
+  recommendedDailyAction: string;
+}
+
+export interface ScoreExplanation {
+  baseScore: number;
+  finalScore: number;
+  freshnessGatePassed: boolean;
+  freshnessStatus: FreshnessStatus;
+  isProvisional: boolean;
+  confidenceLabel: 'HIGH' | 'PROVISIONAL' | 'EXCLUDED';
+  positiveDrivers: string[];
+  negativeDrivers: string[];
+  hardConstraintsPassed: boolean;
+  hardConstraintFailures?: string[];
+  profileConditionSummary: string;
+}
+
 export interface Pathway {
   id: string;
   name: string;
@@ -147,6 +196,13 @@ export interface Pathway {
   nextImmediateStep: string;
   killCriteria: string;
   nodes: PathwayNode[];
+  // Decision Intelligence Enhancements (RULE-45~60)
+  freshnessStatus?: FreshnessStatus;
+  isProvisional?: boolean;
+  excludeFromTop?: boolean;
+  scoreExplanation?: ScoreExplanation;
+  nextGate?: NextGate;
+  profileConditionalStatement?: string;
 }
 
 export interface Evidence {
@@ -183,6 +239,15 @@ export interface IntelligenceEvent {
   eventOrigin?: 'LIVE_DETECTED' | 'HISTORICAL_SEED' | 'MANUAL' | 'CACHED';
   sourceUrl?: string;
   affectedPathways?: string[];
+  // Decision intelligence enhancements (RULE-54)
+  tier?: 'TODAY_PRIORITY' | 'BACKGROUND_INTEL';
+  whatChanged?: string;
+  effectiveDate?: string;
+  confidence?: 'HIGH' | 'MEDIUM' | 'PROVISIONAL';
+  affectedProfileConditions?: string[];
+  personalImpact?: string;
+  scoreDelta?: number;
+  actionRequired?: string;
 }
 
 export interface LowRegretSkill {
@@ -226,6 +291,34 @@ export interface UserWeights {
   learningCostWeight: number;
 }
 
+export interface UserHardConstraints {
+  birthYear: number;
+  education: string;
+  school: string;
+  major: string;
+  gpa: number;
+  englishVocabEstimate: number;
+  currentSavingsRmb: number;
+  monthlyRentRmb: number;
+  monthlyFoodAndLifeRmb: number;
+  currentMonthlyIncomeRmb: number;
+  currentRemoteHoursPerWeek: number;
+  targetDateBaseline: string;
+  citizenship?: string;
+  skills?: string[];
+  certs?: string[];
+}
+
+export interface UserPreferences {
+  weights: UserWeights;
+  preferRemote?: boolean;
+  commuteToleranceMinutes?: number;
+  prPriority?: 'HIGH' | 'MEDIUM' | 'LOW';
+  openInternetPriority?: 'HIGH' | 'MEDIUM' | 'LOW';
+  riskTolerance?: 'LOW' | 'MEDIUM' | 'HIGH';
+  maxInitialCostRmb?: number;
+}
+
 export interface UserProfile {
   name: string;
   birthYear: number;
@@ -241,6 +334,11 @@ export interface UserProfile {
   currentRemoteHoursPerWeek: number;
   targetDateBaseline: string;
   weights: UserWeights;
+  // RULE-57 Structured Hard Constraints vs Preferences
+  hardConstraints?: UserHardConstraints;
+  preferences?: UserPreferences;
+  activeDecisionMode?: DecisionMode;
+  pinnedPathwayId?: string;
 }
 
 export type SourceStatus = 
