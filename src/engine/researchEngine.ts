@@ -76,10 +76,53 @@ const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: Normal
       sourcePublishedAt: '2025-12-01',
       url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
       contentHash: '2c1f23eb36c0',
-      parserVersion: '1.0.0',
+      parserVersion: '2.0.0',
       normalizedFacts: {
-        opportunityCard: { monthlyBlockedFundsEur: 1027, annualBlockedFundsEur: 12324 },
-        ausbildung: { stipendExemptionSperrkonto: true, minLanguageLevel: 'B1' }
+        opportunityCard: {
+          monthlyBlockedFundsEur: {
+            value: 1027,
+            unit: 'EUR/month',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+            fetchedAt: '2025-12-15T00:00:00.000Z',
+            sourcePublishedAt: '2025-12-01',
+            effectiveAt: '2025-01-01',
+            evidenceText: 'In 2025 the required minimum blocked account amount was €1,027 per month.',
+            parserVersion: '2.0.0'
+          },
+          annualBlockedFundsEur: {
+            value: 12324,
+            unit: 'EUR/year',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+            fetchedAt: '2025-12-15T00:00:00.000Z',
+            sourcePublishedAt: '2025-12-01',
+            effectiveAt: '2025-01-01',
+            evidenceText: 'In 2025 the required minimum blocked account amount was €12,324 per year.',
+            parserVersion: '2.0.0'
+          },
+          partTimeWorkAllowedHoursWeekly: {
+            value: 20,
+            unit: 'hours/week',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Secondary Employment',
+            fetchedAt: '2025-12-15T00:00:00.000Z',
+            sourcePublishedAt: '2025-12-01',
+            effectiveAt: '2025-01-01',
+            evidenceText: 'Up to 20 hours per week of secondary employment allowed.',
+            parserVersion: '2.0.0'
+          },
+          currency: 'EUR'
+        },
+        ausbildung: {
+          stipendExemptionSperrkonto: true,
+          minLanguageLevel: 'B1',
+          typicalMonthlyStipendRangeEur: [900, 1250],
+          tuitionFree: true
+        }
       },
       evidence: []
     },
@@ -90,10 +133,53 @@ const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: Normal
       sourcePublishedAt: '2026-08-15',
       url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
       contentHash: '4ef386e22fa2',
-      parserVersion: '1.0.0',
+      parserVersion: '2.0.0',
       normalizedFacts: {
-        opportunityCard: { monthlyBlockedFundsEur: 1091, annualBlockedFundsEur: 13092 },
-        ausbildung: { stipendExemptionSperrkonto: true, minLanguageLevel: 'B1' }
+        opportunityCard: {
+          monthlyBlockedFundsEur: {
+            value: 1091,
+            unit: 'EUR/month',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-08-15',
+            effectiveAt: '2026-01-01',
+            evidenceText: 'For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.',
+            parserVersion: '2.0.0'
+          },
+          annualBlockedFundsEur: {
+            value: 13092,
+            unit: 'EUR/year',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-08-15',
+            effectiveAt: '2026-01-01',
+            evidenceText: '€13,092 for the full 12-month period in a blocked account.',
+            parserVersion: '2.0.0'
+          },
+          partTimeWorkAllowedHoursWeekly: {
+            value: 20,
+            unit: 'hours/week',
+            sourceId: 'src-make-it-germany',
+            sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+            sourceTitle: 'Make it in Germany - Secondary Employment',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-08-15',
+            effectiveAt: '2026-01-01',
+            evidenceText: 'Up to 20 hours per week of trial employment or secondary work permitted.',
+            parserVersion: '2.0.0'
+          },
+          currency: 'EUR'
+        },
+        ausbildung: {
+          stipendExemptionSperrkonto: true,
+          minLanguageLevel: 'B1',
+          typicalMonthlyStipendRangeEur: [950, 1350],
+          tuitionFree: true
+        }
       },
       evidence: []
     }
@@ -106,10 +192,50 @@ const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: Normal
       sourcePublishedAt: '2025-09-15',
       url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
       contentHash: 'd5116811177e',
-      parserVersion: '1.0.0',
+      parserVersion: '2.0.0',
       normalizedFacts: {
-        aewv: { medianWageHourlyNzd: 29.66 },
-        anzscoLevel45Restrictions: { maxContinuousStayYears: 5, minEnglishIelts: 0 }
+        aewv: {
+          aewv_general_median_wage_requirement: {
+            value: 29.66,
+            unit: 'NZD/hour',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+            fetchedAt: '2025-10-01T00:00:00.000Z',
+            sourcePublishedAt: '2025-09-15',
+            effectiveAt: '2025-02-28',
+            evidenceText: 'Former wage rate required for AEWV roles was $29.66 NZD per hour.',
+            parserVersion: '2.0.0'
+          },
+          medianWageHourlyNzd: 29.66,
+          currency: 'NZD'
+        },
+        anzscoLevel45Restrictions: {
+          maxContinuousStayYears: {
+            value: 5,
+            unit: 'years',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+            fetchedAt: '2025-10-01T00:00:00.000Z',
+            sourcePublishedAt: '2025-09-15',
+            effectiveAt: '2025-02-28',
+            evidenceText: 'Previous continuous stay period was up to 5 years for low skill roles.',
+            parserVersion: '2.0.0'
+          },
+          minEnglishIelts: {
+            value: 0,
+            unit: 'IELTS Band',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+            fetchedAt: '2025-10-01T00:00:00.000Z',
+            sourcePublishedAt: '2025-09-15',
+            effectiveAt: '2025-02-28',
+            evidenceText: 'No minimum English language score previously mandated for level 4-5 roles.',
+            parserVersion: '2.0.0'
+          }
+        }
       },
       evidence: []
     },
@@ -120,10 +246,104 @@ const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest: Normal
       sourcePublishedAt: '2026-07-28',
       url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
       contentHash: '304e26ae9c68',
-      parserVersion: '1.0.0',
+      parserVersion: '2.0.0',
       normalizedFacts: {
-        aewv: { medianWageHourlyNzd: 31.61 },
-        anzscoLevel45Restrictions: { maxContinuousStayYears: 3, minEnglishIelts: 4.0 }
+        aewv: {
+          aewv_general_median_wage_requirement: {
+            value: 31.61,
+            unit: 'NZD/hour',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - AEWV 2026 Standards',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-07-28',
+            effectiveAt: '2026-02-28',
+            evidenceText: 'You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.',
+            parserVersion: '2.0.0'
+          },
+          medianWageHourlyNzd: 31.61,
+          currency: 'NZD'
+        },
+        anzscoLevel45Restrictions: {
+          maxContinuousStayYears: {
+            value: 3,
+            unit: 'years',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - AEWV Length Requirements',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-07-28',
+            effectiveAt: '2026-04-01',
+            evidenceText: 'The maximum continuous stay for ANZSCO skill level 4 and 5 roles has been reduced to 3 years.',
+            parserVersion: '2.0.0'
+          },
+          minEnglishIelts: {
+            value: 4.0,
+            unit: 'IELTS Band',
+            sourceId: 'src-inz-gov',
+            sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+            sourceTitle: 'Immigration New Zealand - English Requirements',
+            fetchedAt: '2026-09-06T19:00:00.000Z',
+            sourcePublishedAt: '2026-07-28',
+            effectiveAt: '2026-04-01',
+            evidenceText: 'ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.',
+            parserVersion: '2.0.0'
+          }
+        }
+      },
+      evidence: []
+    }
+  },
+  'src-jsa-au': {
+    v1: {
+      sourceId: 'src-jsa-au',
+      version: 1,
+      fetchedAt: '2026-08-01T00:00:00.000Z',
+      sourcePublishedAt: '2026-08-01',
+      url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
+      contentHash: 'jsa_v1_baseline',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        monitoredShortages: {
+          electrician_341111: {
+            anzscoCode: '341111',
+            title: 'Electrician (General)',
+            labour_market_status: { nationalShortage: true, rating: 'National Shortage', evidenceText: 'Electricians are in national shortage across multiple Australian states.' },
+            visa_relevance: { isAutomaticVisaGrant: false, assessingAuthority: 'Trades Recognition Australia (TRA)' }
+          },
+          software_engineer_261313: {
+            anzscoCode: '261313',
+            title: 'Software Engineer',
+            labour_market_status: { nationalShortage: true, rating: 'National Shortage', evidenceText: 'Software engineers are in national shortage in select specialisations.' },
+            visa_relevance: { isAutomaticVisaGrant: false, assessingAuthority: 'Australian Computer Society (ACS)' }
+          }
+        }
+      },
+      evidence: []
+    },
+    latest: {
+      sourceId: 'src-jsa-au',
+      version: 1,
+      fetchedAt: '2026-09-06T19:00:00.000Z',
+      sourcePublishedAt: '2026-08-01',
+      url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
+      contentHash: 'jsa_v1_baseline',
+      parserVersion: '2.0.0',
+      normalizedFacts: {
+        monitoredShortages: {
+          electrician_341111: {
+            anzscoCode: '341111',
+            title: 'Electrician (General)',
+            labour_market_status: { nationalShortage: true, rating: 'National Shortage', evidenceText: 'Electricians are in national shortage across multiple Australian states.' },
+            visa_relevance: { isAutomaticVisaGrant: false, assessingAuthority: 'Trades Recognition Australia (TRA)' }
+          },
+          software_engineer_261313: {
+            anzscoCode: '261313',
+            title: 'Software Engineer',
+            labour_market_status: { nationalShortage: true, rating: 'National Shortage', evidenceText: 'Software engineers are in national shortage in select specialisations.' },
+            visa_relevance: { isAutomaticVisaGrant: false, assessingAuthority: 'Australian Computer Society (ACS)' }
+          }
+        }
       },
       evidence: []
     }
@@ -182,6 +402,22 @@ export async function executeLiveResearch(
     if (res.ok) {
       latestSnapshot = await res.json();
     }
+    // Check history.json for previous snapshot (RULE-34)
+    try {
+      const histRes = await fetch(`${cleanBase}data/snapshots/${binding.sourceId}/history.json`, { cache: 'no-store' });
+      if (histRes.ok) {
+        const hist = await histRes.json();
+        if (Array.isArray(hist) && hist.length >= 2) {
+          const prevItem = hist[hist.length - 2];
+          const prevRes = await fetch(`${cleanBase}data/snapshots/${binding.sourceId}/${prevItem.file}`, { cache: 'no-store' });
+          if (prevRes.ok) {
+            prevSnapshot = await prevRes.json();
+          }
+        }
+      }
+    } catch {
+      // history loading failed
+    }
   } catch {
     // Network fetch in browser failed, fall back to bundled snapshot
   }
@@ -189,17 +425,21 @@ export async function executeLiveResearch(
   if (!latestSnapshot && BUNDLED_SNAPSHOTS[binding.sourceId]) {
     latestSnapshot = BUNDLED_SNAPSHOTS[binding.sourceId].latest;
     prevSnapshot = BUNDLED_SNAPSHOTS[binding.sourceId].v1;
+  } else if (latestSnapshot && !prevSnapshot && BUNDLED_SNAPSHOTS[binding.sourceId]) {
+    if (BUNDLED_SNAPSHOTS[binding.sourceId].v1.contentHash !== latestSnapshot.contentHash) {
+      prevSnapshot = BUNDLED_SNAPSHOTS[binding.sourceId].v1;
+    }
   }
 
-  // 3. Meaningful Diff execution
+  // 3. Meaningful Diff execution (RULE-34 & RULE-35: strictly UNKNOWN if prevSnapshot is missing)
   const diff = diffSnapshots(prevSnapshot, latestSnapshot || {
     sourceId: binding.sourceId,
     version: 1,
     fetchedAt: '2026-09-06T19:00:00.000Z',
-    sourcePublishedAt: '2026-08-15',
+    sourcePublishedAt: null,
     url: binding.defaultSourceUrl,
     contentHash: 'fallback',
-    parserVersion: '1.0.0',
+    parserVersion: '2.0.0',
     normalizedFacts: {},
     evidence: []
   });
@@ -232,6 +472,38 @@ export async function executeLiveResearch(
     }
   }
 
+  // Populate verified facts from normalizedFacts if SourceProvenance exists (RULE-31 & RULE-42)
+  if (latestSnapshot?.normalizedFacts) {
+    const facts = latestSnapshot.normalizedFacts as any;
+    if (facts.opportunityCard?.monthlyBlockedFundsEur?.evidenceText) {
+      const p = facts.opportunityCard.monthlyBlockedFundsEur;
+      verifiedFacts.unshift({
+        claim: `德国机会卡法定最低月自保金要求：€${p.value} ${p.unit || 'EUR'}`,
+        sourceUrl: p.sourceUrl,
+        quote: p.evidenceText
+      });
+    }
+    if (facts.aewv?.aewv_general_median_wage_requirement?.evidenceText) {
+      const p = facts.aewv.aewv_general_median_wage_requirement;
+      verifiedFacts.unshift({
+        claim: `新西兰 AEWV 雇主担保法定薪酬门槛：$${p.value} ${p.unit || 'NZD/h'}`,
+        sourceUrl: p.sourceUrl,
+        quote: p.evidenceText
+      });
+    }
+    if (facts.monitoredShortages) {
+      for (const [k, v] of Object.entries<any>(facts.monitoredShortages)) {
+        if (v.labour_market_status?.evidenceText) {
+          verifiedFacts.unshift({
+            claim: `澳大利亚职业 [${v.title}] 紧缺评级：${v.labour_market_status.rating} (ANZSCO ${v.anzscoCode})`,
+            sourceUrl: facts.releaseMetadata?.sourceUrl,
+            quote: v.labour_market_status.evidenceText
+          });
+        }
+      }
+    }
+  }
+
   // Profile-driven dynamic reasoning
   const currentSavings = profile.currentSavingsRmb || 0;
   if (targetId === 'path-de-ausbildung' || targetId === 'country-de') {
@@ -256,9 +528,15 @@ export async function executeLiveResearch(
     systemInference.push(`系统已完成对目标主体 [${binding.title}] 的数据校验。`);
   }
 
-  const lastMeaningfulChange = diff.hasChange ? '2026-08-15' : '2026-07-28';
+  // RULE-33: Dynamically computed from diff result
+  let lastMeaningfulChange = 'Unknown / No recorded change';
+  if (diff.hasChange && diff.changeType === 'POLICY_CHANGE') {
+    lastMeaningfulChange = latestSnapshot?.sourcePublishedAt || (latestSnapshot?.fetchedAt ? latestSnapshot.fetchedAt.split('T')[0] : 'Unknown');
+  }
+
   const lastSourceFetchedAt = latestSnapshot?.fetchedAt || '2026-09-06T19:00:00.000Z';
-  const lastSourcePublishedAt = latestSnapshot?.sourcePublishedAt || '2026-08-15';
+  // RULE-32: Never forge date! If unstated in source, sourcePublishedAt is null
+  const lastSourcePublishedAt = latestSnapshot?.sourcePublishedAt || null;
 
   const policyChanges = diff.changes.map(c => ({
     aspect: c.field,
@@ -267,9 +545,19 @@ export async function executeLiveResearch(
     impact: c.impact || 'neutral'
   }));
 
-  const fallbackNotice = diff.hasChange
-    ? `【检测到语义事实变更】快照差分检测到 ${diff.changes.length} 项法定标准调整，已自动纳入研判。`
-    : `自 ${lastSourcePublishedAt} 上次官方数据抓取以来，没有检测到新的已验证事实。系统拒绝生成假的新结论。`;
+  let fallbackNotice: string;
+  let latestFactSummary: string;
+
+  if (diff.changeType === 'POLICY_CHANGE') {
+    fallbackNotice = `【检测到语义事实变更】快照差分检测到 ${diff.changes.length} 项法定标准调整，已自动纳入研判。`;
+    latestFactSummary = `检测到法定条件更新：${diff.changes.map(c => c.summary).join('；')}`;
+  } else if (diff.changeType === 'UNKNOWN') {
+    fallbackNotice = `【基准快照缺失】无法执行前后版本差分比对 (No baseline available)。`;
+    latestFactSummary = `基准快照缺失 (No baseline available)，当前展示单版本官方核验事实，未建立增量差分。`;
+  } else {
+    fallbackNotice = `自 ${lastSourcePublishedAt || '官方核验'} 上次官方数据抓取以来，没有检测到新的已验证事实。系统拒绝生成假的新结论。`;
+    latestFactSummary = `自 ${lastSourcePublishedAt || '官方基准'} 官方核验基准以来，政策关键门槛保持平稳。`;
+  }
 
   return {
     targetId,
@@ -278,9 +566,7 @@ export async function executeLiveResearch(
     status: 'IMPLEMENTED',
     evidenceMode: 'LIVE_DATA',
     baselineSummary: `官方基准数据源: ${binding.sourceName}`,
-    latestFactSummary: diff.hasChange 
-      ? `检测到法定条件更新：${diff.changes.map(c => c.summary).join('；')}`
-      : `自 ${lastSourcePublishedAt} 官方核验基准以来，政策关键门槛保持平稳。`,
+    latestFactSummary,
     policyChanges,
     feasibilityDelta,
     riskAudit: [

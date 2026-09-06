@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-09-06T20:15:34.239Z",
+  "updatedAt": "2026-09-06T20:46:00.228Z",
   "totalSources": 18,
-  "liveDataCount": 4,
-  "reachableCount": 4,
+  "liveDataCount": 2,
+  "reachableCount": 5,
   "cachedCount": 4,
   "manualCount": 3,
   "blockedCount": 1,
   "failedCount": 1,
-  "failedParserCount": 0,
+  "failedParserCount": 1,
   "staticCount": 1,
   "unknownCount": 0,
   "sources": [
@@ -23,18 +23,18 @@
       "sourcePublishedAt": "2026-09-07",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 878,
-      "lastCheck": "2026-09-06T20:15:12.276Z",
-      "fetchedAt": "2026-09-06T20:15:12.276Z",
-      "parsedAt": "2026-09-06T20:15:12.276Z",
+      "latencyMs": 885,
+      "lastCheck": "2026-09-06T20:45:41.667Z",
+      "fetchedAt": "2026-09-06T20:45:41.667Z",
+      "parsedAt": "2026-09-06T20:45:41.667Z",
       "lastVerifiedAt": "2026-09-06",
-      "contentHash": "49b37b24e567",
+      "contentHash": "5155449172d4",
       "extractedFact": "最新汇率实时解析成功：USD/CNY=6.734, EUR/CNY=7.821"
     },
     {
       "id": "src-make-it-germany",
       "name": "德国联邦官方技术移民门户 (Make it in Germany)",
-      "url": "https://www.make-it-in-germany.com/en/",
+      "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
       "country": "德国",
       "sourceTier": "Tier A",
       "category": "Immigration",
@@ -42,14 +42,12 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-15",
       "verifiedPolicyFact": "2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金",
-      "status": "LIVE_DATA",
+      "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 1504,
-      "lastCheck": "2026-09-06T20:15:13.158Z",
-      "fetchedAt": "2026-09-06T20:15:13.158Z",
-      "parsedAt": "2026-09-06T20:15:13.158Z",
-      "contentHash": "7055ce9e303f",
-      "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金"
+      "latencyMs": 1373,
+      "lastCheck": "2026-09-06T20:45:42.556Z",
+      "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
+      "error": "Make it in Germany parser: Required field monthlyBlockedFundsEur could not be extracted from HTML content"
     },
     {
       "id": "src-ba-ausbildung",
@@ -64,14 +62,14 @@
       "verifiedPolicyFact": "双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 1246,
-      "lastCheck": "2026-09-06T20:15:14.929Z",
+      "latencyMs": 1276,
+      "lastCheck": "2026-09-06T20:45:44.195Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月"
     },
     {
       "id": "src-inz-gov",
       "name": "新西兰移民局官网 (Immigration New Zealand)",
-      "url": "https://www.immigration.govt.nz/",
+      "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
       "country": "新西兰",
       "sourceTier": "Tier A",
       "category": "Immigration",
@@ -81,11 +79,11 @@
       "verifiedPolicyFact": "AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 2775,
-      "lastCheck": "2026-09-06T20:15:16.176Z",
-      "fetchedAt": "2026-09-06T20:15:16.176Z",
-      "parsedAt": "2026-09-06T20:15:16.176Z",
-      "contentHash": "beee49f76697",
+      "latencyMs": 3190,
+      "lastCheck": "2026-09-06T20:45:45.471Z",
+      "fetchedAt": "2026-09-06T20:45:45.471Z",
+      "parsedAt": "2026-09-06T20:45:45.471Z",
+      "contentHash": "e86784757a6d",
       "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签"
     },
     {
@@ -101,14 +99,14 @@
       "verifiedPolicyFact": "电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 3136,
-      "lastCheck": "2026-09-06T20:15:19.473Z",
+      "latencyMs": 3064,
+      "lastCheck": "2026-09-06T20:45:49.277Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业"
     },
     {
       "id": "src-jsa-au",
       "name": "澳大利亚就业与技能署 (Jobs and Skills Australia)",
-      "url": "https://www.jobsandskills.gov.au/",
+      "url": "https://www.jobsandskills.gov.au/data/skills-shortage-som",
       "country": "澳大利亚",
       "sourceTier": "Tier A",
       "category": "Labor Stats",
@@ -116,14 +114,12 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-01",
       "verifiedPolicyFact": "国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高",
-      "status": "LIVE_DATA",
-      "httpStatus": 200,
-      "latencyMs": 1252,
-      "lastCheck": "2026-09-06T20:15:22.610Z",
-      "fetchedAt": "2026-09-06T20:15:22.610Z",
-      "parsedAt": "2026-09-06T20:15:22.610Z",
-      "contentHash": "b50f29faaeab",
-      "extractedFact": "[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高"
+      "status": "FAILED",
+      "httpStatus": 404,
+      "latencyMs": 2178,
+      "lastCheck": "2026-09-06T20:45:52.341Z",
+      "extractedFact": "HTTP 404 响应异常，降级启用本地备份",
+      "error": "Remote returned HTTP 404"
     },
     {
       "id": "src-ca-jobbank",
@@ -136,12 +132,11 @@
       "fallbackLevel": 2,
       "lastVerifiedAt": "2026-08-12",
       "verifiedPolicyFact": "各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低",
-      "status": "FAILED",
-      "httpStatus": null,
-      "latencyMs": 6000,
-      "lastCheck": "2026-09-06T20:15:23.865Z",
-      "extractedFact": "网络超时或连接失败，降级启用基准缓存",
-      "error": "The operation was aborted due to timeout"
+      "status": "REACHABLE",
+      "httpStatus": 200,
+      "latencyMs": 2318,
+      "lastCheck": "2026-09-06T20:45:54.519Z",
+      "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低"
     },
     {
       "id": "src-us-onet",
@@ -156,8 +151,8 @@
       "verifiedPolicyFact": "3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 1087,
-      "lastCheck": "2026-09-06T20:15:29.866Z",
+      "latencyMs": 1046,
+      "lastCheck": "2026-09-06T20:45:56.838Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范"
     },
     {
@@ -173,8 +168,8 @@
       "verifiedPolicyFact": "欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 2418,
-      "lastCheck": "2026-09-06T20:15:30.953Z",
+      "latencyMs": 1529,
+      "lastCheck": "2026-09-06T20:45:57.884Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可"
     },
     {
@@ -190,8 +185,8 @@
       "verifiedPolicyFact": "行业报告基准：AI 工具普及使数字资产自由职业者时薪承揽能力提升 38%",
       "status": "BLOCKED",
       "httpStatus": 403,
-      "latencyMs": 868,
-      "lastCheck": "2026-09-06T20:15:33.371Z",
+      "latencyMs": 814,
+      "lastCheck": "2026-09-06T20:45:59.413Z",
       "extractedFact": "受外部 Cloudflare 防爬拦截 (HTTP 403)，已合规降级使用官方行业白皮书缓存",
       "error": "Cloudflare 403 Anti-bot challenge detected. Fallback Level 3 executed."
     },
@@ -209,7 +204,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "中国全日制专科在 Anabin 认定为 H+/-，双元制不要求本科学历认证"
     },
     {
@@ -226,7 +221,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "海外受训电工强制要求 4 年（8,000 小时）工时雇主证明，绝无自动互认"
     },
     {
@@ -243,7 +238,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "普通专科学历需通过 TRA 完整评估并积累 3 年以上相关工作经验"
     },
     {
@@ -260,7 +255,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "全国城镇青年调查失业率基准与行业平均薪酬分布公报"
     },
     {
@@ -277,7 +272,7 @@
       "status": "CACHED",
       "httpStatus": 200,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "特定技能 2 号持续扩大范围，豁免统招全日制本科学历限制"
     },
     {
@@ -294,7 +289,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "国内招聘网站高防反爬保护，降级采用国家人社局宏观统计与 Manual Inbox"
     },
     {
@@ -311,7 +306,7 @@
       "status": "MANUAL",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "多条个案证实：奥克兰蓝领学徒找工难度激增，生活成本侵蚀薪资"
     },
     {
@@ -328,7 +323,7 @@
       "status": "STATIC",
       "httpStatus": null,
       "latencyMs": 0,
-      "lastCheck": "2026-09-06T20:15:34.239Z",
+      "lastCheck": "2026-09-06T20:46:00.227Z",
       "extractedFact": "标准职业分类代码字典，用于精准对齐海外技能等级 Skill Level 1-4"
     }
   ]

@@ -2,27 +2,76 @@
   "sourceId": "src-jsa-au",
   "version": 1,
   "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
   "sourcePublishedAt": "2026-08-01",
   "url": "https://www.jobsandskills.gov.au/data/skills-shortage-som",
-  "contentHash": "0f20b3582002",
-  "parserVersion": "1.0.0",
+  "contentHash": "62a0e83a10fd",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
+    "releaseMetadata": {
+      "agency": "Jobs and Skills Australia",
+      "reportName": "Skills Priority List (SPL) & Occupation Shortages",
+      "jurisdiction": "Commonwealth of Australia",
+      "anzscoClassificationVersion": "ANZSCO 2022/2023 Standard",
+      "sourcePublishedAt": "2026-08-01",
+      "sourceUrl": "https://www.jobsandskills.gov.au/data/skills-shortage-som"
+    },
     "monitoredShortages": {
       "electrician_341111": {
         "anzscoCode": "341111",
         "title": "Electrician (General)",
+        "classificationVersion": "ANZSCO 2022/2023",
         "nationalShortage": true,
-        "assessingAuthority": "Trades Recognition Australia (TRA)"
+        "labour_market_status": {
+          "nationalShortage": true,
+          "rating": "National Shortage",
+          "evidenceText": "Electricians are in national shortage across Australia."
+        },
+        "visa_relevance": {
+          "isAutomaticVisaGrant": false,
+          "assessingAuthority": "Trades Recognition Australia (TRA)",
+          "assessingAuthorityCode": "TRA",
+          "disclaimer": "Domestic shortage does NOT grant automatic work or permanent residence visa."
+        },
+        "qualification_requirements": {
+          "standardApprenticeshipYears": 4,
+          "overseasExperienceRequirement": "4-year apprenticeship or 3+ years documented full-time post-qualification experience with technical interview/practical test",
+          "evidenceText": "TRA migration skills assessment requires verified employment evidence and practical skills evaluation."
+        },
+        "migration_pathway_status": {
+          "pathwayType": "General Skilled Migration (Points-tested) or Employer Sponsored (482/186)",
+          "requiresEmployerSponsor": true
+        }
       },
       "software_engineer_261313": {
         "anzscoCode": "261313",
         "title": "Software Engineer",
+        "classificationVersion": "ANZSCO 2022/2023",
         "nationalShortage": true,
-        "assessingAuthority": "Australian Computer Society (ACS)"
+        "labour_market_status": {
+          "nationalShortage": true,
+          "rating": "National Shortage",
+          "evidenceText": "Software engineers are in national shortage in select specialisations."
+        },
+        "visa_relevance": {
+          "isAutomaticVisaGrant": false,
+          "assessingAuthority": "Australian Computer Society (ACS)",
+          "assessingAuthorityCode": "ACS",
+          "disclaimer": "Domestic shortage does NOT grant automatic work or permanent residence visa."
+        },
+        "qualification_requirements": {
+          "diplomaRplYearsRequired": 6,
+          "requirementNote": "Non-ICT or Diploma qualifications require RPL pathway with 5-6 years relevant work experience",
+          "evidenceText": "ACS skills assessment deducts 5-6 years of professional work experience for non-ICT diploma holders."
+        },
+        "migration_pathway_status": {
+          "pathwayType": "Subclass 189/190/491 (High points pool, diploma applicants face heavy RPL experience deductions)",
+          "requiresEmployerSponsor": false
+        }
       }
     },
     "legalBoundaryDisclaimer": {
-      "domesticShortageVsVisaGrant": "Domestic shortage does not equal automatic visa grant."
+      "domesticShortageVsVisaGrant": "Crucial Legal Distinction: Domestic occupational shortage identifies employer hiring difficulty within Australia, but does NOT grant automatic visa rights to foreign candidates."
     }
   },
   "evidence": [

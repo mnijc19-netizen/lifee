@@ -2,15 +2,49 @@
   "sourceId": "src-make-it-germany",
   "version": 2,
   "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
   "sourcePublishedAt": "2026-08-15",
   "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
-  "contentHash": "4ef386e22fa2",
-  "parserVersion": "1.0.0",
+  "contentHash": "cb81e84abef2",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "opportunityCard": {
-      "monthlyBlockedFundsEur": 1091,
-      "annualBlockedFundsEur": 13092,
-      "partTimeWorkAllowedHoursWeekly": 20,
+      "monthlyBlockedFundsEur": {
+        "value": 1091,
+        "unit": "EUR/month",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.",
+        "parserVersion": "2.0.0"
+      },
+      "annualBlockedFundsEur": {
+        "value": 13092,
+        "unit": "EUR/year",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "€13,092 for the full 12-month period in a blocked account.",
+        "parserVersion": "2.0.0"
+      },
+      "partTimeWorkAllowedHoursWeekly": {
+        "value": 20,
+        "unit": "hours/week",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Secondary Employment",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "Up to 20 hours per week of trial employment or secondary work permitted.",
+        "parserVersion": "2.0.0"
+      },
       "currency": "EUR"
     },
     "ausbildung": {

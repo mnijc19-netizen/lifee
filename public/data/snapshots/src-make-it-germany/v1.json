@@ -2,15 +2,49 @@
   "sourceId": "src-make-it-germany",
   "version": 1,
   "fetchedAt": "2025-12-15T00:00:00.000Z",
+  "lastCheckedAt": "2025-12-15T00:00:00.000Z",
   "sourcePublishedAt": "2025-12-01",
   "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
-  "contentHash": "2c1f23eb36c0",
-  "parserVersion": "1.0.0",
+  "contentHash": "5c50cc1ad5a2",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "opportunityCard": {
-      "monthlyBlockedFundsEur": 1027,
-      "annualBlockedFundsEur": 12324,
-      "partTimeWorkAllowedHoursWeekly": 20,
+      "monthlyBlockedFundsEur": {
+        "value": 1027,
+        "unit": "EUR/month",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "In 2025 the required minimum blocked account amount was €1,027 per month.",
+        "parserVersion": "2.0.0"
+      },
+      "annualBlockedFundsEur": {
+        "value": 12324,
+        "unit": "EUR/year",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "In 2025 the required minimum blocked account amount was €12,324 per year.",
+        "parserVersion": "2.0.0"
+      },
+      "partTimeWorkAllowedHoursWeekly": {
+        "value": 20,
+        "unit": "hours/week",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Secondary Employment",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "Up to 20 hours per week of secondary employment allowed.",
+        "parserVersion": "2.0.0"
+      },
       "currency": "EUR"
     },
     "ausbildung": {

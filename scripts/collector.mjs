@@ -39,7 +39,7 @@ const TARGET_SOURCES = [
   {
     id: 'src-make-it-germany',
     name: '德国联邦官方技术移民门户 (Make it in Germany)',
-    url: 'https://www.make-it-in-germany.com/en/',
+    url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
     country: '德国',
     sourceTier: 'Tier A',
     category: 'Immigration',
@@ -63,7 +63,7 @@ const TARGET_SOURCES = [
   {
     id: 'src-inz-gov',
     name: '新西兰移民局官网 (Immigration New Zealand)',
-    url: 'https://www.immigration.govt.nz/',
+    url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
     country: '新西兰',
     sourceTier: 'Tier A',
     category: 'Immigration',
@@ -87,7 +87,7 @@ const TARGET_SOURCES = [
   {
     id: 'src-jsa-au',
     name: '澳大利亚就业与技能署 (Jobs and Skills Australia)',
-    url: 'https://www.jobsandskills.gov.au/',
+    url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
     country: '澳大利亚',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
@@ -360,7 +360,7 @@ async function probeSource(target) {
           if (parsed) {
             const savedSnapshot = saveSnapshot(target.id, parsed, {
               fetchedAt: nowIso,
-              sourcePublishedAt: target.lastVerifiedAt,
+              sourcePublishedAt: parsed.sourcePublishedAt || null,
               url: target.url,
               summary: target.verifiedPolicyFact
             });

@@ -3,14 +3,8 @@
     "version": 1,
     "file": "v1.json",
     "fetchedAt": "2026-09-06T19:00:00.000Z",
-    "contentHash": "0f20b3582002",
+    "sourcePublishedAt": "2026-08-01",
+    "contentHash": "62a0e83a10fd",
     "summary": "2026 JSA Skills Priority List"
-  },
-  {
-    "version": 2,
-    "file": "v2.json",
-    "fetchedAt": "2026-09-06T20:15:22.610Z",
-    "contentHash": "b50f29faaeab",
-    "summary": "国家紧缺技能清单动态更新，技工类紧缺但职业评估 TRA 壁垒极高"
   }
 ]

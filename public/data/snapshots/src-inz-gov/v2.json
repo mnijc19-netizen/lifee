@@ -2,19 +2,53 @@
   "sourceId": "src-inz-gov",
   "version": 2,
   "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
   "sourcePublishedAt": "2026-07-28",
   "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
-  "contentHash": "304e26ae9c68",
-  "parserVersion": "1.0.0",
+  "contentHash": "a3e43110b081",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "aewv": {
+      "aewv_general_median_wage_requirement": {
+        "value": 31.61,
+        "unit": "NZD/hour",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV 2026 Standards",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-02-28",
+        "evidenceText": "You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.",
+        "parserVersion": "2.0.0"
+      },
       "medianWageHourlyNzd": 31.61,
-      "minGuaranteedHoursWeekly": 30,
       "currency": "NZD"
     },
     "anzscoLevel45Restrictions": {
-      "maxContinuousStayYears": 3,
-      "minEnglishIelts": 4,
+      "maxContinuousStayYears": {
+        "value": 3,
+        "unit": "years",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV Length Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-04-01",
+        "evidenceText": "The maximum continuous stay for ANZSCO skill level 4 and 5 roles has been reduced to 3 years.",
+        "parserVersion": "2.0.0"
+      },
+      "minEnglishIelts": {
+        "value": 4,
+        "unit": "IELTS Band",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - English Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-04-01",
+        "evidenceText": "ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.",
+        "parserVersion": "2.0.0"
+      },
       "directGreenListPathway": false
     }
   },

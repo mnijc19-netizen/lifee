@@ -277,11 +277,11 @@ export const ResearchModal: React.FC<ResearchModalProps> = ({
           </div>
           <div>
             <span className="text-slate-500 block">官方发布生效 (Published):</span>
-            <span className="text-sky-400 font-medium">{diff.lastSourcePublishedAt || '2026-08-15'}</span>
+            <span className="text-sky-400 font-medium">{diff.lastSourcePublishedAt || '官方未标明发布日期'}</span>
           </div>
           <div>
             <span className="text-slate-500 block">上次政策实质变动 (Diff Change):</span>
-            <span className="text-amber-400 font-medium">{diff.lastMeaningfulChange || '2026-08-15'}</span>
+            <span className="text-amber-400 font-medium">{diff.lastMeaningfulChange || 'Unknown / No recorded change'}</span>
           </div>
         </div>
 

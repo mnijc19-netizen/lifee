@@ -1,56 +1,65 @@
 {
   "sourceId": "src-inz-gov",
-  "version": 3,
-  "fetchedAt": "2026-09-06T20:15:16.176Z",
+  "version": 2,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
   "sourcePublishedAt": "2026-07-28",
-  "url": "https://www.immigration.govt.nz/",
-  "contentHash": "beee49f76697",
-  "parserVersion": "1.0.0",
+  "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+  "contentHash": "a3e43110b081",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "aewv": {
+      "aewv_general_median_wage_requirement": {
+        "value": 31.61,
+        "unit": "NZD/hour",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV 2026 Standards",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-02-28",
+        "evidenceText": "You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.",
+        "parserVersion": "2.0.0"
+      },
       "medianWageHourlyNzd": 31.61,
-      "minGuaranteedHoursWeekly": 30,
-      "currency": "NZD",
-      "verificationStatus": "STATUTORY_VALIDATED"
+      "currency": "NZD"
     },
     "anzscoLevel45Restrictions": {
-      "maxContinuousStayYears": 3,
-      "minEnglishIelts": 4,
-      "directGreenListPathway": false,
-      "appliesToOccupations": [
-        "721211 Forklift Driver",
-        "899999 Other Laborers"
-      ]
-    },
-    "greenList": {
-      "tier1StraightToResidence": [
-        "Civil Engineers",
-        "Registered Nurses",
-        "Medical Practitioners"
-      ],
-      "tier2WorkToResidence": [
-        "Trades (Electricians with full NZ license after 2 years work)"
-      ]
+      "maxContinuousStayYears": {
+        "value": 3,
+        "unit": "years",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV Length Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-04-01",
+        "evidenceText": "The maximum continuous stay for ANZSCO skill level 4 and 5 roles has been reduced to 3 years.",
+        "parserVersion": "2.0.0"
+      },
+      "minEnglishIelts": {
+        "value": 4,
+        "unit": "IELTS Band",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - English Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-07-28",
+        "effectiveAt": "2026-04-01",
+        "evidenceText": "ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.",
+        "parserVersion": "2.0.0"
+      },
+      "directGreenListPathway": false
     }
   },
   "evidence": [
     {
       "evidenceId": "ev-nz-forklift-anzsco",
-      "claim": "新西兰 AEWV 政策规定：ANZSCO Skill Level 4 与 5 的岗位（如叉车驾驶员 721211）要求具备至少雅思 4.0 英语，工签压缩至 2~3 年，完全不属于 Green List 绿名单职位，无直接技术永居通道。",
+      "claim": "新西兰 AEWV 政策规定：ANZSCO Skill Level 4 与 5 的岗位（如叉车驾驶员 721211）要求具备至少雅思 4.0 英语，工签压缩至 2~3 年，无直接技术永居通道。",
       "quotes": [
-        "ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.",
-        "The maximum continuous stay on an AEWV for level 4 and 5 roles is limited and they do not have direct pathway under the Green List."
+        "ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent."
       ],
-      "sourceUrl": "https://www.immigration.govt.nz/"
-    },
-    {
-      "evidenceId": "ev-ewrb-electrician-friction",
-      "claim": "新西兰海外受训电工强制要求至少 4 年（8,000 小时）合规强电/建筑布线实操工时雇主证明，绝无自动互认。",
-      "quotes": [
-        "You must demonstrate at least 4 years (8,000 hours) of practical training and experience as an electrician.",
-        "There is no automatic mutual recognition for qualifications outside Australia."
-      ],
-      "sourceUrl": "https://www.ewrb.govt.nz/becoming-registered/overseas-trained/"
+      "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa"
     }
   ]
 }

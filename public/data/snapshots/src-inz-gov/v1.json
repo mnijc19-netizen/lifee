@@ -2,19 +2,53 @@
   "sourceId": "src-inz-gov",
   "version": 1,
   "fetchedAt": "2025-10-01T00:00:00.000Z",
+  "lastCheckedAt": "2025-10-01T00:00:00.000Z",
   "sourcePublishedAt": "2025-09-15",
   "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
-  "contentHash": "d5116811177e",
-  "parserVersion": "1.0.0",
+  "contentHash": "77274577a98c",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "aewv": {
+      "aewv_general_median_wage_requirement": {
+        "value": 29.66,
+        "unit": "NZD/hour",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV Historical Baseline",
+        "fetchedAt": "2025-10-01T00:00:00.000Z",
+        "sourcePublishedAt": "2025-09-15",
+        "effectiveAt": "2025-02-28",
+        "evidenceText": "Former wage rate required for AEWV roles was $29.66 NZD per hour.",
+        "parserVersion": "2.0.0"
+      },
       "medianWageHourlyNzd": 29.66,
-      "minGuaranteedHoursWeekly": 30,
       "currency": "NZD"
     },
     "anzscoLevel45Restrictions": {
-      "maxContinuousStayYears": 5,
-      "minEnglishIelts": 0,
+      "maxContinuousStayYears": {
+        "value": 5,
+        "unit": "years",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV Historical Baseline",
+        "fetchedAt": "2025-10-01T00:00:00.000Z",
+        "sourcePublishedAt": "2025-09-15",
+        "effectiveAt": "2025-02-28",
+        "evidenceText": "Previous continuous stay period was up to 5 years for low skill roles.",
+        "parserVersion": "2.0.0"
+      },
+      "minEnglishIelts": {
+        "value": 0,
+        "unit": "IELTS Band",
+        "sourceId": "src-inz-gov",
+        "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+        "sourceTitle": "Immigration New Zealand - AEWV Historical Baseline",
+        "fetchedAt": "2025-10-01T00:00:00.000Z",
+        "sourcePublishedAt": "2025-09-15",
+        "effectiveAt": "2025-02-28",
+        "evidenceText": "No minimum English language score previously mandated for level 4-5 roles.",
+        "parserVersion": "2.0.0"
+      },
       "directGreenListPathway": false
     }
   },

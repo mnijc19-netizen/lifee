@@ -7,11 +7,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-console.log('=== Seeding Versioned Baseline Snapshots ===');
+console.log('=== Seeding Versioned Baseline Snapshots with SourceProvenance (RULE-31, 32, 36-41) ===');
 
 // 1. Germany Make it in Germany: v1 (2025 previous baseline) -> v2 (2026 current baseline)
 const deDir = ensureSnapshotsDir('src-make-it-germany');
-// Clean up any old test snapshots
 if (fs.existsSync(deDir)) {
   fs.rmSync(deDir, { recursive: true, force: true });
 }
@@ -19,12 +18,46 @@ ensureSnapshotsDir('src-make-it-germany');
 
 // Save DE v1 (Old: €12,324)
 saveSnapshot('src-make-it-germany', {
-  parserVersion: '1.0.0',
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2025-12-01',
   normalizedFacts: {
     opportunityCard: {
-      monthlyBlockedFundsEur: 1027,
-      annualBlockedFundsEur: 12324,
-      partTimeWorkAllowedHoursWeekly: 20,
+      monthlyBlockedFundsEur: {
+        value: 1027,
+        unit: 'EUR/month',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+        fetchedAt: '2025-12-15T00:00:00.000Z',
+        sourcePublishedAt: '2025-12-01',
+        effectiveAt: '2025-01-01',
+        evidenceText: 'In 2025 the required minimum blocked account amount was €1,027 per month.',
+        parserVersion: '2.0.0'
+      },
+      annualBlockedFundsEur: {
+        value: 12324,
+        unit: 'EUR/year',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+        fetchedAt: '2025-12-15T00:00:00.000Z',
+        sourcePublishedAt: '2025-12-01',
+        effectiveAt: '2025-01-01',
+        evidenceText: 'In 2025 the required minimum blocked account amount was €12,324 per year.',
+        parserVersion: '2.0.0'
+      },
+      partTimeWorkAllowedHoursWeekly: {
+        value: 20,
+        unit: 'hours/week',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Secondary Employment',
+        fetchedAt: '2025-12-15T00:00:00.000Z',
+        sourcePublishedAt: '2025-12-01',
+        effectiveAt: '2025-01-01',
+        evidenceText: 'Up to 20 hours per week of secondary employment allowed.',
+        parserVersion: '2.0.0'
+      },
       currency: 'EUR'
     },
     ausbildung: {
@@ -51,12 +84,46 @@ saveSnapshot('src-make-it-germany', {
 
 // Save DE v2 (Current: €13,092)
 saveSnapshot('src-make-it-germany', {
-  parserVersion: '1.0.0',
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-08-15',
   normalizedFacts: {
     opportunityCard: {
-      monthlyBlockedFundsEur: 1091,
-      annualBlockedFundsEur: 13092,
-      partTimeWorkAllowedHoursWeekly: 20,
+      monthlyBlockedFundsEur: {
+        value: 1091,
+        unit: 'EUR/month',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-08-15',
+        effectiveAt: '2026-01-01',
+        evidenceText: 'For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.',
+        parserVersion: '2.0.0'
+      },
+      annualBlockedFundsEur: {
+        value: 13092,
+        unit: 'EUR/year',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Opportunity Card Requirements',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-08-15',
+        effectiveAt: '2026-01-01',
+        evidenceText: '€13,092 for the full 12-month period in a blocked account.',
+        parserVersion: '2.0.0'
+      },
+      partTimeWorkAllowedHoursWeekly: {
+        value: 20,
+        unit: 'hours/week',
+        sourceId: 'src-make-it-germany',
+        sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+        sourceTitle: 'Make it in Germany - Secondary Employment',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-08-15',
+        effectiveAt: '2026-01-01',
+        evidenceText: 'Up to 20 hours per week of trial employment or secondary work permitted.',
+        parserVersion: '2.0.0'
+      },
       currency: 'EUR'
     },
     ausbildung: {
@@ -95,16 +162,50 @@ if (fs.existsSync(nzDir)) {
 ensureSnapshotsDir('src-inz-gov');
 
 saveSnapshot('src-inz-gov', {
-  parserVersion: '1.0.0',
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2025-09-15',
   normalizedFacts: {
     aewv: {
+      aewv_general_median_wage_requirement: {
+        value: 29.66,
+        unit: 'NZD/hour',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+        fetchedAt: '2025-10-01T00:00:00.000Z',
+        sourcePublishedAt: '2025-09-15',
+        effectiveAt: '2025-02-28',
+        evidenceText: 'Former wage rate required for AEWV roles was $29.66 NZD per hour.',
+        parserVersion: '2.0.0'
+      },
       medianWageHourlyNzd: 29.66,
-      minGuaranteedHoursWeekly: 30,
       currency: 'NZD'
     },
     anzscoLevel45Restrictions: {
-      maxContinuousStayYears: 5,
-      minEnglishIelts: 0,
+      maxContinuousStayYears: {
+        value: 5,
+        unit: 'years',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+        fetchedAt: '2025-10-01T00:00:00.000Z',
+        sourcePublishedAt: '2025-09-15',
+        effectiveAt: '2025-02-28',
+        evidenceText: 'Previous continuous stay period was up to 5 years for low skill roles.',
+        parserVersion: '2.0.0'
+      },
+      minEnglishIelts: {
+        value: 0,
+        unit: 'IELTS Band',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - AEWV Historical Baseline',
+        fetchedAt: '2025-10-01T00:00:00.000Z',
+        sourcePublishedAt: '2025-09-15',
+        effectiveAt: '2025-02-28',
+        evidenceText: 'No minimum English language score previously mandated for level 4-5 roles.',
+        parserVersion: '2.0.0'
+      },
       directGreenListPathway: false
     }
   },
@@ -117,16 +218,50 @@ saveSnapshot('src-inz-gov', {
 });
 
 saveSnapshot('src-inz-gov', {
-  parserVersion: '1.0.0',
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-07-28',
   normalizedFacts: {
     aewv: {
+      aewv_general_median_wage_requirement: {
+        value: 31.61,
+        unit: 'NZD/hour',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - AEWV 2026 Standards',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-07-28',
+        effectiveAt: '2026-02-28',
+        evidenceText: 'You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.',
+        parserVersion: '2.0.0'
+      },
       medianWageHourlyNzd: 31.61,
-      minGuaranteedHoursWeekly: 30,
       currency: 'NZD'
     },
     anzscoLevel45Restrictions: {
-      maxContinuousStayYears: 3,
-      minEnglishIelts: 4.0,
+      maxContinuousStayYears: {
+        value: 3,
+        unit: 'years',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - AEWV Length Requirements',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-07-28',
+        effectiveAt: '2026-04-01',
+        evidenceText: 'The maximum continuous stay for ANZSCO skill level 4 and 5 roles has been reduced to 3 years.',
+        parserVersion: '2.0.0'
+      },
+      minEnglishIelts: {
+        value: 4.0,
+        unit: 'IELTS Band',
+        sourceId: 'src-inz-gov',
+        sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+        sourceTitle: 'Immigration New Zealand - English Requirements',
+        fetchedAt: '2026-09-06T19:00:00.000Z',
+        sourcePublishedAt: '2026-07-28',
+        effectiveAt: '2026-04-01',
+        evidenceText: 'ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.',
+        parserVersion: '2.0.0'
+      },
       directGreenListPathway: false
     }
   },
@@ -145,7 +280,7 @@ saveSnapshot('src-inz-gov', {
   summary: '2026 AEWV Wage Threshold and Low Skill restrictions update'
 });
 
-// 3. Jobs and Skills Australia (JSA): v1 & v2 (Stable baseline)
+// 3. Jobs and Skills Australia (JSA): v1 (Stable baseline with 4-category split per RULE-40)
 const jsaDir = ensureSnapshotsDir('src-jsa-au');
 if (fs.existsSync(jsaDir)) {
   fs.rmSync(jsaDir, { recursive: true, force: true });
@@ -153,24 +288,73 @@ if (fs.existsSync(jsaDir)) {
 ensureSnapshotsDir('src-jsa-au');
 
 saveSnapshot('src-jsa-au', {
-  parserVersion: '1.0.0',
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-08-01',
   normalizedFacts: {
+    releaseMetadata: {
+      agency: 'Jobs and Skills Australia',
+      reportName: 'Skills Priority List (SPL) & Occupation Shortages',
+      jurisdiction: 'Commonwealth of Australia',
+      anzscoClassificationVersion: 'ANZSCO 2022/2023 Standard',
+      sourcePublishedAt: '2026-08-01',
+      sourceUrl: 'https://www.jobsandskills.gov.au/data/skills-shortage-som'
+    },
     monitoredShortages: {
       electrician_341111: {
         anzscoCode: '341111',
         title: 'Electrician (General)',
+        classificationVersion: 'ANZSCO 2022/2023',
         nationalShortage: true,
-        assessingAuthority: 'Trades Recognition Australia (TRA)'
+        labour_market_status: {
+          nationalShortage: true,
+          rating: 'National Shortage',
+          evidenceText: 'Electricians are in national shortage across Australia.'
+        },
+        visa_relevance: {
+          isAutomaticVisaGrant: false,
+          assessingAuthority: 'Trades Recognition Australia (TRA)',
+          assessingAuthorityCode: 'TRA',
+          disclaimer: 'Domestic shortage does NOT grant automatic work or permanent residence visa.'
+        },
+        qualification_requirements: {
+          standardApprenticeshipYears: 4,
+          overseasExperienceRequirement: '4-year apprenticeship or 3+ years documented full-time post-qualification experience with technical interview/practical test',
+          evidenceText: 'TRA migration skills assessment requires verified employment evidence and practical skills evaluation.'
+        },
+        migration_pathway_status: {
+          pathwayType: 'General Skilled Migration (Points-tested) or Employer Sponsored (482/186)',
+          requiresEmployerSponsor: true
+        }
       },
       software_engineer_261313: {
         anzscoCode: '261313',
         title: 'Software Engineer',
+        classificationVersion: 'ANZSCO 2022/2023',
         nationalShortage: true,
-        assessingAuthority: 'Australian Computer Society (ACS)'
+        labour_market_status: {
+          nationalShortage: true,
+          rating: 'National Shortage',
+          evidenceText: 'Software engineers are in national shortage in select specialisations.'
+        },
+        visa_relevance: {
+          isAutomaticVisaGrant: false,
+          assessingAuthority: 'Australian Computer Society (ACS)',
+          assessingAuthorityCode: 'ACS',
+          disclaimer: 'Domestic shortage does NOT grant automatic work or permanent residence visa.'
+        },
+        qualification_requirements: {
+          diplomaRplYearsRequired: 6,
+          requirementNote: 'Non-ICT or Diploma qualifications require RPL pathway with 5-6 years relevant work experience',
+          evidenceText: 'ACS skills assessment deducts 5-6 years of professional work experience for non-ICT diploma holders.'
+        },
+        migration_pathway_status: {
+          pathwayType: 'Subclass 189/190/491 (High points pool, diploma applicants face heavy RPL experience deductions)',
+          requiresEmployerSponsor: false
+        }
       }
     },
     legalBoundaryDisclaimer: {
-      domesticShortageVsVisaGrant: 'Domestic shortage does not equal automatic visa grant.'
+      domesticShortageVsVisaGrant: 'Crucial Legal Distinction: Domestic occupational shortage identifies employer hiring difficulty within Australia, but does NOT grant automatic visa rights to foreign candidates.'
     }
   },
   evidence: [
@@ -189,3 +373,4 @@ saveSnapshot('src-jsa-au', {
 });
 
 console.log('=== Finished Seeding Snapshots Successfully ===');
+

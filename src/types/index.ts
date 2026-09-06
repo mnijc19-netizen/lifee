@@ -317,11 +317,25 @@ export interface DiscoveryRoute {
   lastVerifiedAt: string;
 }
 
+export interface SourceProvenance<T = any> {
+  value: T;
+  unit?: string;
+  sourceId: string;
+  sourceUrl: string;
+  sourceTitle: string;
+  fetchedAt: string;
+  sourcePublishedAt: string | null;
+  effectiveAt?: string | null;
+  evidenceText: string;
+  parserVersion: string;
+}
+
 export interface NormalizedSnapshot {
   sourceId: string;
   version: number;
   fetchedAt: string;
-  sourcePublishedAt?: string;
+  lastCheckedAt?: string;
+  sourcePublishedAt?: string | null;
   url: string;
   contentHash: string;
   parserVersion: string;
@@ -344,7 +358,8 @@ export interface SemanticDiffChange {
 
 export interface SemanticDiffResult {
   hasChange: boolean;
-  changeType: 'NO_MEANINGFUL_CHANGE' | 'POLICY_CHANGE' | 'CRITERIA_UPDATE';
+  changeType: 'NO_MEANINGFUL_CHANGE' | 'POLICY_CHANGE' | 'CRITERIA_UPDATE' | 'UNKNOWN';
+  summary?: string;
   sourceId: string;
   oldSnapshotVersion?: number;
   newSnapshotVersion?: number;
@@ -373,7 +388,7 @@ export interface ResearchDiffResult {
   // Rigorous timestamps
   requestedAt: string;
   lastSourceFetchedAt: string;
-  lastSourcePublishedAt: string;
+  lastSourcePublishedAt: string | null;
   lastMeaningfulChange: string;
   lastVerifiedAt?: string;
   fetchedAt?: string;

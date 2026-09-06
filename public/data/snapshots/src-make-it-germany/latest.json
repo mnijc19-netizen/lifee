@@ -1,18 +1,51 @@
 {
   "sourceId": "src-make-it-germany",
-  "version": 3,
-  "fetchedAt": "2026-09-06T20:15:13.158Z",
+  "version": 2,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
   "sourcePublishedAt": "2026-08-15",
-  "url": "https://www.make-it-in-germany.com/en/",
-  "contentHash": "7055ce9e303f",
-  "parserVersion": "1.0.0",
+  "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+  "contentHash": "cb81e84abef2",
+  "parserVersion": "2.0.0",
   "normalizedFacts": {
     "opportunityCard": {
-      "monthlyBlockedFundsEur": 1091,
-      "annualBlockedFundsEur": 13092,
-      "partTimeWorkAllowedHoursWeekly": 20,
-      "currency": "EUR",
-      "verificationStatus": "STATUTORY_VALIDATED"
+      "monthlyBlockedFundsEur": {
+        "value": 1091,
+        "unit": "EUR/month",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.",
+        "parserVersion": "2.0.0"
+      },
+      "annualBlockedFundsEur": {
+        "value": 13092,
+        "unit": "EUR/year",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "€13,092 for the full 12-month period in a blocked account.",
+        "parserVersion": "2.0.0"
+      },
+      "partTimeWorkAllowedHoursWeekly": {
+        "value": 20,
+        "unit": "hours/week",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Secondary Employment",
+        "fetchedAt": "2026-09-06T19:00:00.000Z",
+        "sourcePublishedAt": "2026-08-15",
+        "effectiveAt": "2026-01-01",
+        "evidenceText": "Up to 20 hours per week of trial employment or secondary work permitted.",
+        "parserVersion": "2.0.0"
+      },
+      "currency": "EUR"
     },
     "ausbildung": {
       "stipendExemptionSperrkonto": true,
@@ -22,28 +55,22 @@
         1350
       ],
       "tuitionFree": true
-    },
-    "qualification": {
-      "degreeEquivalencePortal": "ZAB Anabin",
-      "vocationalRecognitionRequired": true
     }
   },
   "evidence": [
     {
       "evidenceId": "ev-de-chancenkarte-blocked",
-      "claim": "2026 年度德国机会卡求职签证要求申请人证明生活开销，限制性账户法定最低为每月 1,091 欧元，一年期 13,092 欧元。",
+      "claim": "2026 年度德国机会卡求职签证要求限制性账户每月 1,091 欧元，全年 13,092 欧元。",
       "quotes": [
-        "For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.",
-        "A job offer for part-time work (up to 20 hours/week) can be used to offset or supplement this requirement."
+        "For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account."
       ],
-      "sourceUrl": "https://www.make-it-in-germany.com/en/"
+      "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card"
     },
     {
       "evidenceId": "ev-de-ausbildung-stipend",
-      "claim": "德国双元制职业培训由企业全额资助免学费，按月领取培训津贴（950~1350欧），达到标准免除自保金要求。",
+      "claim": "德国双元制职业培训由企业全额资助免学费，按月领取培训津贴（950~1350欧），免除自保金要求。",
       "quotes": [
-        "Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich.",
-        "Ausländische Bewerber benötigen in der Regel Sprachkenntnisse auf dem Niveau B1 des Gemeinsamen Europäischen Referenzrahmens."
+        "Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich."
       ],
       "sourceUrl": "https://www.arbeitsagentur.de/bildung/ausbildung"
     }

@@ -97,8 +97,14 @@ async function runAcceptanceSuite() {
   // --- NEG-06: Snapshot Diff (Germany v1 vs v2 yields real POLICY_CHANGE) ---
   console.log('\n[Test NEG-06] Snapshot Diff: Germany v1 (€12,324) vs v2 (€13,092)...');
   try {
-    const deV1 = JSON.parse(fs.readFileSync(path.join(distDir, 'data/snapshots/src-make-it-germany/v1.json'), 'utf-8'));
-    const deV2 = JSON.parse(fs.readFileSync(path.join(distDir, 'data/snapshots/src-make-it-germany/v2.json'), 'utf-8'));
+    const getSnapPath = (sourceId, file) => {
+      const p1 = path.join(distDir, 'data/snapshots', sourceId, file);
+      if (fs.existsSync(p1)) return p1;
+      return path.join(rootDir, 'public/data/snapshots', sourceId, file);
+    };
+
+    const deV1 = JSON.parse(fs.readFileSync(getSnapPath('src-make-it-germany', 'v1.json'), 'utf-8'));
+    const deV2 = JSON.parse(fs.readFileSync(getSnapPath('src-make-it-germany', 'v2.json'), 'utf-8'));
 
     const diffResult = diffSnapshots(deV1, deV2);
     const hasPolicyChange = diffResult.hasChange === true && diffResult.changeType === 'POLICY_CHANGE';
@@ -117,7 +123,13 @@ async function runAcceptanceSuite() {
   // --- NEG-07: Snapshot Diff No Change (Germany v2 vs v2 yields NO_MEANINGFUL_CHANGE) ---
   console.log('\n[Test NEG-07] Snapshot Diff: Germany v2 vs v2 (No Change)...');
   try {
-    const deV2 = JSON.parse(fs.readFileSync(path.join(distDir, 'data/snapshots/src-make-it-germany/v2.json'), 'utf-8'));
+    const getSnapPath = (sourceId, file) => {
+      const p1 = path.join(distDir, 'data/snapshots', sourceId, file);
+      if (fs.existsSync(p1)) return p1;
+      return path.join(rootDir, 'public/data/snapshots', sourceId, file);
+    };
+
+    const deV2 = JSON.parse(fs.readFileSync(getSnapPath('src-make-it-germany', 'v2.json'), 'utf-8'));
     const diffNoChange = diffSnapshots(deV2, deV2);
     const passNoChange = diffNoChange.hasChange === false && 
                          diffNoChange.changeType === 'NO_MEANINGFUL_CHANGE' && 
@@ -127,6 +139,106 @@ async function runAcceptanceSuite() {
     testResults.push({ name: 'NEG-07: Snapshot Diff on identical data yields NO_MEANINGFUL_CHANGE', pass: passNoChange });
   } catch (err) {
     testResults.push({ name: 'NEG-07: Snapshot Diff on identical data yields NO_MEANINGFUL_CHANGE', pass: false, error: err.message });
+  }
+
+  // =========================================================================
+  // RULE-44 Mandatory Regression Tests (5 Invariants)
+  // =========================================================================
+
+  // REG-01: HARD-CODED-PARSER regression (Mutation sensitivity)
+  console.log('\n[Regression REG-01] HARD-CODED-PARSER: Value mutation sensitivity...');
+  try {
+    const testDeHtml = `
+      <html><head><title>Opportunity Card</title></head>
+      <body><p>You must prove financial means of at least €1,234 per month in a blocked account.</p></body></html>
+    `;
+    const parsedDe = parseMakeItGermany(testDeHtml);
+    const valDe = parsedDe.normalizedFacts.opportunityCard.monthlyBlockedFundsEur.value;
+    const passReg01 = valDe === 1234;
+    console.log(`  Parsed mutated value: €${valDe} (Expected: €1234)`);
+    testResults.push({ name: 'REG-01: HARD-CODED-PARSER regression (Output dynamically reflects mutated HTML, €1234 !== hardcoded €1091)', pass: passReg01 });
+  } catch (err) {
+    testResults.push({ name: 'REG-01: HARD-CODED-PARSER regression', pass: false, error: err.message });
+  }
+
+  // REG-02: MISSING-PREVIOUS-SNAPSHOT regression
+  console.log('\n[Regression REG-02] MISSING-PREVIOUS-SNAPSHOT: diff returns UNKNOWN when prev is null...');
+  try {
+    const getSnapPath = (sourceId, file) => {
+      const p1 = path.join(distDir, 'data/snapshots', sourceId, file);
+      if (fs.existsSync(p1)) return p1;
+      return path.join(rootDir, 'public/data/snapshots', sourceId, file);
+    };
+    const deV2 = JSON.parse(fs.readFileSync(getSnapPath('src-make-it-germany', 'v2.json'), 'utf-8'));
+    const diffNull = diffSnapshots(null, deV2);
+    const passReg02 = diffNull.hasChange === false &&
+                      diffNull.changeType === 'UNKNOWN' &&
+                      diffNull.summary === 'No baseline available';
+    console.log(`  Diff with null baseline: changeType=${diffNull.changeType}, summary="${diffNull.summary}"`);
+    testResults.push({ name: 'REG-02: MISSING-PREVIOUS-SNAPSHOT regression (Null baseline returns changeType: UNKNOWN and No baseline available)', pass: passReg02 });
+  } catch (err) {
+    testResults.push({ name: 'REG-02: MISSING-PREVIOUS-SNAPSHOT regression', pass: false, error: err.message });
+  }
+
+  // REG-03: FAKE-PUBLISHED-DATE regression
+  console.log('\n[Regression REG-03] FAKE-PUBLISHED-DATE: Unstated date returns null, never guesses...');
+  try {
+    const noDateHtml = `
+      <html><head><title>Opportunity Card</title></head>
+      <body><p>You must prove financial means of at least €1,091 per month in a blocked account.</p></body></html>
+    `;
+    const parsedNoDate = parseMakeItGermany(noDateHtml);
+    const passReg03 = parsedNoDate.sourcePublishedAt === null;
+    console.log(`  Extracted date from dateless HTML: ${parsedNoDate.sourcePublishedAt} (Expected: null)`);
+    testResults.push({ name: 'REG-03: FAKE-PUBLISHED-DATE regression (sourcePublishedAt is null if unstated in source, never forged)', pass: passReg03 });
+  } catch (err) {
+    testResults.push({ name: 'REG-03: FAKE-PUBLISHED-DATE regression', pass: false, error: err.message });
+  }
+
+  // REG-04: UNSUPPORTED-PRECISE-CLAIM regression
+  console.log('\n[Regression REG-04] UNSUPPORTED-PRECISE-CLAIM: Precise numbers must carry evidence quotes...');
+  try {
+    const getSnapPath = (sourceId, file) => {
+      const p1 = path.join(distDir, 'data/snapshots', sourceId, file);
+      if (fs.existsSync(p1)) return p1;
+      return path.join(rootDir, 'public/data/snapshots', sourceId, file);
+    };
+    const deV2 = JSON.parse(fs.readFileSync(getSnapPath('src-make-it-germany', 'v2.json'), 'utf-8'));
+    const monthlyFact = deV2.normalizedFacts.opportunityCard.monthlyBlockedFundsEur;
+    const hasQuoteInProvenance = typeof monthlyFact === 'object' && monthlyFact.evidenceText && monthlyFact.evidenceText.includes('1,091');
+    const hasQuoteInEvidenceArray = deV2.evidence && deV2.evidence.some(e => e.quotes && e.quotes.some(q => q.includes('1,091')));
+    const passReg04 = hasQuoteInProvenance || hasQuoteInEvidenceArray;
+    console.log(`  Precise claim €1,091 verified with evidence quote: ${passReg04}`);
+    testResults.push({ name: 'REG-04: UNSUPPORTED-PRECISE-CLAIM regression (Exact evidence quote accompanies precise figure)', pass: passReg04 });
+  } catch (err) {
+    testResults.push({ name: 'REG-04: UNSUPPORTED-PRECISE-CLAIM regression', pass: false, error: err.message });
+  }
+
+  // REG-05: CONCEPT-SEMANTIC-CONFLATION regression
+  console.log('\n[Regression REG-05] CONCEPT-SEMANTIC-CONFLATION: Strict semantic segregation...');
+  try {
+    const getSnapPath = (sourceId, file) => {
+      const p1 = path.join(distDir, 'data/snapshots', sourceId, file);
+      if (fs.existsSync(p1)) return p1;
+      return path.join(rootDir, 'public/data/snapshots', sourceId, file);
+    };
+    const inzV2 = JSON.parse(fs.readFileSync(getSnapPath('src-inz-gov', 'v2.json'), 'utf-8'));
+    const hasAewvSpecificKey = 'aewv_general_median_wage_requirement' in (inzV2.normalizedFacts.aewv || {});
+    
+    const jsaV1 = JSON.parse(fs.readFileSync(getSnapPath('src-jsa-au', 'v1.json'), 'utf-8'));
+    const elec = jsaV1.normalizedFacts.monitoredShortages.electrician_341111;
+    const has4Categories = elec && 
+      'labour_market_status' in elec && 
+      'visa_relevance' in elec && 
+      'qualification_requirements' in elec && 
+      'migration_pathway_status' in elec;
+    const shortageDoesNotEqualVisa = elec?.visa_relevance?.isAutomaticVisaGrant === false;
+
+    const passReg05 = hasAewvSpecificKey && has4Categories && shortageDoesNotEqualVisa;
+    console.log(`  AEWV explicit key: ${hasAewvSpecificKey}, JSA 4 categories: ${has4Categories}, Shortage!=Visa: ${shortageDoesNotEqualVisa}`);
+    testResults.push({ name: 'REG-05: CONCEPT-SEMANTIC-CONFLATION regression (AEWV wage separated, shortage partitioned into 4 distinct categories)', pass: passReg05 });
+  } catch (err) {
+    testResults.push({ name: 'REG-05: CONCEPT-SEMANTIC-CONFLATION regression', pass: false, error: err.message });
   }
 
   // =========================================================================

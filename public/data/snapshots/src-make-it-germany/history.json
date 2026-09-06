@@ -3,21 +3,16 @@
     "version": 1,
     "file": "v1.json",
     "fetchedAt": "2025-12-15T00:00:00.000Z",
-    "contentHash": "2c1f23eb36c0",
+    "sourcePublishedAt": "2025-12-01",
+    "contentHash": "5c50cc1ad5a2",
     "summary": "2025 Statutory baseline"
   },
   {
     "version": 2,
     "file": "v2.json",
     "fetchedAt": "2026-09-06T19:00:00.000Z",
-    "contentHash": "4ef386e22fa2",
+    "sourcePublishedAt": "2026-08-15",
+    "contentHash": "cb81e84abef2",
     "summary": "2026 Statutory increase update"
-  },
-  {
-    "version": 3,
-    "file": "v3.json",
-    "fetchedAt": "2026-09-06T20:15:13.158Z",
-    "contentHash": "7055ce9e303f",
-    "summary": "2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金"
   }
 ]
