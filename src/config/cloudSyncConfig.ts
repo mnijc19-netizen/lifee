@@ -7,9 +7,9 @@
  */
 
 export const CLOUD_SYNC_CONFIG = {
-  // 若填写，系统将自动预编译进代码，全设备打开即同步
-  supabaseUrl: (import.meta.env.VITE_SUPABASE_URL || '').trim(),
-  supabaseAnonKey: (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim(),
+  // 个人三端全自动静默无感实时互通配置 (已接入 Supabase 专用槽位)
+  supabaseUrl: (import.meta.env.VITE_SUPABASE_URL || 'https://pbnuvmbdiorssmtaxlkr.supabase.co').trim(),
+  supabaseAnonKey: (import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_GaYbk71JVw2IfuMKEi-3SQ_uljkxE5E').trim(),
   
   // 个人三端共享的单一主租户槽位 ID
   masterSlotId: 'lifee_master_user',

@@ -35,6 +35,7 @@ import {
   INITIAL_SUPABASE_SQL,
   SupabaseConfig 
 } from '../engine/supabaseSync';
+import { isCloudSyncPreConfigured, CLOUD_SYNC_CONFIG } from '../config/cloudSyncConfig';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -236,14 +237,41 @@ export const SyncModal: React.FC<SyncModalProps> = ({
           </button>
         </div>
 
+        {/* Pre-configured Master Cloud Sync Banner */}
+        {isCloudSyncPreConfigured() && (
+          <div className="mt-4 rounded-xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-950 p-4 border border-emerald-500/40 space-y-2.5 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">
+                  三端无感静默实时同步已激活 (Supabase 直连)
+                </span>
+              </div>
+              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">
+                全自动双向同步
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              恭喜！您的专属 Supabase 云数据库已成功连接。您的 <strong>Windows 电脑、iPhone 16 Pro、小米 14 Pro</strong> 只要打开原本的网址，系统将在后台自动双向毫秒级同步所有储蓄画像、任务打勾与录入情报，彻底告别所有手动步骤！
+            </p>
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 pt-1 font-mono border-t border-slate-800/80">
+              <span className="truncate max-w-[280px]">实例: {CLOUD_SYNC_CONFIG.supabaseUrl.replace('https://', '')}</span>
+              <span className="text-emerald-400">心跳: 每 15 秒 / 切屏即刷新</span>
+            </div>
+          </div>
+        )}
+
         {/* Method 1: Instant Mobile 1-Click Link */}
-        <div className="mt-5 space-y-4">
+        <div className="mt-4 space-y-4">
           <div className="rounded-xl bg-slate-950/80 p-4 border border-emerald-500/30">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Smartphone className="h-4 w-4 text-emerald-400" />
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  推荐方式：iPhone 16 Pro 一键直达同步
+                  备用直达：iPhone 16 Pro 微信/AirDrop 快捷链接
                 </span>
               </div>
               <span className="text-[10px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">

@@ -67,10 +67,21 @@ export function clearSupabaseConfig(): void {
 }
 
 /**
+ * Normalizes Supabase base URL, safely stripping trailing slashes or duplicate /rest/v1.
+ */
+export function normalizeSupabaseUrl(url: string): string {
+  let u = (url || '').trim().replace(/\/+$/, '');
+  if (u.endsWith('/rest/v1')) {
+    u = u.substring(0, u.length - '/rest/v1'.length).replace(/\/+$/, '');
+  }
+  return u;
+}
+
+/**
  * Tests connection to the user's Supabase project.
  */
 export async function testSupabaseConnection(url: string, anonKey: string): Promise<{ success: boolean; message: string }> {
-  const cleanUrl = url.trim().replace(/\/+$/, '');
+  const cleanUrl = normalizeSupabaseUrl(url);
   const cleanKey = anonKey.trim();
 
   if (!cleanUrl || !cleanKey) {
@@ -118,7 +129,7 @@ export async function pushToSupabase(code: string, payload: LifeeSyncPayload): P
     return false;
   }
 
-  const cleanUrl = config.url.trim().replace(/\/+$/, '');
+  const cleanUrl = normalizeSupabaseUrl(config.url);
   const cleanKey = config.anonKey.trim();
   const endpoint = `${cleanUrl}/rest/v1/lifee_user_sync`;
 
@@ -154,7 +165,7 @@ export async function pullFromSupabase(code: string): Promise<LifeeSyncPayload |
     return null;
   }
 
-  const cleanUrl = config.url.trim().replace(/\/+$/, '');
+  const cleanUrl = normalizeSupabaseUrl(config.url);
   const cleanKey = config.anonKey.trim();
   const endpoint = `${cleanUrl}/rest/v1/lifee_user_sync?id=eq.${encodeURIComponent(code.toUpperCase().trim())}&select=payload,updated_at`;
 
