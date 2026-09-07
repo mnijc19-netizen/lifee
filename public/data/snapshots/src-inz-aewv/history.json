@@ -30,5 +30,13 @@
     "sourcePublishedAt": null,
     "contentHash": "60591d31d893",
     "summary": "[LIVE_DATA] AEWV 工作经验要求至少 2 年或 NZQCF 4 级学历"
+  },
+  {
+    "version": 5,
+    "file": "v5.json",
+    "fetchedAt": "2026-09-07T17:08:48.453Z",
+    "sourcePublishedAt": null,
+    "contentHash": "9c570631d885",
+    "summary": "[LIVE_DATA] AEWV 工作经验要求至少 2 年或 NZQCF 4 级学历，须达到市场公允薪资"
   }
 ]
