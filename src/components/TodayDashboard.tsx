@@ -24,7 +24,8 @@ import {
   Calendar,
   ArrowUpRight,
   ExternalLink,
-  SlidersHorizontal
+  SlidersHorizontal,
+  FileCheck2
 } from 'lucide-react';
 import { UserProfile, Pathway, IntelligenceEvent, DecisionMode, FreshnessStatus } from '../types';
 import { RunwayAnalysis } from '../engine/runway';
@@ -56,6 +57,28 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   const [activeSlide, setActiveSlide] = useState(0);
   const [isCarouselPaused, setIsCarouselPaused] = useState(false);
   const [isActionsCollapsed, setIsActionsCollapsed] = useState(false);
+  const [isSvgExpanded, setIsSvgExpanded] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  // Mobile Touch Swipe Gesture Support
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 45) {
+      if (diff > 0) {
+        // swipe left -> next slide
+        setActiveSlide(prev => (prev + 1) % heroSlides.length);
+      } else {
+        // swipe right -> previous slide
+        setActiveSlide(prev => (prev - 1 + heroSlides.length) % heroSlides.length);
+      }
+    }
+    setTouchStartX(null);
+  };
 
   const baseUrl = import.meta.env.BASE_URL || '/';
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
@@ -246,18 +269,20 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
       {/* 2. OFFICIAL POLICY NEWS & GAZETTE INTELLIGENCE HERO */}
       <div 
-        className="relative overflow-hidden rounded-3xl border border-slate-800/90 bg-gradient-to-br from-slate-900/95 via-slate-950 to-slate-900/90 shadow-2xl transition-all p-5 sm:p-7 lg:p-8 space-y-5"
+        className="relative overflow-hidden rounded-3xl border border-slate-800/90 bg-gradient-to-br from-slate-900/95 via-slate-950 to-slate-900/90 shadow-2xl transition-all p-4 sm:p-7 lg:p-8 space-y-4 sm:space-y-5"
         onMouseEnter={() => setIsCarouselPaused(true)}
         onMouseLeave={() => setIsCarouselPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Top Category Tabs for Instant News Switching */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-800/60">
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        {/* Top Category Tabs for Instant News Switching - Horizontal scroll on mobile */}
+        <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-800/60">
+          <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 touch-pan-x shrink-0">
             {heroSlides.map((s, idx) => (
               <button
                 key={s.id}
                 onClick={() => setActiveSlide(idx)}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                className={`rounded-xl px-3 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 transition-all flex items-center space-x-1.5 cursor-pointer ${
                   activeSlide === idx
                     ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/20'
                     : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
@@ -269,7 +294,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             ))}
           </div>
 
-          <div className="flex items-center space-x-2 text-[11px] text-slate-400">
+          <div className="hidden sm:flex items-center space-x-2 text-[11px] text-slate-400 shrink-0">
             <span className="rounded-full bg-slate-900 px-2.5 py-1 border border-slate-800 flex items-center space-x-1">
               <Clock className="h-3 w-3 text-slate-400" />
               <span>{currentSlide.officialDate}</span>
@@ -278,10 +303,10 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </div>
 
         {/* Main Split Grid: Left Editorial News / Right Official Gazette Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center">
           {/* Left Column: Official News Headline, Analysis, and CTAs (7 Cols) */}
-          <div className="lg:col-span-7 space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="lg:col-span-7 space-y-3 sm:space-y-4">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span className="rounded-md bg-slate-800 px-2 py-0.5 text-[11px] font-bold text-slate-200 border border-slate-700 flex items-center space-x-1">
                 <span>{currentSlide.flag}</span>
                 <span>{currentSlide.country}</span>
@@ -296,35 +321,62 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             </div>
 
             {/* News Headline */}
-            <h1 className="text-lg sm:text-2xl lg:text-[26px] font-black tracking-tight text-white leading-snug">
+            <h1 className="text-base sm:text-2xl lg:text-[26px] font-black tracking-tight text-white leading-snug line-clamp-2 sm:line-clamp-none">
               {currentSlide.title}
             </h1>
 
             {/* News Summary */}
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed line-clamp-2 sm:line-clamp-none">
               {currentSlide.summary}
             </p>
 
             {/* Impact & Advantage Note */}
-            <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3 text-xs text-emerald-300/90 flex items-start space-x-2">
+            <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-2.5 sm:p-3 text-xs text-emerald-300/90 flex items-start space-x-2">
               <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-              <span>{currentSlide.impactNote}</span>
+              <span className="line-clamp-2 sm:line-clamp-none">{currentSlide.impactNote}</span>
             </div>
 
             {/* Metric Fact Badges */}
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-0.5">
               {currentSlide.badges.map((b, idx) => (
-                <span key={idx} className={`rounded-lg px-2.5 py-1 text-xs font-semibold border ${b.color}`}>
+                <span key={idx} className={`rounded-lg px-2 sm:px-2.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-semibold border ${b.color}`}>
                   {b.label}
                 </span>
               ))}
             </div>
 
+            {/* Mobile Collapsible Gazette Document Card Drawer */}
+            <div className="lg:hidden pt-1">
+              <button
+                type="button"
+                onClick={() => setIsSvgExpanded(!isSvgExpanded)}
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition-all cursor-pointer"
+              >
+                <span className="flex items-center space-x-1.5 text-emerald-400 font-medium">
+                  <FileCheck2 className="h-3.5 w-3.5" />
+                  <span>🏛️ 官方原件公报与防伪凭条</span>
+                </span>
+                <span className="text-slate-400 font-mono text-[10px]">
+                  {isSvgExpanded ? '收起公报 ▲' : '展开查看原件凭条 ▾'}
+                </span>
+              </button>
+
+              {isSvgExpanded && (
+                <div className="mt-2.5 relative rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950 shadow-xl transition-all">
+                  <img 
+                    src={currentSlide.bgImage} 
+                    alt={currentSlide.title} 
+                    className="w-full h-auto block select-none"
+                  />
+                </div>
+              )}
+            </div>
+
             {/* CTAs */}
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            <div className="pt-1 sm:pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
               <button
                 onClick={() => handleBannerAction(currentSlide)}
-                className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-bold text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+                className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-3.5 sm:px-4 py-2 text-xs font-bold text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
               >
                 <span>直达此项政策与路线测算</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -334,7 +386,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
                 href={currentSlide.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-all"
+                className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3 sm:px-3.5 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-all"
               >
                 <span>查看官方原文</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -342,8 +394,8 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             </div>
           </div>
 
-          {/* Right Column: Official Policy Document Gazette Card (5 Cols) */}
-          <div className="lg:col-span-5 relative group/doc">
+          {/* Right Column: Official Policy Document Gazette Card (5 Cols, Desktop Only) */}
+          <div className="hidden lg:block lg:col-span-5 relative group/doc">
             <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950 shadow-2xl shadow-black/60 transition-transform duration-300 group-hover/doc:scale-[1.01]">
               <img 
                 src={currentSlide.bgImage} 
@@ -361,7 +413,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </div>
 
         {/* Bottom Pagination & Carousel Controls */}
-        <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
+        <div className="pt-2 sm:pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2">
             {heroSlides.map((s, idx) => (
               <button
@@ -378,9 +430,9 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             <span className="text-[11px] text-slate-400 ml-2 font-mono">
               0{activeSlide + 1} / 0{heroSlides.length}
             </span>
-            {isCarouselPaused && (
-              <span className="text-[10px] text-slate-500 italic hidden sm:inline">(已暂停轮播)</span>
-            )}
+            <span className="text-[10px] text-slate-500 hidden sm:inline">
+              (支持左右滑动手势)
+            </span>
           </div>
 
           <div className="flex items-center space-x-2">

@@ -71,7 +71,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
       {/* Routes Popover Sheet */}
       {activeSheet === 'routes' && (
-        <div className="fixed bottom-16 left-0 right-0 z-50 rounded-t-2xl border-t border-slate-800 bg-slate-900/98 p-4 shadow-2xl backdrop-blur-xl md:hidden">
+        <div 
+          className="fixed left-0 right-0 z-50 rounded-t-2xl border-t border-slate-800 bg-slate-900/98 p-4 shadow-2xl backdrop-blur-xl md:hidden"
+          style={{ bottom: 'calc(3.5rem + max(env(safe-area-inset-bottom, 0px), 8px))' }}
+        >
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
             <span className="text-sm font-semibold text-white flex items-center gap-1.5">
               <Milestone className="w-4 h-4 text-emerald-400" />
@@ -112,7 +115,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
       {/* More Popover Sheet */}
       {activeSheet === 'more' && (
-        <div className="fixed bottom-16 left-0 right-0 z-50 max-h-[75vh] overflow-y-auto rounded-t-2xl border-t border-slate-800 bg-slate-900/98 p-4 shadow-2xl backdrop-blur-xl md:hidden">
+        <div 
+          className="fixed left-0 right-0 z-50 max-h-[75vh] overflow-y-auto rounded-t-2xl border-t border-slate-800 bg-slate-900/98 p-4 shadow-2xl backdrop-blur-xl md:hidden"
+          style={{ bottom: 'calc(3.5rem + max(env(safe-area-inset-bottom, 0px), 8px))' }}
+        >
           <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
             <span className="text-sm font-semibold text-white flex items-center gap-1.5">
               <MoreHorizontal className="w-4 h-4 text-emerald-400" />
@@ -181,7 +187,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       <nav 
         aria-label="Mobile Bottom Navigation"
         className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-slate-800/90 bg-slate-950/95 px-2 py-1 backdrop-blur-xl md:hidden"
-        style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 6px)' }}
+        style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}
       >
         {/* 1. 今日 */}
         <button

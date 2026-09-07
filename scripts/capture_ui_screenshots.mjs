@@ -86,7 +86,28 @@ async function capture() {
     await page.reload({ waitUntil: 'networkidle0' });
     await new Promise(r => setTimeout(r, 600));
     await page.screenshot({ path: path.join(screenshotsDir, 'mobile_today.png') });
-    console.log('Saved: mobile_today.png');
+    await page.screenshot({ path: path.join(screenshotsDir, 'mobile_today_full.png'), fullPage: true });
+    console.log('Saved: mobile_today.png and mobile_today_full.png');
+
+    // 2b. Mobile (412x915 Xiaomi 14 Pro)
+    await page.setViewport({ width: 412, height: 915, isMobile: true, hasTouch: true });
+    await page.reload({ waitUntil: 'networkidle0' });
+    await new Promise(r => setTimeout(r, 600));
+    await page.screenshot({ path: path.join(screenshotsDir, 'xiaomi14pro_today.png') });
+    console.log('Saved: xiaomi14pro_today.png');
+
+    // 2c. Mobile (390x844) - Expand Official Gazette Drawer
+    await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+    await page.reload({ waitUntil: 'networkidle0' });
+    await new Promise(r => setTimeout(r, 500));
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      const drawerBtn = btns.find(b => b.innerText.includes('官方原件公报与防伪凭条'));
+      if (drawerBtn) drawerBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(screenshotsDir, 'mobile_gazette_expanded.png') });
+    console.log('Saved: mobile_gazette_expanded.png');
 
     // 3. Mobile (390x844) - Routes Popover Sheet open
     await page.evaluate(() => {

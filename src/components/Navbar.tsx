@@ -126,51 +126,56 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Quick Search Button */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center space-x-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:bg-slate-800 transition-all cursor-pointer shadow-xs"
+            className="flex items-center space-x-1.5 rounded-xl border border-slate-800 bg-slate-900/80 p-2 sm:px-3 sm:py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:bg-slate-800 transition-all cursor-pointer shadow-xs touch-target-min"
+            title="全局搜索 (快捷键 Ctrl+K)"
           >
-            <Search className="h-3.5 w-3.5 text-slate-400" />
+            <Search className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-slate-400" />
             <span className="hidden md:inline">全局检索 (电工/德国/工签)</span>
             <kbd className="hidden lg:inline rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 border border-slate-700">
               Ctrl K
             </kbd>
           </button>
 
-          {/* Manual Evidence Quick Add */}
+          {/* Manual Evidence Quick Add (Desktop only, mobile available in More sheet) */}
           <button
             onClick={onOpenManualInbox}
-            className="flex items-center space-x-1 rounded-xl border border-slate-800 bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:text-white transition-all cursor-pointer"
+            className="hidden md:flex items-center space-x-1 rounded-xl border border-slate-800 bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:text-white transition-all cursor-pointer"
             title="手动录入新情报/帖子/链接"
           >
             <PlusCircle className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="hidden sm:inline">录入情报</span>
+            <span>录入情报</span>
           </button>
 
-          {/* Copy AI Context */}
+          {/* Copy AI Context (Desktop only, mobile available in More sheet & profile toolbar) */}
           <button
             onClick={onOpenAiContext}
-            className="flex items-center space-x-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all cursor-pointer shadow-xs"
+            className="hidden md:flex items-center space-x-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all cursor-pointer shadow-xs"
             title="一键复制个人画像与Top3路线Markdown上下文"
           >
             <Copy className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">AI 上下文</span>
+            <span>AI 上下文</span>
           </button>
 
-          {/* Cross-Device Sync */}
+          {/* Cross-Device Sync (Active Beacon on Mobile) */}
           {onOpenSync && (
             <button
               onClick={onOpenSync}
-              className="flex items-center space-x-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer shadow-xs"
-              title="多设备数据互通 (PC / iPhone 16 Pro 一键同步)"
+              className="flex items-center space-x-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2 sm:px-2.5 sm:py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer shadow-xs touch-target-min relative"
+              title="多端无感同步 (PC · iPhone 16 Pro · 小米 14 Pro)"
             >
-              <Smartphone className="h-3.5 w-3.5 text-emerald-400" />
+              <Smartphone className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-emerald-400" />
               <span className="hidden sm:inline">多端同步</span>
+              <span className="absolute -top-1 -right-1 flex h-2 w-2 sm:hidden">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
             </button>
           )}
 
           {/* Settings */}
           <button
             onClick={onOpenSettings}
-            className="rounded-xl border border-slate-800 bg-slate-900/60 p-2 text-slate-400 hover:border-slate-700 hover:text-white transition-all cursor-pointer"
+            className="rounded-xl border border-slate-800 bg-slate-900/60 p-2 text-slate-400 hover:border-slate-700 hover:text-white transition-all cursor-pointer touch-target-min"
             title="个人画像与权重设置"
           >
             <Settings2 className="h-4 w-4" />
