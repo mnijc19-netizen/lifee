@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-07T07:55:44.641Z",
+  "updatedAt": "2026-09-07T09:09:20.931Z",
   "totalSources": 25,
   "liveDataCount": 2,
   "reachableCount": 8,
@@ -23,12 +23,12 @@
       "sourcePublishedAt": "2026-09-07",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 894,
-      "lastCheck": "2026-09-07T07:55:13.675Z",
-      "fetchedAt": "2026-09-07T07:55:13.675Z",
-      "parsedAt": "2026-09-07T07:55:13.675Z",
+      "latencyMs": 866,
+      "lastCheck": "2026-09-07T09:09:06.258Z",
+      "fetchedAt": "2026-09-07T09:09:06.258Z",
+      "parsedAt": "2026-09-07T09:09:06.258Z",
       "lastVerifiedAt": "2026-09-07",
-      "contentHash": "74c0ca3b3d59",
+      "contentHash": "f0ed830823b0",
       "extractedFact": "最新汇率实时解析成功：USD/CNY=6.719, EUR/CNY=7.804"
     },
     {
@@ -44,8 +44,8 @@
       "verifiedPolicyFact": "德国机会卡法定最低自保金为每月 €1,091（每年 €13,092），打工许可为每周 20 小时",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 1486,
-      "lastCheck": "2026-09-07T07:55:14.572Z",
+      "latencyMs": 1440,
+      "lastCheck": "2026-09-07T09:09:07.130Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Opportunity Card parser: Required field monthlyBlockedFundsEur could not be extracted"
     },
@@ -62,8 +62,8 @@
       "verifiedPolicyFact": "德国双元制企业实训津贴法定起步毛额约 €1,048 欧/月（净额约 €822 欧/月），学校型双元制法定生计标准为 €959 欧/月",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 322,
-      "lastCheck": "2026-09-07T07:55:16.322Z",
+      "latencyMs": 328,
+      "lastCheck": "2026-09-07T09:09:08.836Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Vocational Training parser: Required field companyBasedMinimumGross could not be extracted"
     },
@@ -80,8 +80,8 @@
       "verifiedPolicyFact": "机会卡月自保金 €1,091，双元制企业津贴不足时须以自保金差额补足",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 318,
-      "lastCheck": "2026-09-07T07:55:16.812Z",
+      "latencyMs": 322,
+      "lastCheck": "2026-09-07T09:09:09.334Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Opportunity Card parser: Required field monthlyBlockedFundsEur could not be extracted"
     },
@@ -99,7 +99,7 @@
       "status": "REACHABLE",
       "httpStatus": 200,
       "latencyMs": 1294,
-      "lastCheck": "2026-09-07T07:55:17.197Z",
+      "lastCheck": "2026-09-07T09:09:09.721Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：德国劳工局双元制岗位库：企业发放法定实训津贴并提供社保，津贴不足生活标准时须补足证明"
     },
     {
@@ -115,10 +115,10 @@
       "verifiedPolicyFact": "AEWV 通用岗位要求至少 2 年相关经验或 NZQCF 4 级学历，薪资须达到市场公允水平",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 3054,
-      "lastCheck": "2026-09-07T07:55:18.491Z",
-      "fetchedAt": "2026-09-07T07:55:18.491Z",
-      "parsedAt": "2026-09-07T07:55:18.491Z",
+      "latencyMs": 2951,
+      "lastCheck": "2026-09-07T09:09:11.016Z",
+      "fetchedAt": "2026-09-07T09:09:11.016Z",
+      "parsedAt": "2026-09-07T09:09:11.016Z",
       "contentHash": "9c570631d885",
       "extractedFact": "[LIVE_DATA] AEWV 工作经验要求至少 2 年或 NZQCF 4 级学历，须达到市场公允薪资"
     },
@@ -135,8 +135,8 @@
       "verifiedPolicyFact": "新西兰法定成人最低时薪为 $23.95 NZD/小时（2026 年 4 月 1 日起实施）",
       "status": "FAILED",
       "httpStatus": 404,
-      "latencyMs": 1642,
-      "lastCheck": "2026-09-07T07:55:22.165Z",
+      "latencyMs": 1261,
+      "lastCheck": "2026-09-07T09:09:14.551Z",
       "extractedFact": "HTTP 404 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 404"
     },
@@ -153,8 +153,8 @@
       "verifiedPolicyFact": "新西兰移民审理专用中位数时薪为 $35.00 NZD/小时（2026 年 3 月 9 日起生效，仅用于 SMC 与绿名单）",
       "status": "FAILED",
       "httpStatus": 404,
-      "latencyMs": 1465,
-      "lastCheck": "2026-09-07T07:55:23.807Z",
+      "latencyMs": 1526,
+      "lastCheck": "2026-09-07T09:09:15.812Z",
       "extractedFact": "HTTP 404 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 404"
     },
@@ -171,8 +171,8 @@
       "verifiedPolicyFact": "Forklift Driver 官方代码 ANZSCO 721311，基准 Skill Level 4，条件性 Level 3 须雇主 Job Check 明确要求 3 年经验或 NZQCF Level 4",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 2078,
-      "lastCheck": "2026-09-07T07:55:25.272Z",
+      "latencyMs": 2060,
+      "lastCheck": "2026-09-07T09:09:17.338Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "NZ Forklift parser: Required ANZSCO code 721311 for Forklift Driver not found in text"
     },
@@ -190,7 +190,7 @@
       "status": "FAILED_PARSER",
       "httpStatus": 200,
       "latencyMs": 1113,
-      "lastCheck": "2026-09-07T07:55:27.548Z",
+      "lastCheck": "2026-09-07T09:09:19.595Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "Cannot read properties of null (reading 'value')"
     },

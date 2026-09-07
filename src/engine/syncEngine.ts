@@ -1,4 +1,5 @@
 import { UserProfile, UserPlanTask, Evidence } from '../types';
+import { pushToSupabase, pullFromSupabase } from './supabaseSync';
 
 export interface LifeeSyncPayload {
   version: number;
@@ -105,6 +106,14 @@ export async function uploadToCloudRelay(code: string, payload: LifeeSyncPayload
     const compressed = await compressPayload(payload);
     localStorage.setItem(`lifee_cloud_cache_${code}`, compressed);
     localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
+
+    // Dual-layer: If Supabase is configured, upload to cloud database
+    try {
+      await pushToSupabase(code, payload);
+    } catch {
+      // Supabase upload optional
+    }
+
     return true;
   } catch (err) {
     console.warn('Cloud sync relay write error, cached locally:', err);
@@ -114,6 +123,17 @@ export async function uploadToCloudRelay(code: string, payload: LifeeSyncPayload
 
 export async function downloadFromCloudRelay(code: string): Promise<LifeeSyncPayload | null> {
   try {
+    // 1. Try Supabase cloud database first
+    try {
+      const remoteData = await pullFromSupabase(code);
+      if (remoteData) {
+        return remoteData;
+      }
+    } catch {
+      // ignore
+    }
+
+    // 2. Fall back to local relay cache
     const cached = localStorage.getItem(`lifee_cloud_cache_${code}`);
     if (cached) {
       return await decompressPayload(cached);

@@ -1,0 +1,53 @@
+name: Lifee 24/7 Autonomous Policy & Sentinel Crawler
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # Trigger every 6 hours in GitHub cloud
+  workflow_dispatch: # Allows manual 1-click trigger from GitHub Actions web console
+
+permissions:
+  contents: write
+
+jobs:
+  crawl-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Verify Strict Discrete & Aggregator Parsers
+        run: npm run test:parsers
+
+      - name: Verify Policy Freshness & SLA Guardrails
+        run: npm run test:freshness
+
+      - name: Run Tier 1 Critical Policy & FX Collector
+        run: node scripts/collector.mjs --tier=1
+
+      - name: Run Autonomous Sentinel Audit Daemon
+        run: node scripts/sentinel_daemon.mjs --once
+
+      - name: Commit & Push Updated Snapshots and Sentinel Audit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/ src/data/
+          if git diff --staged --quiet; then
+            echo "No policy drift or exchange rate changes detected. Everything is up to date."
+          else
+            echo "Changes detected, committing updated policy snapshots..."
+            git commit -m "chore(sentinel): automated cloud policy & exchange rate crawl [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
