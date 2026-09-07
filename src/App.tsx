@@ -18,6 +18,7 @@ import { AiContextModal } from './components/AiContextModal';
 import { SettingsModal } from './components/SettingsModal';
 import { ManualInbox } from './components/ManualInbox';
 import { ResearchModal } from './components/ResearchModal';
+import { SyncModal } from './components/SyncModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { INTELLIGENCE_STREAM } from './data/intelligence';
 import { COUNTRIES } from './data/countries';
@@ -27,9 +28,11 @@ export function App() {
     profile,
     setProfile,
     tasks,
+    setTasks,
     updateTaskStatus,
     addTask,
     watchlist,
+    setWatchlist,
     toggleWatchlist,
     activeTab,
     setActiveTab,
@@ -45,11 +48,15 @@ export function App() {
     setIsAiContextOpen,
     isSettingsOpen,
     setIsSettingsOpen,
+    isSyncModalOpen,
+    setIsSyncModalOpen,
     runwayAnalysis,
     rankedPathways,
     allEvidence,
     scoredOccupations,
     resetToDefaultProfile,
+    customEvidence,
+    setCustomEvidence,
     addEvidence
   } = useDecisionSystem();
 
@@ -99,6 +106,7 @@ export function App() {
         onOpenAiContext={() => setIsAiContextOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenManualInbox={() => setIsManualInboxOpen(true)}
+        onOpenSync={() => setIsSyncModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -193,6 +201,7 @@ export function App() {
           <AiAdvisorChat
             profile={profile}
             onOpenAiContext={() => setIsAiContextOpen(true)}
+            onAddTask={addTask}
           />
         )}
 
@@ -238,12 +247,26 @@ export function App() {
         onAddEvidence={addEvidence}
       />
 
+      <SyncModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        profile={profile}
+        setProfile={setProfile}
+        tasks={tasks}
+        setTasks={setTasks}
+        watchlist={watchlist}
+        setWatchlist={setWatchlist}
+        customEvidence={customEvidence}
+        setCustomEvidence={setCustomEvidence}
+      />
+
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSync={() => setIsSyncModalOpen(true)}
       />
 
       {/* Footer */}

@@ -1,0 +1,70 @@
+{
+  "sourceId": "src-make-it-germany",
+  "version": 3,
+  "fetchedAt": "2025-12-15T00:00:00.000Z",
+  "lastCheckedAt": "2025-12-15T00:00:00.000Z",
+  "sourcePublishedAt": "2025-12-01",
+  "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+  "contentHash": "5c50cc1ad5a2",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "opportunityCard": {
+      "monthlyBlockedFundsEur": {
+        "value": 1027,
+        "unit": "EUR/month",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "In 2025 the required minimum blocked account amount was €1,027 per month.",
+        "parserVersion": "2.0.0"
+      },
+      "annualBlockedFundsEur": {
+        "value": 12324,
+        "unit": "EUR/year",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Opportunity Card Requirements",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "In 2025 the required minimum blocked account amount was €12,324 per year.",
+        "parserVersion": "2.0.0"
+      },
+      "partTimeWorkAllowedHoursWeekly": {
+        "value": 20,
+        "unit": "hours/week",
+        "sourceId": "src-make-it-germany",
+        "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+        "sourceTitle": "Make it in Germany - Secondary Employment",
+        "fetchedAt": "2025-12-15T00:00:00.000Z",
+        "sourcePublishedAt": "2025-12-01",
+        "effectiveAt": "2025-01-01",
+        "evidenceText": "Up to 20 hours per week of secondary employment allowed.",
+        "parserVersion": "2.0.0"
+      },
+      "currency": "EUR"
+    },
+    "ausbildung": {
+      "stipendExemptionSperrkonto": true,
+      "minLanguageLevel": "B1",
+      "typicalMonthlyStipendRangeEur": [
+        900,
+        1250
+      ],
+      "tuitionFree": true
+    }
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev-de-chancenkarte-blocked",
+      "claim": "2025 年度德国机会卡求职签证自保金标准为每月 1,027 欧元，年 12,324 欧元。",
+      "quotes": [
+        "Previous standard in 2025 was €1,027/mo (€12,324/yr)."
+      ],
+      "sourceUrl": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card"
+    }
+  ]
+}

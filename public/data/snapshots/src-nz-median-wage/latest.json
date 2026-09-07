@@ -1,0 +1,19 @@
+{
+  "sourceId": "src-nz-median-wage",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-03-09",
+  "url": "https://www.immigration.govt.nz/employ-migrants/guides/pay-rates-for-visas",
+  "contentHash": "15c950d458bf",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "medianWageNzd": {
+      "value": 35,
+      "unit": "NZD/hour",
+      "effectiveAt": "9 March 2026",
+      "scopeOfApplication": "SMC and Green List pathways, NOT general AEWV requirement"
+    }
+  },
+  "evidence": []
+}

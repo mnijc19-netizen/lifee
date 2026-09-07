@@ -1,0 +1,24 @@
+{
+  "sourceId": "src-inz-forklift",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-07-28",
+  "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+  "contentHash": "254a84724732",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "officialAnzscoCode": "721311",
+    "baselineSkillLevel": 4,
+    "skillLevel3ConditionalRule": {
+      "isAutomaticVisaGrant": false
+    },
+    "maxContinuousStayYears": {
+      "value": 3
+    },
+    "minEnglishIelts": {
+      "value": 4
+    }
+  },
+  "evidence": []
+}

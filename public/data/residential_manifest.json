@@ -1,0 +1,95 @@
+{
+  "updatedAt": "2026-09-07T08:42:06.530Z",
+  "totalTargets": 7,
+  "liveDataCount": 1,
+  "blockedCount": 2,
+  "failedCount": 4,
+  "results": [
+    {
+      "id": "src-inz-aewv",
+      "name": "新西兰移民局 AEWV 通用准入政策端点",
+      "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+      "country": "新西兰",
+      "status": "LIVE_DATA",
+      "httpStatus": 200,
+      "latencyMs": 6836,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "fetchedAt": "2026-09-07T08:42:06.530Z",
+      "version": 2,
+      "contentHash": "222c5924fc7f",
+      "extractedFact": "[LIVE_DATA] AEWV 工作经验要求至少 2 年或 NZQCF 4 级学历"
+    },
+    {
+      "id": "src-de-opportunity-card",
+      "name": "德国联邦官方机会卡细分数据端点 (Make it in Germany - Chancenkarte)",
+      "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+      "country": "德国",
+      "status": "BLOCKED",
+      "httpStatus": 403,
+      "latencyMs": 2015,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "受官方 WAF/CAPTCHA 保护拦截，系统合规降级使用最新官方基准缓存",
+      "error": "WAF / CAPTCHA verification challenge detected"
+    },
+    {
+      "id": "src-de-vocational-training",
+      "name": "德国联邦官方职业培训细分数据端点 (Make it in Germany - Ausbildung)",
+      "url": "https://www.make-it-in-germany.com/en/study-vocational-training/vocational-training",
+      "country": "德国",
+      "status": "BLOCKED",
+      "httpStatus": 403,
+      "latencyMs": 1551,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "受官方 WAF/CAPTCHA 保护拦截，系统合规降级使用最新官方基准缓存",
+      "error": "WAF / CAPTCHA verification challenge detected"
+    },
+    {
+      "id": "src-nz-min-wage",
+      "name": "新西兰商业创新与就业部法定最低时薪 (MBIE / Employment NZ)",
+      "url": "https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates",
+      "country": "新西兰",
+      "status": "FAILED",
+      "httpStatus": null,
+      "latencyMs": 406,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "网络超时或连接中断",
+      "error": "net::ERR_ABORTED at https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates"
+    },
+    {
+      "id": "src-nz-median-wage",
+      "name": "新西兰移民审理专用中位数时薪 (INZ Wage Thresholds)",
+      "url": "https://www.immigration.govt.nz/employ-migrants/guides/pay-rates-for-visas",
+      "country": "新西兰",
+      "status": "FAILED_PARSER",
+      "httpStatus": 404,
+      "latencyMs": 2749,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "页面获取成功但结构解析器不匹配，拒绝冒充有效数据",
+      "error": "NZ Median Wage parser: Required field medianWageNzd could not be extracted"
+    },
+    {
+      "id": "src-inz-forklift",
+      "name": "新西兰叉车工监管职业细分数据端点 (ANZSCO 721311)",
+      "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+      "country": "新西兰",
+      "status": "FAILED_PARSER",
+      "httpStatus": 200,
+      "latencyMs": 1259,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "页面获取成功但结构解析器不匹配，拒绝冒充有效数据",
+      "error": "NZ Forklift parser: Required ANZSCO code 721311 for Forklift Driver not found in text"
+    },
+    {
+      "id": "src-jsa-au-2025",
+      "name": "澳大利亚就业与技能署 2025 紧缺职业清单 (JSA 2025 OSL)",
+      "url": "https://www.jobsandskills.gov.au/data/skills-shortage-som",
+      "country": "澳大利亚",
+      "status": "FAILED_PARSER",
+      "httpStatus": 404,
+      "latencyMs": 2914,
+      "lastCheck": "2026-09-07T08:42:06.530Z",
+      "extractedFact": "页面获取成功但结构解析器不匹配，拒绝冒充有效数据",
+      "error": "JSA parser: Occupation Electrician (341111) not found in dataset content"
+    }
+  ]
+}

@@ -15,7 +15,8 @@ import {
   Activity,
   Search,
   Settings2,
-  X
+  X,
+  Smartphone
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
@@ -23,13 +24,15 @@ interface MobileBottomNavProps {
   setActiveTab: (tab: string) => void;
   onOpenSearch: () => void;
   onOpenSettings: () => void;
+  onOpenSync?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   activeTab,
   setActiveTab,
   onOpenSearch,
-  onOpenSettings
+  onOpenSettings,
+  onOpenSync
 }) => {
   const [activeSheet, setActiveSheet] = useState<'routes' | 'more' | null>(null);
 
@@ -145,20 +148,29 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               );
             })}
             
-            <div className="pt-2 border-t border-slate-800 flex gap-2">
+            <div className="pt-2 border-t border-slate-800 grid grid-cols-3 gap-2">
               <button
                 onClick={() => { setActiveSheet(null); onOpenSearch(); }}
-                className="flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-800 text-xs text-slate-300 font-medium min-h-[44px]"
+                className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-slate-700 bg-slate-800 text-xs text-slate-300 font-medium min-h-[44px]"
               >
                 <Search className="w-3.5 h-3.5" />
-                全局搜索
+                搜索
               </button>
+              {onOpenSync && (
+                <button
+                  onClick={() => { setActiveSheet(null); onOpenSync(); }}
+                  className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-xs text-emerald-300 font-medium min-h-[44px]"
+                >
+                  <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                  多端同步
+                </button>
+              )}
               <button
                 onClick={() => { setActiveSheet(null); onOpenSettings(); }}
-                className="flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-800 text-xs text-slate-300 font-medium min-h-[44px]"
+                className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-slate-700 bg-slate-800 text-xs text-slate-300 font-medium min-h-[44px]"
               >
                 <Settings2 className="w-3.5 h-3.5" />
-                画像偏好
+                画像
               </button>
             </div>
           </div>

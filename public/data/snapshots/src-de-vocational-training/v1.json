@@ -1,0 +1,28 @@
+{
+  "sourceId": "src-de-vocational-training",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-08-15",
+  "url": "https://www.make-it-in-germany.com/en/study-vocational-training/vocational-training",
+  "contentHash": "acd95909c01b",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "schoolBasedMinimumNetEur": {
+      "value": 959,
+      "unit": "EUR/month"
+    },
+    "companyBasedMinimumGross": {
+      "min": 1048,
+      "unit": "EUR/month"
+    },
+    "companyBasedEstimatedNet": {
+      "value": 822,
+      "unit": "EUR/month"
+    },
+    "languageRequirement": {
+      "level": "B1"
+    }
+  },
+  "evidence": []
+}

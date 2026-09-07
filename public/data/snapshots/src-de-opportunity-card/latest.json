@@ -1,0 +1,25 @@
+{
+  "sourceId": "src-de-opportunity-card",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-08-15",
+  "url": "https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card",
+  "contentHash": "5bad33661826",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "monthlyBlockedFundsEur": {
+      "value": 1091,
+      "unit": "EUR/month"
+    },
+    "annualBlockedFundsEur": {
+      "value": 13092,
+      "unit": "EUR/year"
+    },
+    "partTimeWorkAllowedHoursWeekly": {
+      "value": 20,
+      "unit": "hours/week"
+    }
+  },
+  "evidence": []
+}

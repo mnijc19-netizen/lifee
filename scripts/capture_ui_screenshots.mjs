@@ -126,8 +126,31 @@ async function capture() {
       if (runwayBtn) runwayBtn.click();
     });
     await new Promise(r => setTimeout(r, 500));
-    await page.screenshot({ path: path.join(screenshotsDir, 'desktop_runway.png') });
-    console.log('Saved: desktop_runway.png');
+    // 7. Desktop (1280x850) - Multi-Device Sync Modal
+    await page.evaluate(() => {
+      const syncBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('多端同步'));
+      if (syncBtn) syncBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop_sync_modal.png') });
+    console.log('Saved: desktop_sync_modal.png');
+
+    // Close sync modal
+    await page.evaluate(() => {
+      const closeBtn = document.querySelector('div[role="dialog"] button, .fixed button');
+      if (closeBtn) closeBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 400));
+
+    // 8. Desktop (1280x850) - AI Advisor with Antigravity Bridge
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('nav button'));
+      const aiBtn = btns.find(b => b.innerText.includes('AI 顾问'));
+      if (aiBtn) aiBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop_ai_advisor_antigravity.png') });
+    console.log('Saved: desktop_ai_advisor_antigravity.png');
 
     console.log('All responsive UI screenshots captured successfully!');
   } finally {

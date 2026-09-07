@@ -12,35 +12,53 @@ import {
   AlertTriangle, 
   Cpu, 
   Lock,
-  RefreshCw
+  RefreshCw,
+  Download,
+  Check,
+  Plus,
+  FileText
 } from 'lucide-react';
-import { UserProfile } from '../types';
-import { AiResponseStructure } from '../engine/aiAdvisor';
+import { UserProfile, UserPlanTask } from '../types';
+import { 
+  AiResponseStructure, 
+  generateAntigravityAuditPrompt, 
+  parseExternalAiResponse 
+} from '../engine/aiAdvisor';
 import { 
   ByokConfig, 
   loadByokConfig, 
   saveByokConfig, 
   queryAdvisor 
 } from '../engine/byokAdvisor';
+import { PATHWAYS } from '../data/pathways';
 
 interface AiAdvisorChatProps {
   profile: UserProfile;
   onOpenAiContext: () => void;
+  onAddTask?: (task: Omit<UserPlanTask, 'id'>) => void;
 }
 
 interface ChatMessage {
   role: 'user' | 'assistant';
   text?: string;
   structured?: AiResponseStructure;
-  engineUsed?: 'local' | 'byok-gemini' | 'byok-openai';
+  engineUsed?: 'local' | 'byok-gemini' | 'byok-openai' | 'antigravity-external';
   errorNotice?: string;
 }
 
-export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiContext }) => {
+export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiContext, onAddTask }) => {
   const [inputQuery, setInputQuery] = useState('');
   const [byokConfig, setByokConfig] = useState<ByokConfig>(loadByokConfig);
   const [isByokModalOpen, setIsByokModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importRawText, setImportRawText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   // Form state inside BYOK Modal
   const [tempConfig, setTempConfig] = useState<ByokConfig>(byokConfig);
@@ -121,6 +139,45 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
     }
   };
 
+  const handleCopyAntigravityPrompt = () => {
+    const prompt = generateAntigravityAuditPrompt(profile, PATHWAYS, inputQuery || undefined);
+    navigator.clipboard.writeText(prompt);
+    showToast('✨ 已复制反重力 AI 深度审计 Prompt！可在 Antigravity / Codex 窗口中直接粘贴');
+  };
+
+  const handleImportExternalAi = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!importRawText.trim()) return;
+
+    try {
+      const structured = parseExternalAiResponse(importRawText);
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          structured,
+          engineUsed: 'antigravity-external'
+        }
+      ]);
+      setImportRawText('');
+      setIsImportModalOpen(false);
+      showToast('🎉 成功导入并解析反重力外部研判结果！');
+    } catch (err: any) {
+      alert('解析外部研判失败: ' + err.message);
+    }
+  };
+
+  const handleAdoptTask = (actionText: string) => {
+    if (!onAddTask) return;
+    onAddTask({
+      title: actionText.slice(0, 90),
+      period: 'today',
+      status: 'todo',
+      whyNow: '由反重力 AI 决策研判提取'
+    });
+    showToast(`✅ 已将动作加入今日计划：${actionText.slice(0, 26)}...`);
+  };
+
   const handleSaveByok = (e: React.FormEvent) => {
     e.preventDefault();
     saveByokConfig(tempConfig);
@@ -130,6 +187,14 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-5 right-5 z-50 rounded-xl border border-emerald-500/50 bg-slate-900/95 px-4 py-3 text-xs font-semibold text-emerald-300 shadow-2xl backdrop-blur animate-fade-in flex items-center space-x-2">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -151,6 +216,26 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {/* Antigravity Prompt Bridge */}
+            <button
+              onClick={handleCopyAntigravityPrompt}
+              className="flex items-center space-x-1.5 rounded-lg border border-purple-500/50 bg-purple-950/40 px-3 py-2 text-xs font-semibold text-purple-200 hover:bg-purple-900/60 transition-colors shadow-lg shadow-purple-950/30"
+              title="一键复制包含您当前画像、Runway状态与官方证据库的反重力高阶 Prompt"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+              <span>🌌 复制反重力 Prompt</span>
+            </button>
+
+            {/* Import External AI Verdict */}
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center space-x-1.5 rounded-lg border border-emerald-500/40 bg-emerald-950/40 px-3 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-900/50 transition-colors"
+              title="粘贴 Antigravity / Codex 返回的结构化研判，自动解析并渲染入会话流"
+            >
+              <Download className="h-3.5 w-3.5 text-emerald-400" />
+              <span>📥 导入外部研判</span>
+            </button>
+
             <button
               onClick={() => {
                 setTempConfig(byokConfig);
@@ -171,7 +256,7 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               onClick={onOpenAiContext}
               className="flex items-center space-x-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2 text-xs font-medium text-indigo-300 hover:bg-indigo-500/20 transition-colors"
             >
-              <Sparkles className="h-4 w-4" />
+              <FileText className="h-4 w-4" />
               <span>提取 Markdown 上下文</span>
             </button>
           </div>
@@ -226,7 +311,9 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
                   <div className="flex items-center space-x-1 text-[11px] font-mono text-slate-400">
                     <Cpu className="h-3 w-3 text-slate-500" />
                     <span>
-                      {msg.engineUsed === 'byok-gemini'
+                      {msg.engineUsed === 'antigravity-external'
+                        ? '🌌 反重力 Agent 外部研判 (Antigravity Copilot Bridge)'
+                        : msg.engineUsed === 'byok-gemini'
                         ? 'Google Gemini 大模型直连推演 (AI Model)'
                         : msg.engineUsed === 'byok-openai'
                         ? 'OpenAI 大模型直连推演 (AI Model)'
@@ -300,14 +387,27 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
                     </div>
 
                     {/* Next Immediate Action */}
-                    <div className="rounded-lg bg-emerald-950/40 border border-emerald-800/60 p-3 flex items-start space-x-2">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="text-[10px] text-emerald-400 font-semibold uppercase block">
-                          六、下一步立刻执行动作 (Next Action)
-                        </span>
-                        <p className="text-white font-medium mt-0.5">{msg.structured.nextImmediateAction}</p>
+                    <div className="rounded-lg bg-emerald-950/40 border border-emerald-800/60 p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-start space-x-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="text-[10px] text-emerald-400 font-semibold uppercase block">
+                            六、下一步立刻执行动作 (Next Action)
+                          </span>
+                          <p className="text-white font-medium mt-0.5">{msg.structured.nextImmediateAction}</p>
+                        </div>
                       </div>
+
+                      {/* Action Adoption Button */}
+                      {onAddTask && msg.structured.nextImmediateAction && (
+                        <button
+                          onClick={() => handleAdoptTask(msg.structured!.nextImmediateAction)}
+                          className="shrink-0 flex items-center space-x-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-md transition-colors"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          <span>采纳加入今日计划</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -349,43 +449,99 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
         <button
           type="submit"
           disabled={isLoading || !inputQuery.trim()}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-colors flex items-center space-x-1.5 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center space-x-1.5"
         >
-          <span>发送查询</span>
           <Send className="h-3.5 w-3.5" />
+          <span>发送</span>
         </button>
       </form>
 
-      {/* BYOK Settings Modal */}
-      {isByokModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-lg rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-2xl space-y-4">
-            <div className="flex items-start justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center space-x-2">
-                <Key className="h-5 w-5 text-amber-400" />
-                <h2 className="text-base font-bold text-white">云端大模型直连设置 (BYOK)</h2>
+      {/* Import External AI Verdict Modal */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 p-5 text-xs shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-white font-bold text-sm">
+                <Sparkles className="h-4 w-4 text-purple-400" />
+                <span>导入外部 AI (Antigravity / Codex) 研判结果</span>
               </div>
               <button
-                onClick={() => setIsByokModalOpen(false)}
-                className="rounded p-1 text-slate-400 hover:text-white"
+                onClick={() => setIsImportModalOpen(false)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="rounded-lg bg-emerald-950/20 border border-emerald-900/40 p-3 text-xs text-emerald-300 space-y-1">
-              <div className="flex items-center space-x-1.5 font-bold">
-                <Lock className="h-3.5 w-3.5 text-emerald-400" />
-                <span>会话级安全与威胁模型 (Threat Model)</span>
+            <p className="text-slate-400 leading-relaxed">
+              将外部 Antigravity / Claude / Codex 对话返回的研判结果（无论是 Markdown 标题还是 JSON 格式）粘贴在下方，Lifee 将自动结构化提炼核心结论、死穴与下一步行动，并可一键纳入您的今日计划。
+            </p>
+
+            <form onSubmit={handleImportExternalAi} className="space-y-3">
+              <textarea
+                value={importRawText}
+                onChange={e => setImportRawText(e.target.value)}
+                placeholder="在此粘贴外部 AI 输出的文本..."
+                rows={10}
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 p-3 text-xs text-white placeholder-slate-600 focus:border-purple-500 focus:outline-none font-mono"
+              />
+
+              <div className="flex justify-end space-x-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsImportModalOpen(false)}
+                  className="rounded-lg bg-slate-800 px-3 py-1.5 text-slate-300 hover:bg-slate-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  disabled={!importRawText.trim()}
+                  className="rounded-lg bg-purple-600 hover:bg-purple-500 px-4 py-1.5 font-semibold text-white transition-colors disabled:opacity-40"
+                >
+                  确认解析并注入会话
+                </button>
               </div>
-              <p className="text-[11px] text-emerald-200/80 leading-relaxed">
-                您的 API Key <strong>仅在当前浏览器会话内存 / sessionStorage 中暂存（明文无虚假加密）</strong>。关闭标签页或浏览器后物理自动清空。所有推演请求由当前浏览器直连大模型官方接口，绝不上报或经过任何第三方代理服务器。
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* BYOK Config Modal */}
+      {isByokModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-lg rounded-xl border border-slate-800 bg-slate-900 p-6 text-xs shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2 text-white font-bold text-sm">
+                <Key className="h-4 w-4 text-amber-400" />
+                <span>配置云端大模型 API (BYOK - Bring Your Own Key)</span>
+              </div>
+              <button
+                onClick={() => setIsByokModalOpen(false)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Strict Privacy Notice */}
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 text-amber-200/90 space-y-1">
+              <div className="font-semibold flex items-center space-x-1 text-amber-300">
+                <Lock className="h-3.5 w-3.5" />
+                <span>最高隐私与安全透明声明 (Constitutional Rule)</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-slate-300">
+                1. 您的 Key 仅保存在浏览器当前会话内存/sessionStorage 中，<strong className="text-white">关闭网页窗口立即自动擦除</strong>；
+                <br />
+                2. 前端直连官方大模型端点，不经过任何第三方服务器中转，严禁冒充虚假加密；
+                <br />
+                3. 若您不配置 Key，系统以 100% 离线规则引擎运行，零隐私泄露风险。
               </p>
             </div>
 
-            <form onSubmit={handleSaveByok} className="space-y-4 text-xs">
+            <form onSubmit={handleSaveByok} className="space-y-4">
               <div>
-                <label className="block text-slate-400 font-medium mb-1">直连服务商 (Provider)</label>
+                <label className="block text-slate-400 font-medium mb-1">大模型服务商 (Provider)</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"

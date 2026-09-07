@@ -16,7 +16,8 @@ import {
   Activity,
   PlusCircle,
   ShieldCheck,
-  MoreHorizontal
+  MoreHorizontal,
+  Smartphone
 } from 'lucide-react';
 import { RunwayAnalysis } from '../engine/runway';
 
@@ -28,6 +29,7 @@ interface NavbarProps {
   onOpenAiContext: () => void;
   onOpenSettings: () => void;
   onOpenManualInbox: () => void;
+  onOpenSync?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,7 +39,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSearch,
   onOpenAiContext,
   onOpenSettings,
-  onOpenManualInbox
+  onOpenManualInbox,
+  onOpenSync
 }) => {
   // 5 primary navigation groups
   const isRouteGroup = ['pathways', 'careers', 'countries', 'compare'].includes(activeTab);
@@ -151,6 +154,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Copy className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">AI 上下文</span>
           </button>
+
+          {/* Cross-Device Sync */}
+          {onOpenSync && (
+            <button
+              onClick={onOpenSync}
+              className="flex items-center space-x-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer shadow-xs"
+              title="多设备数据互通 (PC / iPhone 16 Pro 一键同步)"
+            >
+              <Smartphone className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">多端同步</span>
+            </button>
+          )}
 
           {/* Settings */}
           <button

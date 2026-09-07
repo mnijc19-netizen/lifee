@@ -379,5 +379,97 @@ saveSnapshot('src-jsa-au', {
   summary: '2026 JSA Skills Priority List'
 });
 
+// 4. Discrete Adapters Snapshots Seed (RULE-79)
+saveSnapshot('src-de-opportunity-card', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-08-15',
+  normalizedFacts: {
+    monthlyBlockedFundsEur: { value: 1091, unit: 'EUR/month' },
+    annualBlockedFundsEur: { value: 13092, unit: 'EUR/year' },
+    partTimeWorkAllowedHoursWeekly: { value: 20, unit: 'hours/week' }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-08-15',
+  url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+  summary: '德国机会卡法定最低自保金每月 €1,091，年 €13,092'
+});
+
+saveSnapshot('src-de-vocational-training', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-08-15',
+  normalizedFacts: {
+    schoolBasedMinimumNetEur: { value: 959, unit: 'EUR/month' },
+    companyBasedMinimumGross: { min: 1048, unit: 'EUR/month' },
+    companyBasedEstimatedNet: { value: 822, unit: 'EUR/month' },
+    languageRequirement: { level: 'B1' }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-08-15',
+  url: 'https://www.make-it-in-germany.com/en/study-vocational-training/vocational-training',
+  summary: '德国双元制企业实训津贴毛额 €1,048/月，学校型生计 €959/月'
+});
+
+saveSnapshot('src-nz-min-wage', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-04-01',
+  normalizedFacts: {
+    legalMinimumWageNzd: { value: 23.95, unit: 'NZD/hour', effectiveAt: '1 April 2026' }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-04-01',
+  url: 'https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates',
+  summary: '新西兰法定成人最低时薪 $23.95 NZD/小时'
+});
+
+saveSnapshot('src-nz-median-wage', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-03-09',
+  normalizedFacts: {
+    medianWageNzd: { value: 35.00, unit: 'NZD/hour', effectiveAt: '9 March 2026', scopeOfApplication: 'SMC and Green List pathways, NOT general AEWV requirement' }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-03-09',
+  url: 'https://www.immigration.govt.nz/employ-migrants/guides/pay-rates-for-visas',
+  summary: '新西兰移民审理专用中位数时薪 $35.00 NZD/小时'
+});
+
+saveSnapshot('src-inz-forklift', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-07-28',
+  normalizedFacts: {
+    officialAnzscoCode: '721311',
+    baselineSkillLevel: 4,
+    skillLevel3ConditionalRule: { isAutomaticVisaGrant: false },
+    maxContinuousStayYears: { value: 3 },
+    minEnglishIelts: { value: 4.0 }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-07-28',
+  url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+  summary: '叉车工代码 ANZSCO 721311，基准 Skill Level 4'
+});
+
+saveSnapshot('src-jsa-au-2025', {
+  parserVersion: '2.0.0',
+  sourcePublishedAt: '2026-08-01',
+  normalizedFacts: {
+    releaseMetadata: { agency: 'Jobs and Skills Australia', reportName: '2025 OSL', year: 2025 },
+    monitoredShortages: {
+      electrician_341111: { nationalShortage: true, labour_market_status: { rating: 'National Shortage' } },
+      software_engineer_261313: { nationalShortage: false, labour_market_status: { rating: 'No Shortage' } }
+    }
+  }
+}, {
+  fetchedAt: '2026-09-06T19:00:00.000Z',
+  sourcePublishedAt: '2026-08-01',
+  url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
+  summary: 'JSA 2025 OSL 紧缺职业清单基准'
+});
+
 console.log('=== Finished Seeding Snapshots Successfully ===');
 

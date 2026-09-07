@@ -1,0 +1,18 @@
+{
+  "sourceId": "src-nz-min-wage",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-04-01",
+  "url": "https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates",
+  "contentHash": "9dd9c1a73ccf",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "legalMinimumWageNzd": {
+      "value": 23.95,
+      "unit": "NZD/hour",
+      "effectiveAt": "1 April 2026"
+    }
+  },
+  "evidence": []
+}

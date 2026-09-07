@@ -22,5 +22,21 @@
     "sourcePublishedAt": null,
     "contentHash": "cddeebf1268b",
     "summary": "[LIVE_DATA] AEWV 最低时薪 $23.95，移民中位数 $35"
+  },
+  {
+    "version": 4,
+    "file": "v4.json",
+    "fetchedAt": "2025-10-01T00:00:00.000Z",
+    "sourcePublishedAt": "2025-09-15",
+    "contentHash": "77274577a98c",
+    "summary": "Pre-reform AEWV threshold"
+  },
+  {
+    "version": 5,
+    "file": "v5.json",
+    "fetchedAt": "2026-09-06T19:00:00.000Z",
+    "sourcePublishedAt": "2026-07-28",
+    "contentHash": "c0f1d871629c",
+    "summary": "2026 AEWV Wage Threshold and Low Skill restrictions update"
   }
 ]

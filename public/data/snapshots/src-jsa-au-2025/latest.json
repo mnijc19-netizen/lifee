@@ -1,0 +1,32 @@
+{
+  "sourceId": "src-jsa-au-2025",
+  "version": 1,
+  "fetchedAt": "2026-09-06T19:00:00.000Z",
+  "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+  "sourcePublishedAt": "2026-08-01",
+  "url": "https://www.jobsandskills.gov.au/data/skills-shortage-som",
+  "contentHash": "b9b1dd3a143c",
+  "parserVersion": "2.0.0",
+  "normalizedFacts": {
+    "releaseMetadata": {
+      "agency": "Jobs and Skills Australia",
+      "reportName": "2025 OSL",
+      "year": 2025
+    },
+    "monitoredShortages": {
+      "electrician_341111": {
+        "nationalShortage": true,
+        "labour_market_status": {
+          "rating": "National Shortage"
+        }
+      },
+      "software_engineer_261313": {
+        "nationalShortage": false,
+        "labour_market_status": {
+          "rating": "No Shortage"
+        }
+      }
+    }
+  },
+  "evidence": []
+}

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { UserProfile, UserPlanTask, Evidence, Occupation, Country, Pathway } from '../types';
 import { DEFAULT_USER_PROFILE, DEFAULT_INITIAL_TASKS } from '../data/defaultProfile';
 import { OCCUPATIONS } from '../data/occupations';
@@ -7,6 +7,7 @@ import { PATHWAYS } from '../data/pathways';
 import { EVIDENCE_BASE } from '../data/evidence';
 import { calculateRunway } from '../engine/runway';
 import { rankPathways, calculateOccupationMatchScore } from '../engine/scoring';
+import { decompressPayload } from '../engine/syncEngine';
 
 const PROFILE_KEY = 'lifee_user_profile_v1';
 const TASKS_KEY = 'lifee_user_tasks_v1';
@@ -142,6 +143,32 @@ export function useDecisionSystem() {
     setCustomEvidence(prev => [newEv, ...prev]);
   };
 
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+
+  // Auto-detect and unpack sync payload from URL hash (e.g. mobile Safari opening #import=...)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash && hash.includes('import=')) {
+      const match = hash.match(/import=([^&]+)/);
+      if (match && match[1]) {
+        decompressPayload(match[1]).then(payload => {
+          if (payload && payload.profile) {
+            setProfile(payload.profile);
+            if (payload.tasks) setTasks(payload.tasks);
+            if (payload.watchlist) setWatchlist(payload.watchlist);
+            if (payload.customEvidence) setCustomEvidence(payload.customEvidence);
+            try {
+              history.replaceState(null, '', window.location.pathname);
+            } catch {
+              // ignore
+            }
+          }
+        }).catch(err => console.warn('Sync import failed:', err));
+      }
+    }
+  }, []);
+
   const resetToDefaultProfile = () => {
     setProfile(DEFAULT_USER_PROFILE);
     setTasks(DEFAULT_INITIAL_TASKS);
@@ -151,11 +178,14 @@ export function useDecisionSystem() {
     profile,
     setProfile,
     tasks,
+    setTasks,
     updateTaskStatus,
     addTask,
     customEvidence,
+    setCustomEvidence,
     addEvidence,
     watchlist,
+    setWatchlist,
     toggleWatchlist,
     activeTab,
     setActiveTab,
@@ -171,6 +201,8 @@ export function useDecisionSystem() {
     setIsAiContextOpen,
     isSettingsOpen,
     setIsSettingsOpen,
+    isSyncModalOpen,
+    setIsSyncModalOpen,
     runwayAnalysis,
     rankedPathways,
     allEvidence,

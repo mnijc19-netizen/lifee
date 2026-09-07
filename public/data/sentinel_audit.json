@@ -1,0 +1,83 @@
+{
+  "auditTimestamp": "2026-09-07T08:43:27.697Z",
+  "durationMs": 92,
+  "healthScore": 100,
+  "auditStatus": "OPTIMAL",
+  "monitoredPolicies": [
+    {
+      "sourceId": "src-de-opportunity-card",
+      "version": 1,
+      "contentHash": "5bad33661826",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-de-vocational-training",
+      "version": 1,
+      "contentHash": "acd95909c01b",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-nz-min-wage",
+      "version": 1,
+      "contentHash": "9dd9c1a73ccf",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-nz-median-wage",
+      "version": 1,
+      "contentHash": "15c950d458bf",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-inz-aewv",
+      "version": 2,
+      "contentHash": "222c5924fc7f",
+      "lastCheckedAt": "2026-09-07T08:42:06.530Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-inz-forklift",
+      "version": 1,
+      "contentHash": "254a84724732",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    },
+    {
+      "sourceId": "src-jsa-au-2025",
+      "version": 1,
+      "contentHash": "b9b1dd3a143c",
+      "lastCheckedAt": "2026-09-06T19:00:00.000Z",
+      "freshnessStatus": "FRESH",
+      "summary": "官方已核验基准"
+    }
+  ],
+  "detectedPolicyShifts": [],
+  "parserSuitePassed": true,
+  "parserTestsCount": 25,
+  "freshnessEvaluation": {
+    "fxRates": {
+      "status": "ACTIVE",
+      "rates": {
+        "USD_CNY": 6.7194,
+        "EUR_CNY": 7.8035,
+        "NZD_CNY": 3.9524,
+        "AUD_CNY": 4.8422,
+        "CAD_CNY": 4.8583,
+        "JPY_CNY": 0.04302,
+        "lastUpdated": "Mon, 07 Sep 2026 00:02:31 +0000"
+      },
+      "lastUpdated": "Mon, 07 Sep 2026 00:02:31 +0000"
+    }
+  },
+  "recommendations": []
+}
