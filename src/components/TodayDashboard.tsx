@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, 
   ArrowRight, 
@@ -11,13 +11,20 @@ import {
   Clock, 
   Coins, 
   ChevronRight,
+  ChevronLeft,
   ChevronDown,
   ChevronUp,
-  ShieldCheck,
-  Compass,
-  Lock,
-  Target,
-  Info
+  ShieldCheck, 
+  Compass, 
+  Lock, 
+  Target, 
+  Info,
+  Radio,
+  Bell,
+  Calendar,
+  ArrowUpRight,
+  ExternalLink,
+  SlidersHorizontal
 } from 'lucide-react';
 import { UserProfile, Pathway, IntelligenceEvent, DecisionMode, FreshnessStatus } from '../types';
 import { RunwayAnalysis } from '../engine/runway';
@@ -46,13 +53,85 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   // Decision Mode: Explore Mode vs Execute Mode
   const [mode, setMode] = useState<DecisionMode>(profile.activeDecisionMode || 'EXPLORE');
   const [expandedExplanationId, setExpandedExplanationId] = useState<string | null>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
+  const [isActionsCollapsed, setIsActionsCollapsed] = useState(false);
 
-  // Immediate Action Cards (Section A)
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+  // Curated Official Policy Hero Slides
+  const heroSlides = [
+    {
+      id: 'de-opportunity-ausbildung',
+      country: '德国 (Germany)',
+      flag: '🇩🇪',
+      agency: '德国联邦官方技术移民 (Make it in Germany)',
+      officialDate: '2026-08 生效中 · 24/7 哨兵已验证',
+      title: '德国机会卡自保金锁定 €1,091/月 · 兼职打工放宽至 20h/周',
+      summary: '联邦内政部与劳工局已正式执行机会卡新政。大专或职业技能人才可凭打分或直接资格抵德找工，双元制实训津贴法定起步约 €1,048 欧/月（津贴覆盖生活开销即可免自保金）。',
+      bgImage: `${cleanBase}images/banners/germany_banner.jpg`,
+      targetTab: 'pathways',
+      targetPathwayId: 'path-de-ausbildung',
+      badges: [
+        { label: '💶 月自保金 €1,091', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+        { label: '⏱️ 打工放宽 20h/周', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40' },
+        { label: '🎓 双元制带薪实训', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
+      ]
+    },
+    {
+      id: 'nz-minimum-median-wage',
+      country: '新西兰 (New Zealand)',
+      flag: '🇳🇿',
+      agency: '新西兰商业创新与就业部 (MBIE) & 移民局 (INZ)',
+      officialDate: '2026-04-01 & 2026-03-09 生效 · 24/7 哨兵已验证',
+      title: '法定最低成人时薪调整为 $23.95 NZD · 移民审理中位数锁定 $35.00 NZD',
+      summary: 'MBIE 正式公布最新成人法定最低时薪 $23.95 NZD；移民局同步调整技术移民 SMC 与绿名单专用中位数时薪至 $35.00 NZD。普通 AEWV 工签岗位须达到市场公允薪资。',
+      bgImage: `${cleanBase}images/banners/nz_banner.jpg`,
+      targetTab: 'pathways',
+      targetPathwayId: 'path-nz-working-holiday-forklift',
+      badges: [
+        { label: '💵 最低时薪 $23.95/h', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+        { label: '📈 移民中位数 $35.00/h', color: 'bg-sky-500/20 text-sky-300 border-sky-500/40' },
+        { label: '🚜 叉车监管 ANZSCO 721311', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
+      ]
+    },
+    {
+      id: 'au-jsa-shortage-list',
+      country: '澳大利亚 (Australia)',
+      flag: '🇦🇺',
+      agency: '澳大利亚就业与技能署 (JSA 2025 OSL)',
+      officialDate: 'JSA 2025 官方发布 · 持续追踪中',
+      title: '澳大利亚 2025 紧缺职业清单发布：电工全澳紧缺 · 软件开发进入饱和期',
+      summary: '官方最新评估显示：电工 (341111) 列入全国紧缺 (S)，但海外换牌评估 TRA 壁垒极高；软件工程师 (261313) 列为非紧缺 (NS)，海外直聘离岸获邀门槛持续收紧。',
+      bgImage: `${cleanBase}images/banners/au_banner.jpg`,
+      targetTab: 'careers',
+      targetPathwayId: null,
+      badges: [
+        { label: '⚡ 电工全国短缺 (S)', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
+        { label: '💻 软件开发非紧缺 (NS)', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40' },
+        { label: '📋 TRA 执照严格认证', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
+      ]
+    }
+  ];
+
+  // Auto slide carousel every 7 seconds
+  useEffect(() => {
+    if (isCarouselPaused) return;
+    const timer = setInterval(() => {
+      setActiveSlide(prev => (prev + 1) % heroSlides.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [isCarouselPaused, heroSlides.length]);
+
+  const currentSlide = heroSlides[activeSlide];
+
+  // Immediate Action Cards (Stress-free execution)
   const topActions = [
     {
       id: 1,
       title: '保持居家 3D/AI 资产制作外包现金流交付',
-      reason: `刚性房租（¥${profile.monthlyRentRmb || 1200}/月）需要自负盈亏。只有先稳住每月的自给进账，才能彻底免除低薪长工时坐班通勤，买断白天用于学习的核心自由时间。`,
+      reason: `刚性房租（¥${profile.monthlyRentRmb || 1000}/月）优先自负盈亏。先稳住每月的自给进账，买断白天用于学习的核心自由时间。`,
       badge: '生存底线',
       badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
       actionTab: 'myplan',
@@ -61,7 +140,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
     {
       id: 2,
       title: '执行今日 45 分钟实用语言攻坚（德语 A1 / 英语 3000 高频词）',
-      reason: '外语是所有高阶出海路线（德国双元制、出海接单、WHV、数字游民）的通用底层杠杆，每日 45 分钟属于零后悔高复利投资。',
+      reason: '外语是所有出海路线（德国双元制、出海接单、WHV、数字游民）的通用底层杠杆，每日 45 分钟属于零后悔高复利投资。',
       badge: '低后悔投资',
       badgeColor: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
       actionTab: 'lowregret',
@@ -70,7 +149,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
     {
       id: 3,
       title: '启动【7天小实验】：用 Python 批处理优化 3D 资产拆分工作流',
-      reason: '拒绝假大空式的学习。先验证能否把现有资产制作与切分的单位耗时减少 40%，直接将有效时薪拉升至更高收益区间。',
+      reason: '先验证能否把现有资产制作与切分的单位耗时减少 40%，直接将有效时薪拉升至更高收益区间。',
       badge: '敏捷验证',
       badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
       actionTab: 'myplan',
@@ -119,631 +198,475 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
     }
   };
 
+  const handleBannerAction = (slide: typeof heroSlides[0]) => {
+    if (slide.targetPathwayId) {
+      const match = topPathways.find(p => p.id === slide.targetPathwayId);
+      if (match) {
+        onSelectPathway(match);
+        return;
+      }
+    }
+    onNavigateTab(slide.targetTab);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Welcome & Directive Headline */}
-      <div className="rounded-2xl border border-slate-800/80 bg-gradient-to-r from-slate-900/90 via-slate-900/95 to-slate-950/90 backdrop-blur-xl p-5 sm:p-6 shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>决策基准日期: {profile.targetDateBaseline}</span>
-              <span className="text-slate-500">·</span>
-              <span>当前画像：{profile.education || '大专学历'} / ¥{profile.currentSavingsRmb || 0} 可用储蓄</span>
-            </div>
-            <h1 className="mt-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
-              <span>人生路线智能决策罗盘</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
-                我现在最应该做什么？
-              </span>
-            </h1>
-            <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
-              系统已根据你的设定条件（{profile.education || '大专学历'}、¥{profile.currentSavingsRmb}储蓄、¥{profile.monthlyRentRmb}房租、{profile.englishVocabEstimate}词汇量）完成全局政策与市场交叉验证。拒绝假大空的规划，直达今日执行闭环。
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            {/* Explore Mode vs Execute Mode Toggle */}
-            <div className="inline-flex rounded-xl border border-slate-800 bg-slate-950/80 p-1 backdrop-blur-sm">
-              <button
-                type="button"
-                onClick={() => setMode('EXPLORE')}
-                className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                  mode === 'EXPLORE'
-                    ? 'bg-slate-800 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Compass className="h-3.5 w-3.5 text-sky-400" />
-                <span>探索模式 (Explore)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('EXECUTE')}
-                className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
-                  mode === 'EXECUTE'
-                    ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-950'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Lock className="h-3.5 w-3.5 text-emerald-300" />
-                <span>执行模式 (Execute)</span>
-              </button>
-            </div>
-
-            <button
-              onClick={onOpenAiContext}
-              className="flex items-center space-x-2 rounded-xl bg-emerald-600/90 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-950/50 cursor-pointer"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>一键提取 AI 上下文</span>
-            </button>
-          </div>
+      {/* 1. Reassuring Status Ticker & Freshness Beacon */}
+      <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md px-3.5 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
+        <div className="flex items-center space-x-2 text-slate-300">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="font-semibold text-white">24/7 哨兵已就绪</span>
+          <span className="text-slate-600">·</span>
+          <span className="text-slate-400 hidden sm:inline">今日 12:00 完成巡检，监控全球 24 大官方移民与劳工端点</span>
+          <span className="text-emerald-400 font-medium">2 项法定新规在库已生效</span>
         </div>
-
-        {/* Execute Mode Focus Shield Banner */}
-        {mode === 'EXECUTE' && primaryPathway && (
-          <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/25 p-4 text-xs text-emerald-200/90 flex items-start space-x-3">
-            <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <div className="font-semibold text-emerald-300 flex items-center space-x-2">
-                <span>🔒 执行专注保护已激活：当前锁定主攻【{primaryPathway.name.slice(0, 32)}...】</span>
-                <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300 font-semibold">专注保障</span>
-              </div>
-              <p className="text-slate-300 leading-relaxed">
-                在执行模式下系统自动过滤微弱外部噪音，不让无休止的信息搜集推迟行动。除非当前路线触发<strong>止损条件 (Kill Criteria)</strong>或<strong>核心移民法规发生重大实质变动</strong>，否则请心无旁骛攻坚当期唯一的 Next Gate。
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 30-Second Quick Onboarding & Profile Tuning Wizard */}
-      <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-slate-900/90 to-slate-950/90 backdrop-blur-xl p-4 sm:p-5 shadow-xl shadow-black/30">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 mb-3.5 border-b border-slate-800/80">
-          <div className="flex items-center space-x-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-xs shadow-xs">
-              ⚡
-            </span>
-            <span className="text-sm font-bold text-white tracking-wide">30秒快捷画像调优 · 即选即测算</span>
-            <span className="hidden sm:inline-block text-xs text-slate-400">
-              (点击下方选项直接切换人生基准条件，推荐路线与生存跑道秒级重算)
-            </span>
-          </div>
-          <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            纯本地实时推演 · 零隐私上传
+        
+        <div className="flex items-center space-x-3 shrink-0 text-[11px] text-slate-400">
+          <span className="flex items-center space-x-1">
+            <Calendar className="h-3 w-3 text-slate-500" />
+            <span>基准: {profile.targetDateBaseline || '2026-09-07'}</span>
+          </span>
+          <span className="flex items-center space-x-1 text-emerald-400 font-mono">
+            <span>三端静默同步中</span>
           </span>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-          {/* Degree */}
-          <div className="space-y-1.5">
-            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
-              <span>🎓 最高学历背景</span>
-              <span className="text-slate-500 text-[10px]">影响工签与绿卡门槛</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {[
-                { label: '全日制大专', val: '全日制大专 (专科)' },
-                { label: '本科及以上', val: '全日制本科及以上' },
-                { label: '中专/高中', val: '高中/中专/无学历' }
-              ].map(opt => {
-                const cur = profile.education || '全日制大专 (专科)';
-                const isSelected = cur.includes('大专') ? opt.val.includes('大专') : (cur.includes('本科') ? opt.val.includes('本科') : opt.val.includes('高中'));
-                return (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    onClick={() => {
-                      if (setProfile) setProfile(prev => ({ ...prev, education: opt.val }));
-                    }}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
-                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Savings */}
-          <div className="space-y-1.5">
-            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
-              <span>💰 可用起步储蓄</span>
-              <span className="text-slate-500 text-[10px]">现金流第一道过滤器</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {[
-                { label: '¥5,000', val: 5000 },
-                { label: '¥30,000', val: 30000 },
-                { label: '¥100,000+', val: 100000 }
-              ].map(opt => {
-                const s = profile.currentSavingsRmb || 0;
-                const isSelected = (opt.val === 5000 && s <= 10000) || (opt.val === 30000 && s > 10000 && s < 80000) || (opt.val === 100000 && s >= 80000);
-                return (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    onClick={() => {
-                      if (setProfile) setProfile(prev => ({ ...prev, currentSavingsRmb: opt.val }));
-                    }}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
-                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* English / Language */}
-          <div className="space-y-1.5">
-            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
-              <span>🌐 语言与沟通基础</span>
-              <span className="text-slate-500 text-[10px]">高复利底层杠杆</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {[
-                { label: '基础 2000词', val: 2000 },
-                { label: '进阶 4000词', val: 4000 },
-                { label: '零基础攻坚', val: 800 }
-              ].map(opt => {
-                const v = profile.englishVocabEstimate || 2000;
-                const isSelected = (opt.val === 2000 && v >= 1500 && v <= 2500) || (opt.val === 4000 && v > 2500) || (opt.val === 800 && v < 1500);
-                return (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    onClick={() => {
-                      if (setProfile) setProfile(prev => ({ ...prev, englishVocabEstimate: opt.val }));
-                    }}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
-                      isSelected
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
-                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* A. Top 3 Immediate Actions */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <Zap className="h-4 w-4 text-emerald-400" />
-            <h2 className="text-base font-semibold text-white">A. 当前最重要的 3 件事 (今日与本周执行)</h2>
-          </div>
-          <button 
-            onClick={() => onNavigateTab('myplan')}
-            className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
-          >
-            <span>进入行动看板</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
+      {/* 2. GRAND CINEMATIC POLICY INTELLIGENCE HERO BANNER */}
+      <div 
+        className="relative overflow-hidden rounded-3xl border border-slate-800/90 shadow-2xl transition-all group"
+        onMouseEnter={() => setIsCarouselPaused(true)}
+        onMouseLeave={() => setIsCarouselPaused(false)}
+      >
+        {/* Background Image with Cinematic Dark Gradient Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-102"
+          style={{ backgroundImage: `url('${currentSlide.bgImage}')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
 
-        {/* Hero Card for Top 1 Action */}
-        <div className="space-y-3">
-          {/* Top 1 Action (Hero) */}
-          <div className="group relative rounded-xl border border-emerald-500/40 bg-gradient-to-br from-emerald-950/20 via-slate-900 to-slate-900 p-5 shadow-sm hover:border-emerald-500/60 transition-all flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  <span className="rounded px-2.5 py-0.5 text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    Top 1 核心动作 · 生存底线
-                  </span>
-                  <span className="text-xs font-mono text-emerald-400 font-semibold">优先级 #01</span>
-                </div>
-                <span className="text-xs text-slate-400">今日必做</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
-                {topActions[0].title}
-              </h3>
-              <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed max-w-4xl">
-                {topActions[0].reason}
-              </p>
+        {/* Banner Content */}
+        <div className="relative z-10 p-6 sm:p-8 md:p-10 flex flex-col justify-between min-h-[360px] sm:min-h-[400px]">
+          {/* Top Pill / Official Agency Badge */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-slate-700/80 flex items-center space-x-1.5 shadow-sm">
+                <span className="text-sm">{currentSlide.flag}</span>
+                <span>{currentSlide.country}</span>
+              </span>
+              <span className="rounded-full bg-emerald-500/10 backdrop-blur-md px-3 py-1 text-[11px] font-semibold text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
+                <Radio className="h-3 w-3 animate-pulse text-emerald-400" />
+                <span>官方政策头条速递</span>
+              </span>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-              <span className="text-slate-400">为什么现在做？稳固生存底线，杜绝沉没成本</span>
+            <div className="rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-[11px] text-slate-300 border border-slate-800 flex items-center space-x-1.5">
+              <Clock className="h-3 w-3 text-slate-400" />
+              <span>{currentSlide.officialDate}</span>
+            </div>
+          </div>
+
+          {/* Headline & Abstract */}
+          <div className="my-auto py-4 max-w-3xl space-y-3">
+            <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center space-x-1">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>{currentSlide.agency}</span>
+            </div>
+
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+              {currentSlide.title}
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed drop-shadow-sm max-w-2xl">
+              {currentSlide.summary}
+            </p>
+
+            {/* Quick Fact Pills */}
+            <div className="flex flex-wrap gap-2 pt-2">
+              {currentSlide.badges.map((b, idx) => (
+                <span key={idx} className={`rounded-lg px-2.5 py-1 text-xs font-medium border backdrop-blur-md ${b.color}`}>
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Controls & Action Button */}
+          <div className="pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Slide Navigation Dots */}
+            <div className="flex items-center space-x-2">
+              {heroSlides.map((s, idx) => (
+                <button
+                  key={s.id}
+                  onClick={() => setActiveSlide(idx)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    activeSlide === idx 
+                      ? 'w-8 bg-emerald-400 shadow-md shadow-emerald-400/50' 
+                      : 'w-2 bg-slate-700 hover:bg-slate-500'
+                  }`}
+                  title={s.title}
+                />
+              ))}
+              <span className="text-[11px] text-slate-400 ml-2 font-mono">
+                0{activeSlide + 1} / 0{heroSlides.length}
+              </span>
+            </div>
+
+            {/* Action CTA & Arrows */}
+            <div className="flex items-center space-x-2">
               <button
-                onClick={() => onNavigateTab(topActions[0].actionTab)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition-colors shadow-sm"
+                onClick={() => setActiveSlide(prev => (prev - 1 + heroSlides.length) % heroSlides.length)}
+                className="h-9 w-9 rounded-xl border border-slate-700 bg-slate-900/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                title="上一条政策"
               >
-                <span>立即执行</span>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setActiveSlide(prev => (prev + 1) % heroSlides.length)}
+                className="h-9 w-9 rounded-xl border border-slate-700 bg-slate-900/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+                title="下一条政策"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={() => handleBannerAction(currentSlide)}
+                className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-bold text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer ml-2"
+              >
+                <span>直达此项政策与路线测算</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
-
-          {/* Secondary Actions 2 & 3 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {topActions.slice(1).map(action => (
-              <div 
-                key={action.id}
-                className="group relative rounded-xl border border-slate-800 bg-slate-900/60 p-4 hover:border-slate-700 hover:bg-slate-900 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`rounded px-2 py-0.5 text-[10px] font-semibold border ${action.badgeColor}`}>
-                      {action.badge}
-                    </span>
-                    <span className="text-xs font-mono text-slate-500">优先级 #0{action.id}</span>
-                  </div>
-                  <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
-                    {action.title}
-                  </h3>
-                  <p className="mt-1.5 text-xs text-slate-400 leading-relaxed">
-                    {action.reason}
-                  </p>
-                </div>
-
-                <div className="mt-3.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                  <span className="text-slate-500">为什么现在做？</span>
-                  <button
-                    onClick={() => onNavigateTab(action.actionTab)}
-                    className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-medium"
-                  >
-                    <span>立即执行</span>
-                    <ArrowRight className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* B. My Current Status Matrix & Runway Banner */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Runway Survival Widget */}
-        <div className="lg:col-span-1 rounded-xl border border-slate-800 bg-slate-900/50 p-4 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400">生存现金流 (Runway)</span>
-              <Flame className={`h-4 w-4 ${runway.isSelfSustaining ? 'text-emerald-400' : 'text-rose-400'}`} />
-            </div>
-            <div className="mt-2">
-              <div className="text-2xl font-bold text-white">
-                {runway.isSelfSustaining ? '自给自足稳态' : `${runway.survivalMonths} 个月`}
-              </div>
-              <p className={`text-xs mt-1 ${runway.isSelfSustaining ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {runway.healthLabel}
-              </p>
-            </div>
+      {/* 3. Sleek Single-Line Profile Toolbar & Mode Switcher */}
+      <div className="rounded-2xl border border-slate-800/80 bg-slate-900/80 backdrop-blur-xl p-3 sm:p-4 shadow-lg flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center space-x-1.5 text-slate-400 font-medium">
+            <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="font-semibold text-white">当前设定画像：</span>
+          </div>
 
-            <div className="mt-4 space-y-1.5 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
-              <div className="flex justify-between">
-                <span>月刚性房租支出:</span>
-                <span className="text-slate-200 font-mono">¥{profile.monthlyRentRmb}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>月均基础开销:</span>
-                <span className="text-slate-200 font-mono">¥{profile.monthlyFoodAndLifeRmb}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>当前自给收入:</span>
-                <span className="text-emerald-400 font-mono">¥{profile.currentMonthlyIncomeRmb}</span>
-              </div>
-            </div>
+          {/* Quick Profile Tag Pills */}
+          <span className="rounded-lg bg-slate-950 border border-slate-800 px-2.5 py-1 text-slate-200">
+            🎓 学历: <strong className="text-emerald-300">{profile.education || '全日制大专'}</strong>
+          </span>
+          <span className="rounded-lg bg-slate-950 border border-slate-800 px-2.5 py-1 text-slate-200">
+            💰 储蓄: <strong className="text-emerald-300">¥{profile.currentSavingsRmb || 2000}</strong>
+          </span>
+          <span className="rounded-lg bg-slate-950 border border-slate-800 px-2.5 py-1 text-slate-200">
+            🌐 语言: <strong className="text-emerald-300">{profile.englishVocabEstimate || 2000} 词</strong>
+          </span>
+        </div>
+
+        {/* Mode Toggle & AI Context */}
+        <div className="flex items-center space-x-2 shrink-0">
+          <div className="inline-flex rounded-xl border border-slate-800 bg-slate-950 p-1">
+            <button
+              type="button"
+              onClick={() => setMode('EXPLORE')}
+              className={`flex items-center space-x-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer ${
+                mode === 'EXPLORE'
+                  ? 'bg-slate-800 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Compass className="h-3 w-3 text-sky-400" />
+              <span>探索模式</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('EXECUTE')}
+              className={`flex items-center space-x-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer ${
+                mode === 'EXECUTE'
+                  ? 'bg-emerald-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Lock className="h-3 w-3 text-emerald-300" />
+              <span>执行模式</span>
+            </button>
           </div>
 
           <button
-            onClick={() => onNavigateTab('runway')}
-            className="mt-4 w-full rounded-lg border border-slate-700 bg-slate-800/80 py-2 text-xs font-medium text-slate-200 hover:bg-slate-700 transition-colors"
+            onClick={onOpenAiContext}
+            className="flex items-center space-x-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all cursor-pointer"
+            title="一键提取当前决策上下文与画像"
           >
-            调整收支与门槛测算
+            <Sparkles className="h-3 w-3" />
+            <span>AI 上下文</span>
           </button>
         </div>
+      </div>
 
-        {/* User Profile Snapshot Grid */}
-        <div className="lg:col-span-3 rounded-xl border border-slate-800 bg-slate-900/50 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-slate-400">B. 我的当前底层状态 (System State Matrix · 客观硬性约束)</span>
-            <span className="text-[10px] text-slate-500 font-mono">硬性约束校验</span>
+      {/* Execute Mode Focus Shield Banner (if active) */}
+      {mode === 'EXECUTE' && primaryPathway && (
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/25 p-4 text-xs text-emerald-200/90 flex items-start space-x-3">
+          <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-semibold text-emerald-300 flex items-center space-x-2">
+              <span>🔒 执行专注保护已激活：当前锁定主攻【{primaryPathway.name.slice(0, 32)}...】</span>
+              <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300 font-semibold">专注保障</span>
+            </div>
+            <p className="text-slate-300 leading-relaxed">
+              在执行模式下系统自动过滤微弱外部噪音，不让无休止的信息搜集推迟行动。除非当前路线触发<strong>止损条件 (Kill Criteria)</strong>或<strong>核心移民法规发生重大实质变动</strong>，否则请心无旁骛攻坚当期唯一的 Next Gate。
+            </p>
           </div>
+        </div>
+      )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">学历背景</span>
-              <span className="text-xs font-semibold text-white block mt-0.5">{profile.education || '全日制大专'}</span>
-              <span className="text-[10px] text-amber-400">{profile.major || '数字媒体与设计'}</span>
-            </div>
-
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">英语水平</span>
-              <span className="text-xs font-semibold text-white block mt-0.5">~{profile.englishVocabEstimate || 2000} 词汇量</span>
-              <span className="text-[10px] text-rose-400">口语听力攻坚中</span>
-            </div>
-
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">当前实战技能</span>
-              <span className="text-xs font-semibold text-white block mt-0.5">3D + AI 工作流</span>
-              <span className="text-[10px] text-emerald-400">数字资产交付流水</span>
-            </div>
-
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">AI 协同能力</span>
-              <span className="text-xs font-semibold text-white block mt-0.5">高频 Agent 协同</span>
-              <span className="text-[10px] text-indigo-400">独立交付全栈 Web</span>
-            </div>
-
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">启动可用资本</span>
-              <span className="text-xs font-semibold text-white block mt-0.5 font-mono">¥{profile.currentSavingsRmb}</span>
-              <span className="text-[10px] text-amber-400">需依赖现金流</span>
-            </div>
-
-            <div className="rounded-lg border border-slate-800/80 bg-slate-950/40 p-2.5">
-              <span className="text-[10px] text-slate-500 block">出国准备度</span>
-              <span className="text-xs font-semibold text-white block mt-0.5">阶段 1 (蓄水中)</span>
-              <span className="text-[10px] text-emerald-400">可走双元制/跳板</span>
-            </div>
-          </div>
-
-          <div className="mt-3 text-xs text-slate-400 bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/60 flex items-center justify-between">
+      {/* 4. THREE INTUITIVE COMMERCIAL HUBS (Clear & Easy to Use) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Hub 1: Optimal Pathways Overview */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <ShieldAlert className="h-4 w-4 text-emerald-400 shrink-0" />
-              <span>
-                <strong>系统裁决：</strong>目前不具备直接自费留学（需20万+）或离岸技术移民条件；首要战略是<strong>“居家低消耗做远程现金流 + 定向攻关外语门槛”</strong>。
-              </span>
+              <TrendingUp className="h-4 w-4 text-emerald-400" />
+              <h2 className="text-sm sm:text-base font-bold text-white">
+                动态评估当前最优路线 Top 3 (基于真实官方数据与时效门禁)
+              </h2>
             </div>
-            <button
-              onClick={() => onNavigateTab('lowregret')}
-              className="text-emerald-400 hover:underline shrink-0 ml-3 text-[11px]"
+            <button 
+              onClick={() => onNavigateTab('pathways')}
+              className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 cursor-pointer font-medium"
             >
-              查看低后悔技能表
+              <span>查看全部路线拆解</span>
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* C. Current Optimal Pathways (Profile-Conditional & Explainable) */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="h-4 w-4 text-emerald-400" />
-            <h2 className="text-base font-semibold text-white">
-              C. 动态评估当前最优路线 {mode === 'EXECUTE' ? '（当前执行锚定）' : 'Top 3 (基于真实官方数据与时效门禁)'}
-            </h2>
-          </div>
-          <button 
-            onClick={() => onNavigateTab('pathways')}
-            className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
-          >
-            <span>查看完整 5 条路线拆解</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
+          <div className="space-y-3">
+            {(mode === 'EXECUTE' ? topPathways.slice(0, 1) : topPathways.slice(0, 3)).map((pathway, idx) => {
+              const isExplanationOpen = expandedExplanationId === pathway.id;
+              const explanation = pathway.scoreExplanation;
 
-        <div className="space-y-3">
-          {(mode === 'EXECUTE' ? topPathways.slice(0, 1) : topPathways.slice(0, 3)).map((pathway, idx) => {
-            const isExplanationOpen = expandedExplanationId === pathway.id;
-            const explanation = pathway.scoreExplanation;
+              return (
+                <div
+                  key={pathway.id}
+                  data-pathway-card="true"
+                  className="group rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-5 hover:border-emerald-500/50 hover:bg-slate-900/90 transition-all shadow-sm"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-400 border border-emerald-500/30">
+                          {idx + 1}
+                        </span>
+                        <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                          {pathway.category}
+                        </span>
+                        <span className="text-slate-500">·</span>
+                        <span className="text-xs text-slate-300">目标国: {pathway.targetCountry}</span>
+                        {renderFreshnessBadge(pathway.freshnessStatus, pathway.isProvisional)}
+                      </div>
 
-            return (
-              <div
-                key={pathway.id}
-                data-pathway-card="true"
-                className="group rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 hover:border-emerald-500/40 hover:bg-slate-900/80 transition-all"
-              >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-400 border border-emerald-500/30">
-                        {idx + 1}
-                      </span>
-                      <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                        {pathway.category}
-                      </span>
-                      <span className="text-slate-500">·</span>
-                      <span className="text-xs text-slate-300">目标国: {pathway.targetCountry}</span>
-                      {renderFreshnessBadge(pathway.freshnessStatus, pathway.isProvisional)}
+                      <h3 
+                        onClick={() => onSelectPathway(pathway)}
+                        className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors cursor-pointer"
+                      >
+                        {pathway.name}
+                      </h3>
+
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        {pathway.whyRecommended}
+                      </p>
                     </div>
 
-                    <h3 
-                      onClick={() => onSelectPathway(pathway)}
-                      className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors cursor-pointer"
+                    {/* Metrics & Feasibility Score */}
+                    <div className="flex items-center space-x-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                      <div className="text-right">
+                        <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end">
+                          <Coins className="h-3.5 w-3.5 text-amber-400" />
+                          <span>起步: ¥{pathway.minCapitalRmb.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end mt-0.5">
+                          <Clock className="h-3.5 w-3.5 text-indigo-400" />
+                          <span>周期: {pathway.totalMonthsEst}月</span>
+                        </div>
+                      </div>
+
+                      <div className="text-center rounded-xl bg-emerald-500/10 border border-emerald-500/25 px-3.5 py-2">
+                        <span className="block text-[10px] text-slate-400 font-medium">可行性</span>
+                        <span className="text-base font-extrabold text-emerald-400 font-mono">{pathway.feasibilityScore}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Concrete Next Gate & Kill Criteria */}
+                  <div className="mt-3.5 pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                    <div className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-2.5 text-sky-200">
+                      <div className="flex items-center space-x-1.5 font-semibold text-sky-300 mb-0.5">
+                        <Target className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                        <span>下一道具体门槛 (Next Gate)：</span>
+                      </div>
+                      <div className="text-white font-medium">{pathway.nextGate?.title || pathway.nextImmediateStep}</div>
+                    </div>
+
+                    <div className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-2.5 text-rose-200">
+                      <div className="flex items-center space-x-1.5 font-semibold text-rose-300 mb-0.5">
+                        <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
+                        <span>止损条件 (Kill Criteria)：</span>
+                      </div>
+                      <p className="text-[11px] text-rose-300/90 leading-relaxed">
+                        {pathway.killCriteria}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action & Explanation */}
+                  <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedExplanationId(isExplanationOpen ? null : pathway.id)}
+                      className="flex items-center space-x-1 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                     >
-                      {pathway.name}
-                    </h3>
+                      <Info className="h-3.5 w-3.5 text-slate-400" />
+                      <span>{isExplanationOpen ? '收起评分归因' : '查看评分归因'}</span>
+                      {isExplanationOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                    </button>
 
-                    {/* Profile Conditional Statement */}
-                    <p className="text-xs text-slate-300 bg-slate-950/50 rounded px-2.5 py-1.5 border border-slate-800/80">
-                      <span className="text-emerald-400 font-medium">📌 画像条件化判定：</span>
-                      {pathway.profileConditionalStatement || `以当前画像（${profile.education || '大专'} / ${profile.englishVocabEstimate || 2000}词汇 / ¥${profile.currentSavingsRmb}储蓄）与最新已核验证据，综合排序第 ${idx + 1} 位`}
-                    </p>
-
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                      {pathway.whyRecommended}
-                    </p>
+                    <button
+                      onClick={() => onSelectPathway(pathway)}
+                      className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-semibold cursor-pointer"
+                    >
+                      <span>探索详细节点</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </button>
                   </div>
 
-                  <div className="flex items-center space-x-4 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
-                    <div className="text-right">
-                      <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end">
-                        <Coins className="h-3.5 w-3.5 text-amber-400" />
-                        <span>最低资金: ¥{pathway.minCapitalRmb.toLocaleString()}</span>
+                  {/* Expanded Score Explanation */}
+                  {isExplanationOpen && explanation && (
+                    <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950/90 p-3.5 text-xs space-y-2">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span className="font-semibold text-white">画像匹配分析：基准 {explanation.baseScore} 分 → 最终 {explanation.finalScore} 分</span>
+                        <span className="text-emerald-400 text-[11px]">{explanation.hardConstraintsPassed ? '✅ 约束达标' : '⚠️ 存在差距'}</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-xs text-slate-400 justify-end mt-0.5">
-                        <Clock className="h-3.5 w-3.5 text-indigo-400" />
-                        <span>预计周期: {pathway.totalMonthsEst} 个月</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                        <div>
+                          <span className="font-semibold text-emerald-400 block mb-1">🟢 加分优势：</span>
+                          {explanation.positiveDrivers.map((d, i) => (
+                            <div key={i} className="text-slate-300">✓ {d}</div>
+                          ))}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-amber-400 block mb-1">🔴 风险与限制：</span>
+                          {explanation.negativeDrivers.length > 0 ? (
+                            explanation.negativeDrivers.map((d, i) => (
+                              <div key={i} className="text-slate-300">✕ {d}</div>
+                            ))
+                          ) : (
+                            <div className="text-slate-500">无重大负向扣分</div>
+                          )}
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center space-x-2">
-                      <div className="text-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5">
-                        <span className="block text-[10px] text-slate-400">可行性评分</span>
-                        <span className="text-sm font-bold text-emerald-400 font-mono">{pathway.feasibilityScore}%</span>
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
-
-                {/* Concrete Next Gate & Kill Criteria */}
-                <div className="mt-3.5 pt-3 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
-                  {/* Next Gate */}
-                  <div className="rounded-lg border border-sky-500/30 bg-sky-950/20 p-2.5 text-sky-200">
-                    <div className="flex items-center space-x-1.5 font-semibold text-sky-300 mb-1">
-                      <Target className="h-3.5 w-3.5 text-sky-400 shrink-0" />
-                      <span>下一道具体门槛 (Next Gate)：</span>
-                      <span className="text-white">{pathway.nextGate?.title || pathway.nextImmediateStep}</span>
-                    </div>
-                    {pathway.nextGate && (
-                      <div className="space-y-0.5 text-[11px] text-sky-300/80">
-                        <div><strong className="text-sky-200">衡量指标：</strong>{pathway.nextGate.targetMetric}</div>
-                        <div><strong className="text-sky-200">每日动作：</strong>{pathway.nextGate.recommendedDailyAction}</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Kill Criteria */}
-                  <div className="rounded-lg border border-rose-500/30 bg-rose-950/20 p-2.5 text-rose-200">
-                    <div className="flex items-center space-x-1.5 font-semibold text-rose-300 mb-1">
-                      <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
-                      <span>止损条件 (Kill Criteria)：</span>
-                    </div>
-                    <p className="text-[11px] text-rose-300/90 leading-relaxed">
-                      {pathway.killCriteria}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Score Explanation Toggle */}
-                <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setExpandedExplanationId(isExplanationOpen ? null : pathway.id)}
-                    className="flex items-center space-x-1 text-slate-400 hover:text-slate-200 transition-colors"
-                  >
-                    <Info className="h-3.5 w-3.5 text-slate-400" />
-                    <span>{isExplanationOpen ? '收起评分归因拆解' : '查看评分归因拆解 (可解释性归因)'}</span>
-                    {isExplanationOpen ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                  </button>
-
-                  <button
-                    onClick={() => onSelectPathway(pathway)}
-                    className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 font-medium"
-                  >
-                    <span>查看路线阶段节点</span>
-                    <ArrowRight className="h-3 w-3" />
-                  </button>
-                </div>
-
-                {/* Expanded Score Explanation Box */}
-                {isExplanationOpen && explanation && (
-                  <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/80 p-3.5 text-xs space-y-2.5">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-white">评分归因构成：</span>
-                        <span className="font-mono text-slate-400">基准 {explanation.baseScore} 分 → 最终 {explanation.finalScore} 分</span>
-                      </div>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
-                        explanation.hardConstraintsPassed
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                          : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                      }`}>
-                        {explanation.hardConstraintsPassed ? '✅ 刚性约束达标' : '⚠️ 存在资金/年龄硬约束差距'}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {/* Positive Drivers */}
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-semibold text-emerald-400">🟢 正向加分因素：</span>
-                        {explanation.positiveDrivers.map((driver, dIdx) => (
-                          <div key={dIdx} className="text-slate-300 text-[11px] flex items-start space-x-1.5">
-                            <span className="text-emerald-400 shrink-0">✓</span>
-                            <span>{driver}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Negative Drivers */}
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-semibold text-amber-400">🔴 约束降权与风险：</span>
-                        {explanation.negativeDrivers.length > 0 ? (
-                          explanation.negativeDrivers.map((driver, dIdx) => (
-                            <div key={dIdx} className="text-slate-300 text-[11px] flex items-start space-x-1.5">
-                              <span className="text-amber-400 shrink-0">✕</span>
-                              <span>{driver}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="text-slate-500 text-[11px]">无重大负向扣分项</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* D. Major Policy & Market Changes */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <AlertTriangle className="h-4 w-4 text-amber-400" />
-            <h2 className="text-base font-semibold text-white">D. 重大政策情报与个人决策关联 (回答“与我有什么关系”)</h2>
+              );
+            })}
           </div>
-          <button 
-            onClick={() => onNavigateTab('intelligence')}
-            className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center space-x-1"
-          >
-            <span>查看完整情报流</span>
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {intelligence.slice(0, 2).map(intel => (
-            <div key={intel.id} className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 space-y-2">
+        {/* Hub 2 & Hub 3 Sidebar */}
+        <div className="space-y-5">
+          {/* Survival Cashflow (Runway) Widget */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 flex flex-col justify-between shadow-sm">
+            <div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <span className="rounded bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400 border border-amber-500/20">
-                    {intel.category}
-                  </span>
-                  <span className="text-xs text-slate-400">{intel.country}</span>
-                  <span className="rounded bg-emerald-500/10 px-1.5 py-0.2 text-[9px] text-emerald-400 font-mono">
-                    今日优先
-                  </span>
+                  <Flame className={`h-4 w-4 ${runway.isSelfSustaining ? 'text-emerald-400' : 'text-rose-400'}`} />
+                  <h3 className="text-sm font-bold text-white">生存现金流 (Runway)</h3>
                 </div>
-                <span className="text-[11px] font-mono text-slate-500">{intel.date}</span>
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/20">
+                  安全感测算
+                </span>
               </div>
 
-              <h4 className="text-sm font-semibold text-white">{intel.title}</h4>
-
-              <div className="text-xs space-y-1.5 bg-slate-950/60 p-2.5 rounded border border-slate-800">
-                <div className="text-slate-400">
-                  <span className="text-slate-500 font-medium">变动事实：</span>{intel.newFact}
+              <div className="mt-4 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
+                <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                  {runway.isSelfSustaining ? '自给自足稳态' : `${runway.survivalMonths} 个月`}
                 </div>
-                <div className="text-emerald-400/90 pt-1.5 border-t border-slate-800/80">
-                  <span className="font-semibold text-emerald-400">对我的直接决策影响：</span>
-                  {intel.whatToChangeForMe}
+                <p className={`text-xs mt-1 font-medium ${runway.isSelfSustaining ? 'text-emerald-400' : 'text-amber-400'}`}>
+                  {runway.healthLabel}
+                </p>
+              </div>
+
+              <div className="mt-4 space-y-2 text-xs text-slate-400 border-t border-slate-800/80 pt-3">
+                <div className="flex justify-between">
+                  <span>月刚性房租:</span>
+                  <span className="text-slate-200 font-mono">¥{profile.monthlyRentRmb || 1000}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>月均基础开销:</span>
+                  <span className="text-slate-200 font-mono">¥{profile.monthlyFoodAndLifeRmb || 2000}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>当前自给月收入:</span>
+                  <span className="text-emerald-400 font-mono font-semibold">¥{profile.currentMonthlyIncomeRmb || 0}</span>
                 </div>
               </div>
             </div>
-          ))}
+
+            <button
+              onClick={() => onNavigateTab('runway')}
+              className="mt-5 w-full rounded-xl border border-slate-700 bg-slate-800/90 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white transition-all cursor-pointer shadow-sm"
+            >
+              调整收支与门槛测算 →
+            </button>
+          </div>
+
+          {/* Stress-Free Collapsible Action Items */}
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm">
+            <div 
+              onClick={() => setIsActionsCollapsed(!isActionsCollapsed)}
+              className="flex items-center justify-between cursor-pointer group"
+            >
+              <div className="flex items-center space-x-2">
+                <Zap className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+                  当前最重要的 3 件事
+                </h3>
+              </div>
+              <div className="flex items-center space-x-1.5 text-xs text-slate-400">
+                <span>{isActionsCollapsed ? '展开' : '收起'}</span>
+                {isActionsCollapsed ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronUp className="h-3.5 w-3.5" />}
+              </div>
+            </div>
+
+            {!isActionsCollapsed && (
+              <div className="mt-4 space-y-3">
+                {topActions.map(action => (
+                  <div 
+                    key={action.id}
+                    onClick={() => onNavigateTab(action.actionTab)}
+                    className="group rounded-xl border border-slate-800/90 bg-slate-950/70 p-3 hover:border-emerald-500/40 hover:bg-slate-950 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className={`rounded px-2 py-0.5 text-[10px] font-semibold border ${action.badgeColor}`}>
+                        {action.badge}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-500">优先级 #0{action.id}</span>
+                    </div>
+                    <h4 className="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
+                      {action.title}
+                    </h4>
+                    <p className="mt-1 text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                      {action.reason}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
