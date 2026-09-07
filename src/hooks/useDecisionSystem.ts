@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { UserProfile, UserPlanTask, Evidence, Occupation, Country, Pathway } from '../types';
 import { DEFAULT_USER_PROFILE, DEFAULT_INITIAL_TASKS } from '../data/defaultProfile';
 import { OCCUPATIONS } from '../data/occupations';
@@ -168,6 +168,96 @@ export function useDecisionSystem() {
       }
     }
   }, []);
+
+  // 8. Completely Silent, Frictionless Multi-Device Auto-Sync (PC · iPhone 16 Pro · 小米 14 Pro)
+  const isApplyingRemoteRef = useRef(false);
+  const isInitialPullCompleteRef = useRef(false);
+  const initialLocalHashRef = useRef<string>('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const performSilentPull = async () => {
+      try {
+        const { silentPullFromMaster } = await import('../engine/supabaseSync');
+        const remote = await silentPullFromMaster();
+        if (remote && remote.profile && isMounted) {
+          const localUpdated = localStorage.getItem('lifee_last_local_mod_at');
+          if (!localUpdated || new Date(remote.updatedAt) > new Date(localUpdated)) {
+            isApplyingRemoteRef.current = true;
+            setProfile(remote.profile);
+            if (remote.tasks) setTasks(remote.tasks);
+            if (remote.watchlist) setWatchlist(remote.watchlist);
+            if (remote.customEvidence) setCustomEvidence(remote.customEvidence);
+            localStorage.setItem('lifee_last_local_mod_at', remote.updatedAt);
+          }
+        }
+      } catch {
+        // silent background failure handling
+      } finally {
+        isInitialPullCompleteRef.current = true;
+      }
+    };
+
+    // Pull immediately on app mount
+    performSilentPull();
+
+    // Pull whenever user switches back to browser tab (iOS Safari or Xiaomi browser)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        performSilentPull();
+      }
+    };
+
+    window.addEventListener('focus', performSilentPull);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // Periodic heartbeat poll every 20 seconds
+    const interval = setInterval(performSilentPull, 20000);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('focus', performSilentPull);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Silent push whenever profile, tasks, watchlist, or customEvidence change locally
+  useEffect(() => {
+    // 1. If this state update was triggered by pulling from remote, do NOT echo it back
+    if (isApplyingRemoteRef.current) {
+      isApplyingRemoteRef.current = false;
+      return;
+    }
+
+    // 2. Prevent cold mount on a new device from overwriting existing cloud state before initial pull
+    if (!isInitialPullCompleteRef.current) {
+      return;
+    }
+
+    const currentHash = JSON.stringify({ profile, tasks, watchlist, customEvidence });
+    if (initialLocalHashRef.current === currentHash) {
+      return;
+    }
+    initialLocalHashRef.current = currentHash;
+
+    const nowIso = new Date().toISOString();
+    localStorage.setItem('lifee_last_local_mod_at', nowIso);
+    import('../engine/supabaseSync').then(({ silentPushToMaster }) => {
+      import('../engine/syncEngine').then(({ getOrCreateDeviceId }) => {
+        silentPushToMaster({
+          version: 1,
+          updatedAt: nowIso,
+          deviceId: getOrCreateDeviceId(),
+          profile,
+          tasks,
+          watchlist,
+          customEvidence
+        });
+      });
+    }).catch(() => {});
+  }, [profile, tasks, watchlist, customEvidence]);
 
   const resetToDefaultProfile = () => {
     setProfile(DEFAULT_USER_PROFILE);

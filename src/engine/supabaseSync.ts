@@ -1,4 +1,5 @@
 import { LifeeSyncPayload } from './syncEngine';
+import { CLOUD_SYNC_CONFIG } from '../config/cloudSyncConfig';
 
 export interface SupabaseConfig {
   url: string;
@@ -25,6 +26,15 @@ CREATE POLICY "Allow public read and write by pairing code"
 `;
 
 export function loadSupabaseConfig(): SupabaseConfig {
+  // If pre-configured in code, prefer code config for zero-touch experience
+  if (CLOUD_SYNC_CONFIG.supabaseUrl && CLOUD_SYNC_CONFIG.supabaseAnonKey) {
+    return {
+      url: CLOUD_SYNC_CONFIG.supabaseUrl,
+      anonKey: CLOUD_SYNC_CONFIG.supabaseAnonKey,
+      enabled: true
+    };
+  }
+
   try {
     const raw = localStorage.getItem(SUPABASE_CONFIG_KEY);
     if (raw) {
@@ -68,7 +78,6 @@ export async function testSupabaseConnection(url: string, anonKey: string): Prom
   }
 
   try {
-    // Query table existence via Supabase PostgREST API
     const endpoint = `${cleanUrl}/rest/v1/lifee_user_sync?select=id&limit=1`;
     const res = await fetch(endpoint, {
       method: 'GET',
@@ -80,7 +89,7 @@ export async function testSupabaseConnection(url: string, anonKey: string): Prom
     });
 
     if (res.status === 200) {
-      return { success: true, message: '连接成功！已检测到 lifee_user_sync 数据表，可正常实时云同步。' };
+      return { success: true, message: '连接成功！已检测到 lifee_user_sync 数据表，三端无感实时互通已就绪。' };
     } else if (res.status === 404 || res.status === 400) {
       const errBody = await res.text();
       if (errBody.includes('relation "public.lifee_user_sync" does not exist')) {
@@ -101,7 +110,7 @@ export async function testSupabaseConnection(url: string, anonKey: string): Prom
 }
 
 /**
- * Upserts user state to Supabase table using the pairing code as the primary key.
+ * Upserts user state to Supabase table using slot ID as the primary key.
  */
 export async function pushToSupabase(code: string, payload: LifeeSyncPayload): Promise<boolean> {
   const config = loadSupabaseConfig();
@@ -137,7 +146,7 @@ export async function pushToSupabase(code: string, payload: LifeeSyncPayload): P
 }
 
 /**
- * Pulls user state from Supabase table using the pairing code.
+ * Pulls user state from Supabase table using slot ID.
  */
 export async function pullFromSupabase(code: string): Promise<LifeeSyncPayload | null> {
   const config = loadSupabaseConfig();
@@ -167,6 +176,39 @@ export async function pullFromSupabase(code: string): Promise<LifeeSyncPayload |
     return null;
   } catch (err) {
     console.warn('[Supabase Sync] Pull error:', err);
+    return null;
+  }
+}
+
+let pushDebounceTimer: any = null;
+
+/**
+ * Silently pushes state to the master cloud slot in the background with debounce.
+ */
+export function silentPushToMaster(payload: LifeeSyncPayload): void {
+  const config = loadSupabaseConfig();
+  if (!config.enabled || !config.url || !config.anonKey) return;
+
+  if (pushDebounceTimer) clearTimeout(pushDebounceTimer);
+  pushDebounceTimer = setTimeout(async () => {
+    try {
+      await pushToSupabase(CLOUD_SYNC_CONFIG.masterSlotId, payload);
+    } catch {
+      // silent background failure handling
+    }
+  }, 1200);
+}
+
+/**
+ * Silently pulls from the master cloud slot.
+ */
+export async function silentPullFromMaster(): Promise<LifeeSyncPayload | null> {
+  const config = loadSupabaseConfig();
+  if (!config.enabled || !config.url || !config.anonKey) return null;
+
+  try {
+    return await pullFromSupabase(CLOUD_SYNC_CONFIG.masterSlotId);
+  } catch {
     return null;
   }
 }
