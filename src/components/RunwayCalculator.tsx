@@ -1,7 +1,8 @@
 import React from 'react';
-import { Flame, ShieldCheck, AlertTriangle, ShieldAlert, DollarSign, ArrowRight } from 'lucide-react';
+import { Flame, ShieldCheck, AlertTriangle, ShieldAlert, DollarSign, ArrowRight, Building2, Globe, RefreshCw, ExternalLink } from 'lucide-react';
 import { UserProfile, Pathway } from '../types';
 import { calculateRunway, evaluatePathwayRunwayGating } from '../engine/runway';
+import { CITY_COST_PROFILES } from '../data/cityCostProfiles';
 
 interface RunwayCalculatorProps {
   profile: UserProfile;
@@ -19,7 +20,27 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
   onNavigateTab
 }) => {
   const [isMobileInputOpen, setIsMobileInputOpen] = React.useState(false);
+  const [selectedCityId, setSelectedCityId] = React.useState<string>('');
   const runway = calculateRunway(profile);
+
+  const selectedCity = CITY_COST_PROFILES.find(c => c.id === selectedCityId);
+
+  const applyCityCost = (city: typeof CITY_COST_PROFILES[0]) => {
+    setProfile(prev => ({
+      ...prev,
+      monthlyRentRmb: city.singleApartmentRentOutsideRmb,
+      monthlyFoodAndLifeRmb: city.monthlyLivingExpensesExcludingRentRmb
+    }));
+  };
+
+  const resetDomesticBaseline = () => {
+    setProfile(prev => ({
+      ...prev,
+      monthlyRentRmb: 1000,
+      monthlyFoodAndLifeRmb: 1500
+    }));
+    setSelectedCityId('');
+  };
 
   const handleInputChange = (field: keyof UserProfile, val: number) => {
     setProfile(prev => ({
@@ -62,6 +83,60 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
           </div>
 
           <div className={`space-y-4 ${isMobileInputOpen ? 'block' : 'hidden lg:block'}`}>
+
+          {/* City Cost Preset Selector */}
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-950/20 p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5" />
+                目标城市生活成本参考 (Numbeo 权威脱水)
+              </span>
+              {selectedCityId && (
+                <button
+                  type="button"
+                  onClick={resetDomesticBaseline}
+                  className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
+                >
+                  恢复国内基准
+                </button>
+              )}
+            </div>
+            <select
+              value={selectedCityId}
+              onChange={e => {
+                const id = e.target.value;
+                setSelectedCityId(id);
+                const c = CITY_COST_PROFILES.find(item => item.id === id);
+                if (c) applyCityCost(c);
+              }}
+              className="w-full rounded-md border border-slate-700 bg-slate-900 py-1.5 px-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+            >
+              <option value="">-- 选择目标城市一键导入真实开销 --</option>
+              {CITY_COST_PROFILES.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.flag} {c.cityName} · 预估月生存 ¥{c.totalMonthlySurvivalRmb.toLocaleString()}
+                </option>
+              ))}
+            </select>
+            {selectedCity && (
+              <div className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">外围单间租金:</span>
+                  <span className="font-mono text-emerald-300">¥{selectedCity.singleApartmentRentOutsideRmb.toLocaleString()} ({selectedCity.singleApartmentRentOutsideLocal} {selectedCity.currency})</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">日常基本生活费:</span>
+                  <span className="font-mono text-emerald-300">¥{selectedCity.monthlyLivingExpensesExcludingRentRmb.toLocaleString()} ({selectedCity.monthlyLivingExpensesExcludingRentLocal} {selectedCity.currency})</span>
+                </div>
+                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-0.5">
+                  <span>信源: {selectedCity.source} ({selectedCity.sourceTier})</span>
+                  <a href={selectedCity.sourceUrl} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline flex items-center gap-0.5">
+                    核验链接 <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div>
             <label className="block text-xs text-slate-400 mb-1">当前手头可用存款储备</label>

@@ -317,6 +317,18 @@ const TARGET_SOURCES = [
     fallbackLevel: 2,
     lastVerifiedAt: '2026-08-01',
     verifiedPolicyFact: '标准职业分类代码字典，用于精准对齐海外技能等级 Skill Level 1-4'
+  },
+  {
+    id: 'src-numbeo-cost-benchmark',
+    name: 'Numbeo 全球城市生活成本与单间租金权威脱水库',
+    url: 'https://www.numbeo.com/cost-of-living/',
+    country: '全球',
+    sourceTier: 'Tier C',
+    category: 'Global Index',
+    expectedType: 'CACHED',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-02-15',
+    verifiedPolicyFact: '覆盖柏林、奥克兰、悉尼、东京、吉隆坡等14大出海城市单间房租与生存月支出脱水指数'
   }
 ];
 

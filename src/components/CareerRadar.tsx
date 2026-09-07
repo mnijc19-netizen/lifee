@@ -46,8 +46,9 @@ export const CareerRadar: React.FC<CareerRadarProps> = ({
     { id: 'Digital & 3D', label: '3D与数字制作' },
     { id: 'AI & Software', label: 'AI与软件' },
     { id: 'Trades & Engineering', label: '技工与工程' },
+    { id: 'Green Energy', label: '绿色能源与光伏' },
     { id: 'Logistics & Transport', label: '物流与运输' },
-    { id: 'Healthcare & Services', label: '介护与服务' },
+    { id: 'Healthcare & Services', label: '医疗与护理服务' },
   ];
 
   const filteredOccupations = occupations.filter(occ => {

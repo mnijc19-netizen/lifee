@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-09-07T06:40:30.379Z",
+  "collectedAt": "2026-09-07T07:55:44.641Z",
   "rates": {
     "USD_CNY": 6.7194,
     "EUR_CNY": 7.8035,
@@ -9,15 +9,15 @@
     "JPY_CNY": 0.04302,
     "lastUpdated": "Mon, 07 Sep 2026 00:02:31 +0000"
   },
-  "sourcesChecked": 24,
+  "sourcesChecked": 25,
   "manifestSummary": {
-    "LIVE_DATA": 3,
-    "REACHABLE": 5,
-    "CACHED": 4,
-    "MANUAL": 3,
-    "BLOCKED": 1,
+    "LIVE_DATA": 2,
+    "REACHABLE": 8,
+    "CACHED": 3,
+    "MANUAL": 2,
+    "BLOCKED": 0,
     "STATIC": 1,
-    "FAILED": 3,
+    "FAILED": 4,
     "UNKNOWN": 0
   }
 }

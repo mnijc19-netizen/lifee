@@ -115,6 +115,29 @@ export interface Country {
   summaryVerdict: string;
 }
 
+export interface CityCostProfile {
+  id: string;
+  cityName: string;
+  cityNameEn: string;
+  countryId: string;
+  countryName: string;
+  flag: string;
+  source: string;
+  sourceTier: SourceTier;
+  currency: string;
+  fxRateToCny: number;
+  singleApartmentRentCenterLocal: number;
+  singleApartmentRentOutsideLocal: number;
+  monthlyLivingExpensesExcludingRentLocal: number;
+  singleApartmentRentOutsideRmb: number;
+  monthlyLivingExpensesExcludingRentRmb: number;
+  totalMonthlySurvivalRmb: number;
+  sampleCount: number;
+  lastUpdated: string;
+  sourceUrl: string;
+  notes?: string;
+}
+
 export interface PathwayNode {
   id: string;
   title: string;

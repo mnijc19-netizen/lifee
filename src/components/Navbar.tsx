@@ -354,6 +354,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {allTabs.map(item => (
             <button 
               key={`bridge-${item.id}`}
+              data-automation-tab={item.id}
               onClick={() => setActiveTab(item.id)}
             >
               {item.label}

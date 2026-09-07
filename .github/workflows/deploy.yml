@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run parser fact verification tests
+        run: npm run test:parsers
+
+      - name: Run data freshness SLA tests
+        run: npm run test:freshness
+
       - name: Run collector snapshot update
         run: node scripts/collector.mjs
 
