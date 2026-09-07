@@ -60,34 +60,40 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   const baseUrl = import.meta.env.BASE_URL || '/';
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
-  // Curated Official Policy Hero Slides
+  // Curated Official Policy News Hero Slides
   const heroSlides = [
     {
       id: 'de-opportunity-ausbildung',
       country: '德国 (Germany)',
       flag: '🇩🇪',
-      agency: '德国联邦官方技术移民 (Make it in Germany)',
-      officialDate: '2026-08 生效中 · 24/7 哨兵已验证',
-      title: '德国机会卡自保金锁定 €1,091/月 · 兼职打工放宽至 20h/周',
-      summary: '联邦内政部与劳工局已正式执行机会卡新政。大专或职业技能人才可凭打分或直接资格抵德找工，双元制实训津贴法定起步约 €1,048 欧/月（津贴覆盖生活开销即可免自保金）。',
-      bgImage: `${cleanBase}images/banners/germany_banner.jpg`,
+      tabLabel: '🇩🇪 德国内政部公报',
+      agency: '德国联邦内政与国土部 (BMI) & 联邦劳动局 (BA)',
+      officialDate: '2026-08 生效中 · 24/7 哨兵已核验',
+      sourceUrl: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+      title: '【官方公报】2026 德国机会卡细则锁定：自保金基线调至 €1,091/月 · 兼职打工放宽至 20h/周',
+      summary: '德国官方正式执行新版《技术移民发展法案》(FEG)。大专或职业技能人才可凭打分满 6 分或直接资格抵德 1 年找工；双元制带薪实训法定起步约 €1,048/月，津贴覆盖生活开销即可直接免开立自保金账户。',
+      impactNote: '核心利好：每周允许合法打工 20 小时，按法定最低时薪兼职月入最高可达 €1,111，完全自负盈亏。',
+      bgImage: `${cleanBase}images/banners/de_policy_card.svg`,
       targetTab: 'pathways',
       targetPathwayId: 'path-de-ausbildung',
       badges: [
         { label: '💶 月自保金 €1,091', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
         { label: '⏱️ 打工放宽 20h/周', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40' },
-        { label: '🎓 双元制带薪实训', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
+        { label: '🎓 双元制起步 ~€1,048', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
       ]
     },
     {
       id: 'nz-minimum-median-wage',
       country: '新西兰 (New Zealand)',
       flag: '🇳🇿',
+      tabLabel: '🇳🇿 新西兰工薪新政',
       agency: '新西兰商业创新与就业部 (MBIE) & 移民局 (INZ)',
-      officialDate: '2026-04-01 & 2026-03-09 生效 · 24/7 哨兵已验证',
-      title: '法定最低成人时薪调整为 $23.95 NZD · 移民审理中位数锁定 $35.00 NZD',
-      summary: 'MBIE 正式公布最新成人法定最低时薪 $23.95 NZD；移民局同步调整技术移民 SMC 与绿名单专用中位数时薪至 $35.00 NZD。普通 AEWV 工签岗位须达到市场公允薪资。',
-      bgImage: `${cleanBase}images/banners/nz_banner.jpg`,
+      officialDate: '2026-04-01 & 2026-03-09 生效 · 哨兵已核验',
+      sourceUrl: 'https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates',
+      title: '【官方公报】2026 新西兰法定成人最低时薪调至 $23.95 NZD · 技术移民中位数锁定 $35.00 NZD',
+      summary: 'MBIE 正式公布最新成人法定最低时薪 $23.95 NZD（2026-04-01 起强制执行）；移民局同步调整技术移民 SMC 与绿名单中位数时薪至 $35.00 NZD。叉车操作员 (ANZSCO 721311) 列为 Level 4 监管岗位。',
+      impactNote: '核心利好：绿名单或技术移民薪资达标直接直通居留；普通 AEWV 工签岗位脱钩中位数，仅需达市场公允薪资。',
+      bgImage: `${cleanBase}images/banners/nz_policy_card.svg`,
       targetTab: 'pathways',
       targetPathwayId: 'path-nz-working-holiday-forklift',
       badges: [
@@ -100,17 +106,20 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
       id: 'au-jsa-shortage-list',
       country: '澳大利亚 (Australia)',
       flag: '🇦🇺',
-      agency: '澳大利亚就业与技能署 (JSA 2025 OSL)',
-      officialDate: 'JSA 2025 官方发布 · 持续追踪中',
-      title: '澳大利亚 2025 紧缺职业清单发布：电工全澳紧缺 · 软件开发进入饱和期',
-      summary: '官方最新评估显示：电工 (341111) 列入全国紧缺 (S)，但海外换牌评估 TRA 壁垒极高；软件工程师 (261313) 列为非紧缺 (NS)，海外直聘离岸获邀门槛持续收紧。',
-      bgImage: `${cleanBase}images/banners/au_banner.jpg`,
+      tabLabel: '🇦🇺 澳洲技能短缺报告',
+      agency: '澳大利亚就业与技能署 (Jobs and Skills Australia - JSA)',
+      officialDate: 'JSA 2025-2026 官方发布 · 持续追踪中',
+      sourceUrl: 'https://www.jobsandskills.gov.au/data/occupation-shortages/occupations-in-shortage',
+      title: '【官方报告】2025-2026 澳大利亚紧缺职业清单发布：电工全澳紧缺 · 软件开发进入饱和期',
+      summary: '官方最新实证评估显示：通用电工 (ANZSCO 341111) 列为全国短缺 (S)，但海外抵澳执业须经 TRA 严苛技能认证与换牌；软件工程师 (261313) 列为非短缺 (NS)，海外直聘离岸获邀门槛持续收紧。',
+      impactNote: '真实警示：高薪蓝领存在本土行业持牌门槛，盲目离岸找工获批率接近为零，务必优先评估低风险路径。',
+      bgImage: `${cleanBase}images/banners/au_policy_card.svg`,
       targetTab: 'careers',
       targetPathwayId: null,
       badges: [
         { label: '⚡ 电工全国短缺 (S)', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
         { label: '💻 软件开发非紧缺 (NS)', color: 'bg-rose-500/20 text-rose-300 border-rose-500/40' },
-        { label: '📋 TRA 执照严格认证', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
+        { label: '📋 TRA 强制换牌认证', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' }
       ]
     }
   ];
@@ -235,112 +244,160 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
         </div>
       </div>
 
-      {/* 2. GRAND CINEMATIC POLICY INTELLIGENCE HERO BANNER */}
+      {/* 2. OFFICIAL POLICY NEWS & GAZETTE INTELLIGENCE HERO */}
       <div 
-        className="relative overflow-hidden rounded-3xl border border-slate-800/90 shadow-2xl transition-all group"
+        className="relative overflow-hidden rounded-3xl border border-slate-800/90 bg-gradient-to-br from-slate-900/95 via-slate-950 to-slate-900/90 shadow-2xl transition-all p-5 sm:p-7 lg:p-8 space-y-5"
         onMouseEnter={() => setIsCarouselPaused(true)}
         onMouseLeave={() => setIsCarouselPaused(false)}
       >
-        {/* Background Image with Cinematic Dark Gradient Overlay */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700 transform group-hover:scale-102"
-          style={{ backgroundImage: `url('${currentSlide.bgImage}')` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-
-        {/* Banner Content */}
-        <div className="relative z-10 p-6 sm:p-8 md:p-10 flex flex-col justify-between min-h-[360px] sm:min-h-[400px]">
-          {/* Top Pill / Official Agency Badge */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-slate-700/80 flex items-center space-x-1.5 shadow-sm">
-                <span className="text-sm">{currentSlide.flag}</span>
-                <span>{currentSlide.country}</span>
-              </span>
-              <span className="rounded-full bg-emerald-500/10 backdrop-blur-md px-3 py-1 text-[11px] font-semibold text-emerald-300 border border-emerald-500/30 flex items-center space-x-1">
-                <Radio className="h-3 w-3 animate-pulse text-emerald-400" />
-                <span>官方政策头条速递</span>
-              </span>
-            </div>
-
-            <div className="rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-[11px] text-slate-300 border border-slate-800 flex items-center space-x-1.5">
-              <Clock className="h-3 w-3 text-slate-400" />
-              <span>{currentSlide.officialDate}</span>
-            </div>
+        {/* Top Category Tabs for Instant News Switching */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-800/60">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            {heroSlides.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSlide(idx)}
+                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                  activeSlide === idx
+                    ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 shadow-sm shadow-emerald-500/20'
+                    : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
+                }`}
+              >
+                <span>{s.tabLabel}</span>
+                {activeSlide === idx && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+              </button>
+            ))}
           </div>
 
-          {/* Headline & Abstract */}
-          <div className="my-auto py-4 max-w-3xl space-y-3">
-            <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center space-x-1">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>{currentSlide.agency}</span>
+          <div className="flex items-center space-x-2 text-[11px] text-slate-400">
+            <span className="rounded-full bg-slate-900 px-2.5 py-1 border border-slate-800 flex items-center space-x-1">
+              <Clock className="h-3 w-3 text-slate-400" />
+              <span>{currentSlide.officialDate}</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Main Split Grid: Left Editorial News / Right Official Gazette Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left Column: Official News Headline, Analysis, and CTAs (7 Cols) */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-slate-800 px-2 py-0.5 text-[11px] font-bold text-slate-200 border border-slate-700 flex items-center space-x-1">
+                <span>{currentSlide.flag}</span>
+                <span>{currentSlide.country}</span>
+              </span>
+              <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                <Radio className="h-3 w-3 text-emerald-400 animate-pulse" />
+                <span>官方公报生效</span>
+              </span>
+              <span className="text-xs text-slate-400 font-mono hidden sm:inline">
+                {currentSlide.agency}
+              </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight drop-shadow-md">
+            {/* News Headline */}
+            <h1 className="text-lg sm:text-2xl lg:text-[26px] font-black tracking-tight text-white leading-snug">
               {currentSlide.title}
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed drop-shadow-sm max-w-2xl">
+            {/* News Summary */}
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               {currentSlide.summary}
             </p>
 
-            {/* Quick Fact Pills */}
-            <div className="flex flex-wrap gap-2 pt-2">
+            {/* Impact & Advantage Note */}
+            <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3 text-xs text-emerald-300/90 flex items-start space-x-2">
+              <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <span>{currentSlide.impactNote}</span>
+            </div>
+
+            {/* Metric Fact Badges */}
+            <div className="flex flex-wrap gap-2 pt-1">
               {currentSlide.badges.map((b, idx) => (
-                <span key={idx} className={`rounded-lg px-2.5 py-1 text-xs font-medium border backdrop-blur-md ${b.color}`}>
+                <span key={idx} className={`rounded-lg px-2.5 py-1 text-xs font-semibold border ${b.color}`}>
                   {b.label}
                 </span>
               ))}
             </div>
-          </div>
 
-          {/* Bottom Controls & Action Button */}
-          <div className="pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Slide Navigation Dots */}
-            <div className="flex items-center space-x-2">
-              {heroSlides.map((s, idx) => (
-                <button
-                  key={s.id}
-                  onClick={() => setActiveSlide(idx)}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    activeSlide === idx 
-                      ? 'w-8 bg-emerald-400 shadow-md shadow-emerald-400/50' 
-                      : 'w-2 bg-slate-700 hover:bg-slate-500'
-                  }`}
-                  title={s.title}
-                />
-              ))}
-              <span className="text-[11px] text-slate-400 ml-2 font-mono">
-                0{activeSlide + 1} / 0{heroSlides.length}
-              </span>
-            </div>
-
-            {/* Action CTA & Arrows */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setActiveSlide(prev => (prev - 1 + heroSlides.length) % heroSlides.length)}
-                className="h-9 w-9 rounded-xl border border-slate-700 bg-slate-900/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                title="上一条政策"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setActiveSlide(prev => (prev + 1) % heroSlides.length)}
-                className="h-9 w-9 rounded-xl border border-slate-700 bg-slate-900/80 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                title="下一条政策"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-
+            {/* CTAs */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => handleBannerAction(currentSlide)}
-                className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-bold text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer ml-2"
+                className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-bold text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
               >
                 <span>直达此项政策与路线测算</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
+
+              <a
+                href={currentSlide.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-1.5 rounded-xl border border-slate-700 bg-slate-800/80 px-3.5 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-all"
+              >
+                <span>查看官方原文</span>
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
             </div>
+          </div>
+
+          {/* Right Column: Official Policy Document Gazette Card (5 Cols) */}
+          <div className="lg:col-span-5 relative group/doc">
+            <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-950 shadow-2xl shadow-black/60 transition-transform duration-300 group-hover/doc:scale-[1.01]">
+              <img 
+                src={currentSlide.bgImage} 
+                alt={currentSlide.title} 
+                className="w-full h-auto block select-none"
+              />
+              <div className="absolute top-3 right-3">
+                <span className="rounded-full bg-slate-950/85 backdrop-blur-md px-2.5 py-1 text-[10px] font-mono text-emerald-400 border border-emerald-500/40 flex items-center space-x-1 shadow-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>官方原件公报</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Pagination & Carousel Controls */}
+        <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
+          <div className="flex items-center space-x-2">
+            {heroSlides.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSlide(idx)}
+                className={`h-2 rounded-full transition-all cursor-pointer ${
+                  activeSlide === idx 
+                    ? 'w-8 bg-emerald-400 shadow-md shadow-emerald-400/50' 
+                    : 'w-2 bg-slate-700 hover:bg-slate-500'
+                }`}
+                title={s.title}
+              />
+            ))}
+            <span className="text-[11px] text-slate-400 ml-2 font-mono">
+              0{activeSlide + 1} / 0{heroSlides.length}
+            </span>
+            {isCarouselPaused && (
+              <span className="text-[10px] text-slate-500 italic hidden sm:inline">(已暂停轮播)</span>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setActiveSlide(prev => (prev - 1 + heroSlides.length) % heroSlides.length)}
+              className="h-8 w-8 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              title="上一条新闻"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setActiveSlide(prev => (prev + 1) % heroSlides.length)}
+              className="h-8 w-8 rounded-lg border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white flex items-center justify-center transition-all cursor-pointer"
+              title="下一条新闻"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>

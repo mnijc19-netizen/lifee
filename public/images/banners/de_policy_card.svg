@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="de-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080e1e" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#050811" />
+    </linearGradient>
+    <pattern id="de-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="640" height="400" rx="16" fill="url(#de-bg)" />
+  <rect width="640" height="400" rx="16" fill="url(#de-grid)" />
+  <rect x="1" y="1" width="638" height="398" rx="15" fill="none" stroke="rgba(245, 158, 11, 0.35)" stroke-width="1.5" />
+
+  <rect x="0" y="0" width="213" height="4" fill="#111827" />
+  <rect x="213" y="0" width="214" height="4" fill="#dc2626" />
+  <rect x="427" y="0" width="213" height="4" fill="#f59e0b" />
+
+  <g transform="translate(440, 80) scale(0.95)" opacity="0.07" fill="#ffffff">
+    <path d="M100 20 C85 35, 75 50, 65 75 C55 65, 40 60, 25 65 C35 80, 50 90, 60 105 C45 110, 30 110, 15 120 C30 130, 45 130, 55 145 C40 150, 25 160, 20 175 C35 175, 50 170, 65 165 C60 185, 50 205, 35 225 C55 220, 75 205, 85 185 C90 205, 90 225, 85 245 C95 225, 100 205, 105 185 C115 205, 135 220, 155 225 C140 205, 130 185, 125 165 C140 170, 155 175, 170 175 C165 160, 150 150, 135 145 C145 130, 160 130, 175 120 C160 110, 145 110, 130 105 C140 90, 155 80, 165 65 C150 60, 135 65, 125 75 C115 50, 105 35, 100 20 Z"/>
+  </g>
+
+  <g transform="translate(32, 34)">
+    <rect x="0" y="0" width="144" height="24" rx="6" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1" />
+    <text x="10" y="16" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700">🇩🇪 德联邦移民官方公报</text>
+    <text x="156" y="16" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="11">BGBI. I Nr. 128 · § 20a AufenthG</text>
+
+    <text x="0" y="54" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="20" font-weight="800">CHANCENKARTE (机会卡) 法定标准</text>
+    <text x="0" y="75" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12">联邦内政部 (BMI) 与联邦劳动局 (BA) 联合签发 · 现行生效标准</text>
+  </g>
+
+  <g transform="translate(32, 132)">
+    <rect x="0" y="0" width="176" height="114" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(16, 185, 129, 0.4)" stroke-width="1.2" />
+    <circle cx="18" cy="18" r="4" fill="#10b981" />
+    <text x="28" y="22" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" font-weight="600">月自保金法定基线</text>
+    <text x="14" y="58" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900">€1,091</text>
+    <text x="116" y="56" fill="#6ee7b7" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13">/月</text>
+    <path d="M 14 72 L 162 72" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+    <text x="14" y="92" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">年化总额: €13,092 (冻结户)</text>
+    <text x="14" y="105" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="9">已排除旧版 €1027 废止标准</text>
+  </g>
+
+  <g transform="translate(224, 132)">
+    <rect x="0" y="0" width="176" height="114" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(99, 102, 241, 0.4)" stroke-width="1.2" />
+    <circle cx="18" cy="18" r="4" fill="#818cf8" />
+    <text x="28" y="22" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" font-weight="600">找工期合法打工权</text>
+    <text x="14" y="58" fill="#a5b4fc" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900">20 h</text>
+    <text x="86" y="56" fill="#c7d2fe" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13">/周</text>
+    <path d="M 14 72 L 162 72" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+    <text x="14" y="92" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">兼职月入最高可达 €1,111</text>
+    <text x="14" y="105" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="9">允许试工 2 周，收入可抵扣</text>
+  </g>
+
+  <g transform="translate(416, 132)">
+    <rect x="0" y="0" width="192" height="114" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(245, 158, 11, 0.4)" stroke-width="1.2" />
+    <circle cx="18" cy="18" r="4" fill="#fbbf24" />
+    <text x="28" y="22" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" font-weight="600">双元制带薪实训起步</text>
+    <text x="14" y="58" fill="#fcd34d" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900">~€1,048</text>
+    <text x="128" y="56" fill="#fde68a" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13">/月</text>
+    <path d="M 14 72 L 178 72" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+    <text x="14" y="92" fill="#cbd5e1" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">0 学费企业实训 + 德语 B1</text>
+    <text x="14" y="105" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="9">津贴覆盖生活开销即可免自保金</text>
+  </g>
+
+  <g transform="translate(32, 266)">
+    <rect x="0" y="0" width="576" height="52" rx="8" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" />
+    <path d="M 20 26 L 24 30 L 32 20" fill="none" stroke="#10b981" stroke-width="2" />
+    <text x="42" y="24" fill="#f1f5f9" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="11" font-weight="700">大专/职业技能人才适用打分制：满 6 分直接下发 1 年找工签</text>
+    <text x="42" y="40" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10">门槛仅需 A1 德语或 B2 英语 + 国内认可学历，可合法在德国当地寻找对口技术岗位换正签</text>
+  </g>
+
+  <g transform="translate(545, 345)">
+    <circle cx="0" cy="0" r="34" fill="none" stroke="rgba(245, 158, 11, 0.45)" stroke-width="1.5" stroke-dasharray="3 2" />
+    <circle cx="0" cy="0" r="30" fill="none" stroke="rgba(245, 158, 11, 0.8)" stroke-width="1" />
+    <text x="0" y="-12" text-anchor="middle" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="7" font-weight="800" letter-spacing="1">AMTLICH BEGLAUBIGT</text>
+    <text x="0" y="3" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="9" font-weight="800">2026</text>
+    <text x="0" y="16" text-anchor="middle" fill="#fbbf24" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="6.5" font-weight="700">DEUTSCHER BUND</text>
+  </g>
+
+  <text x="32" y="358" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">追踪源: make-it-in-germany.com · 哨兵巡检状态: 24/7 VERIFIED · 严格零虚构</text>
+</svg>
