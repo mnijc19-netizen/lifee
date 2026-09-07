@@ -77,25 +77,25 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl shadow-lg shadow-black/20">
       {/* Top Utility Bar */}
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6">
         <div className="flex items-center space-x-3">
           <div 
             onClick={() => setActiveTab('today')}
-            className="flex cursor-pointer items-center space-x-2 group"
+            className="flex cursor-pointer items-center space-x-2.5 group"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-500/30 transition-colors">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 text-emerald-400 border border-emerald-500/30 group-hover:border-emerald-400/60 group-hover:scale-105 transition-all shadow-xs">
               <Compass className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="font-bold tracking-tight text-white text-base">Lifee</span>
-                <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20 hidden xs:inline">
-                  决策情报系统
+                <span className="font-extrabold tracking-tight text-white text-base bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text">Lifee</span>
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 border border-emerald-500/20 hidden xs:inline">
+                  人生决策情报
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 hidden sm:block">Personal Career & Global Life Decision Intelligence</p>
+              <p className="text-[10px] text-slate-400 hidden sm:block">Global Career & Life Transition Decision Intelligence</p>
             </div>
           </div>
         </div>
@@ -105,12 +105,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Runway Indicator */}
           <button
             onClick={() => setActiveTab('runway')}
-            className={`flex shrink-0 whitespace-nowrap items-center space-x-1 rounded-full px-2.5 py-1 text-xs font-medium border transition-colors touch-target-min ${
+            className={`flex shrink-0 whitespace-nowrap items-center space-x-1.5 rounded-full px-3 py-1 text-xs font-semibold border transition-all cursor-pointer shadow-xs ${
               runway.isSelfSustaining
-                ? 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300 hover:bg-emerald-900/60'
+                ? 'bg-emerald-950/70 border-emerald-700/60 text-emerald-300 hover:bg-emerald-900/70 shadow-emerald-950/30'
                 : runway.survivalMonths < 2
-                ? 'bg-rose-950/60 border-rose-800/60 text-rose-300 animate-pulse'
-                : 'bg-amber-950/60 border-amber-800/60 text-amber-300'
+                ? 'bg-rose-950/70 border-rose-700/60 text-rose-300 animate-pulse shadow-rose-950/30'
+                : 'bg-amber-950/70 border-amber-700/60 text-amber-300'
             }`}
             title="点击查看生存现金流分析"
           >
@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Quick Search Button */}
           <button
             onClick={onOpenSearch}
-            className="flex items-center space-x-1.5 rounded-lg border border-slate-800 bg-slate-900/80 px-2.5 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:bg-slate-800 transition-colors touch-target-min"
+            className="flex items-center space-x-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:bg-slate-800 transition-all cursor-pointer shadow-xs"
           >
             <Search className="h-3.5 w-3.5 text-slate-400" />
             <span className="hidden md:inline">全局检索 (电工/德国/工签)</span>
@@ -135,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Manual Evidence Quick Add */}
           <button
             onClick={onOpenManualInbox}
-            className="flex items-center space-x-1 rounded-lg border border-slate-800 bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:text-white transition-colors touch-target-min"
+            className="flex items-center space-x-1 rounded-xl border border-slate-800 bg-slate-900/60 px-2.5 py-1.5 text-xs text-slate-300 hover:border-slate-700 hover:text-white transition-all cursor-pointer"
             title="手动录入新情报/帖子/链接"
           >
             <PlusCircle className="h-3.5 w-3.5 text-emerald-400" />
@@ -145,17 +145,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Copy AI Context */}
           <button
             onClick={onOpenAiContext}
-            className="flex items-center space-x-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-medium text-indigo-300 hover:bg-indigo-500/20 transition-colors touch-target-min"
+            className="flex items-center space-x-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 hover:bg-indigo-500/20 transition-all cursor-pointer shadow-xs"
             title="一键复制个人画像与Top3路线Markdown上下文"
           >
             <Copy className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Copy AI Context</span>
+            <span className="hidden sm:inline">AI 上下文</span>
           </button>
 
           {/* Settings */}
           <button
             onClick={onOpenSettings}
-            className="rounded-lg border border-slate-800 bg-slate-900/60 p-2 text-slate-400 hover:border-slate-700 hover:text-white transition-colors touch-target-min"
+            className="rounded-xl border border-slate-800 bg-slate-900/60 p-2 text-slate-400 hover:border-slate-700 hover:text-white transition-all cursor-pointer"
             title="个人画像与权重设置"
           >
             <Settings2 className="h-4 w-4" />
@@ -166,14 +166,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Main Navigation (Desktop 5-Group + Contextual Sub-Bar) */}
       <nav aria-label="Main Navigation" className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Tier 1: 5 Core Navigation Groups (Desktop Only, Mobile uses BottomNav) */}
-        <div className="hidden md:flex items-center justify-between border-t border-slate-800/60 pt-1 pb-1">
+        <div className="hidden md:flex items-center justify-between border-t border-slate-800/60 pt-1.5 pb-1.5">
           <div className="flex items-center space-x-1 sm:space-x-1.5">
             {/* 1. 今日 */}
             <button
               onClick={() => setActiveTab('today')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'today'
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
               }`}
             >
@@ -186,23 +186,23 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => {
                 if (!isRouteGroup) setActiveTab('pathways');
               }}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 isRouteGroup
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
               }`}
             >
               <Milestone className="h-3.5 w-3.5" />
               <span>路线</span>
-              <span className="text-[10px] px-1 rounded bg-slate-800 text-slate-400">4</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400 font-mono">4</span>
             </button>
 
             {/* 3. 行动 */}
             <button
               onClick={() => setActiveTab('myplan')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'myplan'
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
               }`}
             >
@@ -213,14 +213,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* 4. AI */}
             <button
               onClick={() => setActiveTab('aiadvisor')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'aiadvisor'
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
-              <span>AI</span>
+              <span>AI 顾问</span>
             </button>
 
             {/* 5. 更多 */}
@@ -228,15 +228,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => {
                 if (!isMoreGroup) setActiveTab('intelligence');
               }}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                 isMoreGroup
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                  ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
               }`}
             >
               <MoreHorizontal className="h-3.5 w-3.5" />
               <span>更多</span>
-              <span className="text-[10px] px-1 rounded bg-slate-800 text-slate-400">5</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400 font-mono">5</span>
             </button>
           </div>
 

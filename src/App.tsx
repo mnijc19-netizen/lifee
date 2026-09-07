@@ -106,6 +106,7 @@ export function App() {
         {activeTab === 'today' && (
           <TodayDashboard
             profile={profile}
+            setProfile={setProfile}
             runway={runwayAnalysis}
             topPathways={rankedPathways}
             intelligence={INTELLIGENCE_STREAM}

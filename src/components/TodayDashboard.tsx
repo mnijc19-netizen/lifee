@@ -24,6 +24,7 @@ import { RunwayAnalysis } from '../engine/runway';
 
 interface TodayDashboardProps {
   profile: UserProfile;
+  setProfile?: React.Dispatch<React.SetStateAction<UserProfile>>;
   runway: RunwayAnalysis;
   topPathways: Pathway[];
   intelligence: IntelligenceEvent[];
@@ -34,6 +35,7 @@ interface TodayDashboardProps {
 
 export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   profile,
+  setProfile,
   runway,
   topPathways,
   intelligence,
@@ -120,17 +122,20 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Welcome & Directive Headline */}
-      <div className="rounded-xl border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-5 sm:p-6 shadow-xl">
+      <div className="rounded-2xl border border-slate-800/80 bg-gradient-to-r from-slate-900/90 via-slate-900/95 to-slate-950/90 backdrop-blur-xl p-5 sm:p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
               <span>决策基准日期: {profile.targetDateBaseline}</span>
               <span className="text-slate-500">·</span>
-              <span>画像状态：{profile.education || '大专学历'} / ¥{profile.currentSavingsRmb || 0} 可用储蓄</span>
+              <span>当前画像：{profile.education || '大专学历'} / ¥{profile.currentSavingsRmb || 0} 可用储蓄</span>
             </div>
-            <h1 className="mt-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              我现在最应该做什么？
+            <h1 className="mt-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span>人生路线智能决策罗盘</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
+                我现在最应该做什么？
+              </span>
             </h1>
             <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
               系统已根据你的设定条件（{profile.education || '大专学历'}、¥{profile.currentSavingsRmb}储蓄、¥{profile.monthlyRentRmb}房租、{profile.englishVocabEstimate}词汇量）完成全局政策与市场交叉验证。拒绝假大空的规划，直达今日执行闭环。
@@ -139,11 +144,11 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             {/* Explore Mode vs Execute Mode Toggle */}
-            <div className="inline-flex rounded-lg border border-slate-700 bg-slate-950 p-1">
+            <div className="inline-flex rounded-xl border border-slate-800 bg-slate-950/80 p-1 backdrop-blur-sm">
               <button
                 type="button"
                 onClick={() => setMode('EXPLORE')}
-                className={`flex items-center space-x-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
                   mode === 'EXPLORE'
                     ? 'bg-slate-800 text-white shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
@@ -155,7 +160,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => setMode('EXECUTE')}
-                className={`flex items-center space-x-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all cursor-pointer ${
                   mode === 'EXECUTE'
                     ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-950'
                     : 'text-slate-400 hover:text-slate-200'
@@ -168,7 +173,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
             <button
               onClick={onOpenAiContext}
-              className="flex items-center space-x-2 rounded-lg bg-emerald-600/90 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-950"
+              className="flex items-center space-x-2 rounded-xl bg-emerald-600/90 px-3.5 py-2 text-xs font-medium text-white hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-950/50 cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>一键提取 AI 上下文</span>
@@ -178,7 +183,7 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
 
         {/* Execute Mode Focus Shield Banner */}
         {mode === 'EXECUTE' && primaryPathway && (
-          <div className="mt-4 rounded-lg border border-emerald-500/30 bg-emerald-950/20 p-3.5 text-xs text-emerald-200/90 flex items-start space-x-3">
+          <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/25 p-4 text-xs text-emerald-200/90 flex items-start space-x-3">
             <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <div className="font-semibold text-emerald-300 flex items-center space-x-2">
@@ -191,6 +196,129 @@ export const TodayDashboard: React.FC<TodayDashboardProps> = ({
             </div>
           </div>
         )}
+      </div>
+
+      {/* 30-Second Quick Onboarding & Profile Tuning Wizard */}
+      <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-b from-slate-900/90 to-slate-950/90 backdrop-blur-xl p-4 sm:p-5 shadow-xl shadow-black/30">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 mb-3.5 border-b border-slate-800/80">
+          <div className="flex items-center space-x-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 font-bold text-xs shadow-xs">
+              ⚡
+            </span>
+            <span className="text-sm font-bold text-white tracking-wide">30秒快捷画像调优 · 即选即测算</span>
+            <span className="hidden sm:inline-block text-xs text-slate-400">
+              (点击下方选项直接切换人生基准条件，推荐路线与生存跑道秒级重算)
+            </span>
+          </div>
+          <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            纯本地实时推演 · 零隐私上传
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {/* Degree */}
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
+              <span>🎓 最高学历背景</span>
+              <span className="text-slate-500 text-[10px]">影响工签与绿卡门槛</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { label: '全日制大专', val: '全日制大专 (专科)' },
+                { label: '本科及以上', val: '全日制本科及以上' },
+                { label: '中专/高中', val: '高中/中专/无学历' }
+              ].map(opt => {
+                const cur = profile.education || '全日制大专 (专科)';
+                const isSelected = cur.includes('大专') ? opt.val.includes('大专') : (cur.includes('本科') ? opt.val.includes('本科') : opt.val.includes('高中'));
+                return (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => {
+                      if (setProfile) setProfile(prev => ({ ...prev, education: opt.val }));
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
+                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Savings */}
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
+              <span>💰 可用起步储蓄</span>
+              <span className="text-slate-500 text-[10px]">现金流第一道过滤器</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { label: '¥5,000', val: 5000 },
+                { label: '¥30,000', val: 30000 },
+                { label: '¥100,000+', val: 100000 }
+              ].map(opt => {
+                const s = profile.currentSavingsRmb || 0;
+                const isSelected = (opt.val === 5000 && s <= 10000) || (opt.val === 30000 && s > 10000 && s < 80000) || (opt.val === 100000 && s >= 80000);
+                return (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => {
+                      if (setProfile) setProfile(prev => ({ ...prev, currentSavingsRmb: opt.val }));
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
+                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* English / Language */}
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-slate-300 flex items-center justify-between">
+              <span>🌐 语言与沟通基础</span>
+              <span className="text-slate-500 text-[10px]">高复利底层杠杆</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {[
+                { label: '基础 2000词', val: 2000 },
+                { label: '进阶 4000词', val: 4000 },
+                { label: '零基础攻坚', val: 800 }
+              ].map(opt => {
+                const v = profile.englishVocabEstimate || 2000;
+                const isSelected = (opt.val === 2000 && v >= 1500 && v <= 2500) || (opt.val === 4000 && v > 2500) || (opt.val === 800 && v < 1500);
+                return (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    onClick={() => {
+                      if (setProfile) setProfile(prev => ({ ...prev, englishVocabEstimate: opt.val }));
+                    }}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-medium text-center transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-xs'
+                        : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* A. Top 3 Immediate Actions */}

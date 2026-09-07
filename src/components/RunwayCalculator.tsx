@@ -52,31 +52,37 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-        <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
-          <span>生存底线法则 · 资本断裂防范</span>
-          <span className="text-slate-500">·</span>
-          <span>凡要求长期不赚钱脱产的路线均自动触发可行性扣减</span>
+      <div className="glass-panel rounded-2xl border border-slate-800/80 p-6 relative overflow-hidden">
+        <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              生存底线法则 · 资本断裂防范
+            </span>
+            <span className="text-slate-500">·</span>
+            <span className="text-slate-400">凡要求长期不赚钱脱产的路线均自动触发可行性扣减</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-2">
+            生存现金流测算器 (Runway Intelligence)
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
+            因为你目前存款较少、家庭无法承担几十万留学费用，现金流自给能力是所有路线的第一前置过滤器。
+          </p>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
-          生存现金流测算器 (Runway Intelligence)
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
-          因为你目前存款较少、家庭无法承担几十万留学费用，现金流自给能力是所有路线的第一前置过滤器。
-        </p>
       </div>
 
       {/* Calculator Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Inputs */}
-        <div className="lg:col-span-1 rounded-xl border border-slate-800 bg-slate-900/40 p-5 space-y-4">
+        <div className="lg:col-span-1 glass-card rounded-2xl border border-slate-800/80 p-5 space-y-4 shadow-lg">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-              输入你的真实财务数字 (元 / RMB)
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+              <DollarSign className="w-4 h-4 text-emerald-400" />
+              真实财务输入 (元 / RMB)
             </h3>
             <button
               onClick={() => setIsMobileInputOpen(!isMobileInputOpen)}
-              className="lg:hidden text-xs text-emerald-400 hover:text-emerald-300 font-medium py-1 px-2.5 rounded-lg border border-slate-700 bg-slate-800 touch-target-min"
+              className="lg:hidden text-xs text-emerald-400 hover:text-emerald-300 font-medium py-1 px-2.5 rounded-xl border border-slate-700 bg-slate-800 touch-target-min"
             >
               {isMobileInputOpen ? '收起输入' : '展开调参'}
             </button>
@@ -85,11 +91,11 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
           <div className={`space-y-4 ${isMobileInputOpen ? 'block' : 'hidden lg:block'}`}>
 
           {/* City Cost Preset Selector */}
-          <div className="rounded-lg border border-emerald-500/20 bg-emerald-950/20 p-3 space-y-2">
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3.5 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5" />
-                目标城市生活成本参考 (Numbeo 权威脱水)
+                目标城市生活成本参考 (Numbeo 脱水)
               </span>
               {selectedCityId && (
                 <button
@@ -109,7 +115,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
                 const c = CITY_COST_PROFILES.find(item => item.id === id);
                 if (c) applyCityCost(c);
               }}
-              className="w-full rounded-md border border-slate-700 bg-slate-900 py-1.5 px-2 text-xs text-white focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-700 bg-slate-900 py-2 px-3 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
             >
               <option value="">-- 选择目标城市一键导入真实开销 --</option>
               {CITY_COST_PROFILES.map(c => (
@@ -119,7 +125,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
               ))}
             </select>
             {selectedCity && (
-              <div className="text-[11px] text-slate-300 space-y-1 pt-1 border-t border-slate-800/80">
+              <div className="text-[11px] text-slate-300 space-y-1 pt-1.5 border-t border-slate-800/80">
                 <div className="flex justify-between">
                   <span className="text-slate-400">外围单间租金:</span>
                   <span className="font-mono text-emerald-300">¥{selectedCity.singleApartmentRentOutsideRmb.toLocaleString()} ({selectedCity.singleApartmentRentOutsideLocal} {selectedCity.currency})</span>
@@ -128,7 +134,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
                   <span className="text-slate-400">日常基本生活费:</span>
                   <span className="font-mono text-emerald-300">¥{selectedCity.monthlyLivingExpensesExcludingRentRmb.toLocaleString()} ({selectedCity.monthlyLivingExpensesExcludingRentLocal} {selectedCity.currency})</span>
                 </div>
-                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-0.5">
+                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-1">
                   <span>信源: {selectedCity.source} ({selectedCity.sourceTier})</span>
                   <a href={selectedCity.sourceUrl} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline flex items-center gap-0.5">
                     核验链接 <ExternalLink className="w-2.5 h-2.5" />
@@ -139,58 +145,58 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">当前手头可用存款储备</label>
+            <label className="block text-xs text-slate-400 mb-1.5 font-medium">当前手头可用存款储备</label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-slate-500 text-xs">¥</span>
+              <span className="absolute left-3.5 top-2 text-slate-500 text-xs font-mono">¥</span>
               <input
                 type="number"
                 value={profile.currentSavingsRmb}
                 onChange={e => handleInputChange('currentSavingsRmb', Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 py-1.5 pl-8 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 py-2 pl-9 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">每月固定房租支出</label>
+            <label className="block text-xs text-slate-400 mb-1.5 font-medium">每月固定房租支出</label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-slate-500 text-xs">¥</span>
+              <span className="absolute left-3.5 top-2 text-slate-500 text-xs font-mono">¥</span>
               <input
                 type="number"
                 value={profile.monthlyRentRmb}
                 onChange={e => handleInputChange('monthlyRentRmb', Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 py-1.5 pl-8 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 py-2 pl-9 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">每月食物与基础生活开销</label>
+            <label className="block text-xs text-slate-400 mb-1.5 font-medium">每月食物与基础生活开销</label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-slate-500 text-xs">¥</span>
+              <span className="absolute left-3.5 top-2 text-slate-500 text-xs font-mono">¥</span>
               <input
                 type="number"
                 value={profile.monthlyFoodAndLifeRmb}
                 onChange={e => handleInputChange('monthlyFoodAndLifeRmb', Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 py-1.5 pl-8 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 py-2 pl-9 pr-3 text-xs font-mono text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-1">当前每月自给收入 (3D外包/兼职)</label>
+            <label className="block text-xs text-slate-400 mb-1.5 font-medium">当前每月自给收入 (3D外包/兼职)</label>
             <div className="relative">
-              <span className="absolute left-3 top-2 text-slate-500 text-xs">¥</span>
+              <span className="absolute left-3.5 top-2 text-slate-500 text-xs font-mono">¥</span>
               <input
                 type="number"
                 value={profile.currentMonthlyIncomeRmb}
                 onChange={e => handleInputChange('currentMonthlyIncomeRmb', Number(e.target.value))}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 py-1.5 pl-8 pr-3 text-xs font-mono text-emerald-400 focus:border-emerald-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950/80 py-2 pl-9 pr-3 text-xs font-mono text-emerald-400 font-bold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none transition-all"
               />
             </div>
           </div>
 
-          <div className="pt-2 text-[11px] text-slate-500 leading-relaxed border-t border-slate-800">
+          <div className="pt-2 text-[11px] text-slate-500 leading-relaxed border-t border-slate-800/80">
             * 提示：数据保存在本地浏览器 LocalStorage，不会上传至任何公开服务器，安全无泄露风险。
           </div>
           </div>
@@ -199,46 +205,46 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
         {/* Right Analysis Dashboard */}
         <div className="lg:col-span-2 space-y-4">
           {/* Main Stat Card */}
-          <div className={`rounded-xl border p-5 ${
+          <div className={`glass-card rounded-2xl border p-6 shadow-xl ${
             runway.isSelfSustaining
-              ? 'border-emerald-500/30 bg-emerald-950/20'
+              ? 'border-emerald-500/40 bg-emerald-950/20'
               : runway.survivalMonths < 2
-              ? 'border-rose-500/40 bg-rose-950/20'
-              : 'border-amber-500/30 bg-amber-950/20'
+              ? 'border-rose-500/50 bg-rose-950/20'
+              : 'border-amber-500/40 bg-amber-950/20'
           }`}>
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2.5">
                 <Flame className={`h-5 w-5 ${runway.isSelfSustaining ? 'text-emerald-400' : 'text-amber-400'}`} />
                 <h3 className="text-base font-bold text-white">生存缓冲期 (Survival Runway) 裁决</h3>
               </div>
-              <span className={`rounded px-2 py-0.5 text-xs font-bold border ${
-                runway.isSelfSustaining ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+              <span className={`rounded-xl px-3 py-1 text-xs font-bold border ${
+                runway.isSelfSustaining ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
               }`}>
                 {runway.healthLabel}
               </span>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-lg bg-slate-950/70 p-3 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block">月固定总烧钱率 (Burn Rate)</span>
-                <span className="text-lg font-bold text-white font-mono">¥{runway.fixedMonthlyBurnRmb}</span>
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              <div className="rounded-xl bg-slate-950/80 p-4 border border-slate-800">
+                <span className="text-[11px] text-slate-400 block mb-1">月固定总烧钱率 (Burn Rate)</span>
+                <span className="text-xl font-bold text-white font-mono">¥{runway.fixedMonthlyBurnRmb}</span>
               </div>
-              <div className="rounded-lg bg-slate-950/70 p-3 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block">月净现金流 (Net Cash Flow)</span>
-                <span className={`text-lg font-bold font-mono ${runway.netMonthlyCashflowRmb >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <div className="rounded-xl bg-slate-950/80 p-4 border border-slate-800">
+                <span className="text-[11px] text-slate-400 block mb-1">月净现金流 (Net Cash Flow)</span>
+                <span className={`text-xl font-bold font-mono ${runway.netMonthlyCashflowRmb >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   {runway.netMonthlyCashflowRmb >= 0 ? `+¥${runway.netMonthlyCashflowRmb}` : `-¥${Math.abs(runway.netMonthlyCashflowRmb)}`}
                 </span>
               </div>
-              <div className="rounded-lg bg-slate-950/70 p-3 border border-slate-800">
-                <span className="text-[10px] text-slate-500 block">极限生存支撑时间</span>
-                <span className="text-lg font-bold text-emerald-400 font-mono">
+              <div className="rounded-xl bg-slate-950/80 p-4 border border-slate-800">
+                <span className="text-[11px] text-slate-400 block mb-1">极限生存支撑时间</span>
+                <span className="text-xl font-bold text-emerald-400 font-mono">
                   {runway.isSelfSustaining ? '无限期稳态' : `${runway.survivalMonths} 个月`}
                 </span>
               </div>
             </div>
 
-            <div className="mt-4 text-xs text-slate-300 leading-relaxed border-t border-slate-800/80 pt-3">
-              <strong>系统裁决：</strong>
+            <div className="mt-4 text-xs text-slate-300 leading-relaxed border-t border-slate-800/80 pt-3.5 bg-slate-950/40 p-3 rounded-xl">
+              <strong className="text-white">系统裁决：</strong>
               {runway.isSelfSustaining
                 ? '太棒了！只要你的远程数字交付业务能持续保持，你的现金流就处于净流入状态，你不需要去被迫找传统高压低薪的坐班工作。你所有的业余时间都可以从容投资在核心语言和作品集上！'
                 : `注意！当前月支出大于收入，存款仅能支撑 ${runway.survivalMonths} 个月。你必须在 30 天内把远程交付收入拉满，或者将非必要生活开销缩减，绝不能在此时做任何高额自费消费！`}
@@ -246,35 +252,35 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
           </div>
 
           {/* Pathway Capital Feasibility Matrix */}
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
+          <div className="glass-card rounded-2xl border border-slate-800/80 p-5 space-y-3.5 shadow-lg">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
               全路线资金可行性门槛与拦截审计 (Capital Gating Audit)
             </h3>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {pathways.map(p => {
                 const gate = evaluatePathwayRunwayGating(p, profile);
                 return (
                   <div
                     key={p.id}
-                    className={`rounded-lg border p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs ${
-                      gate.isBlocked ? 'border-rose-900/50 bg-rose-950/20' : 'border-slate-800 bg-slate-950'
+                    className={`rounded-xl border p-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs transition-all ${
+                      gate.isBlocked ? 'border-rose-900/60 bg-rose-950/20' : 'border-slate-800/80 bg-slate-950/80 hover:border-slate-700'
                     }`}
                   >
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-bold text-white">{p.targetCountry} · {p.category}</span>
+                        <span className="font-bold text-white text-sm">{p.targetCountry} · {p.category}</span>
                         {gate.isBlocked ? (
-                          <span className="rounded bg-rose-500/10 text-rose-400 px-1.5 py-0.2 text-[10px] border border-rose-500/20 font-bold">
+                          <span className="rounded-md bg-rose-500/15 text-rose-400 px-2 py-0.5 text-[10px] border border-rose-500/30 font-bold">
                             资金拦截 (缺口 ¥{gate.gapRmb.toLocaleString()})
                           </span>
                         ) : (
-                          <span className="rounded bg-emerald-500/10 text-emerald-400 px-1.5 py-0.2 text-[10px] border border-emerald-500/20 font-bold">
+                          <span className="rounded-md bg-emerald-500/15 text-emerald-400 px-2 py-0.5 text-[10px] border border-emerald-500/30 font-bold">
                             资金安全 / 可边赚边走
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-1">{gate.reason}</p>
+                      <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{gate.reason}</p>
                     </div>
 
                     <button
@@ -282,7 +288,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
                         onSelectPathway(p);
                         onNavigateTab('pathways');
                       }}
-                      className="text-emerald-400 hover:text-emerald-300 flex items-center space-x-1 shrink-0 font-medium text-xs"
+                      className="text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/30 flex items-center space-x-1.5 shrink-0 font-semibold text-xs transition-colors self-start sm:self-center"
                     >
                       <span>路线详情</span>
                       <ArrowRight className="h-3 w-3" />

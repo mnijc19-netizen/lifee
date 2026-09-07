@@ -10,57 +10,62 @@ export const MultiCompare: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
-              <span>全维度实机横向对比</span>
-              <span className="text-slate-500">·</span>
-              <span>结构化硬核看板 · 拒绝长篇大论 · 适合一键截图</span>
+      <div className="glass-panel rounded-2xl border border-slate-800/80 p-6 relative overflow-hidden">
+        <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  全维度实机横向对比
+                </span>
+                <span className="text-slate-500">·</span>
+                <span className="text-slate-400">结构化硬核看板 · 拒绝长篇大论 · 适合一键截图</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-2">
+                多维对比 (Multi-Vector Compare)
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
+                直接横向排列，一眼看清差距。无论是国家制度红利、职业时薪与工时、还是不同路线的时间与金钱代价，全在统一维度下量化审视。
+              </p>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
-              多维对比 (Multi-Vector Compare)
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              直接横向排列，一眼看清差距。无论是国家制度红利、职业时薪与工时、还是不同路线的时间与金钱代价，全在统一维度下量化审视。
-            </p>
-          </div>
 
-          <div className="flex items-center space-x-2 bg-slate-950 p-1 rounded-lg border border-slate-800 shrink-0">
-            <button
-              onClick={() => setCompareMode('countries')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                compareMode === 'countries' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              国家 vs 国家
-            </button>
-            <button
-              onClick={() => setCompareMode('careers')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                compareMode === 'careers' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              职业 vs 职业
-            </button>
-            <button
-              onClick={() => setCompareMode('pathways')}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                compareMode === 'pathways' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              路线 vs 路线
-            </button>
+            <div className="flex items-center space-x-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 shrink-0">
+              <button
+                onClick={() => setCompareMode('countries')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  compareMode === 'countries' ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                国家 vs 国家
+              </button>
+              <button
+                onClick={() => setCompareMode('careers')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  compareMode === 'careers' ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                职业 vs 职业
+              </button>
+              <button
+                onClick={() => setCompareMode('pathways')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  compareMode === 'pathways' ? 'bg-emerald-500 text-slate-950 font-bold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                路线 vs 路线
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* 1. Country Comparison Table */}
       {compareMode === 'countries' && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
-          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+        <div className="glass-card rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-slate-950/80 border-b border-slate-800/80 text-[11px] text-slate-400">
             <span>横向对比矩阵</span>
-            <span>← 左右滑动查看全部国家 →</span>
+            <span className="text-emerald-400">← 左右滑动查看全部国家 →</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -176,10 +181,10 @@ export const MultiCompare: React.FC = () => {
 
       {/* 2. Career Comparison Table */}
       {compareMode === 'careers' && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
-          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+        <div className="glass-card rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-slate-950/80 border-b border-slate-800/80 text-[11px] text-slate-400">
             <span>横向对比矩阵</span>
-            <span>← 左右滑动查看全部职业 →</span>
+            <span className="text-emerald-400">← 左右滑动查看全部职业 →</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -293,10 +298,10 @@ export const MultiCompare: React.FC = () => {
 
       {/* 3. Pathway Comparison Table */}
       {compareMode === 'pathways' && (
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
-          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+        <div className="glass-card rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-slate-950/80 border-b border-slate-800/80 text-[11px] text-slate-400">
             <span>横向对比矩阵</span>
-            <span>← 左右滑动查看全部路线 →</span>
+            <span className="text-emerald-400">← 左右滑动查看全部路线 →</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">

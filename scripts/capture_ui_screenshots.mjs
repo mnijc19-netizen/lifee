@@ -109,6 +109,26 @@ async function capture() {
     await page.screenshot({ path: path.join(screenshotsDir, 'desktop_compare.png') });
     console.log('Saved: desktop_compare.png');
 
+    // 5. Desktop (1280x850) - Career Radar
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('nav button'));
+      const careerBtn = btns.find(b => b.innerText.includes('职业雷达'));
+      if (careerBtn) careerBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop_career_radar.png') });
+    console.log('Saved: desktop_career_radar.png');
+
+    // 6. Desktop (1280x850) - Runway Calculator
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('nav button'));
+      const runwayBtn = btns.find(b => b.innerText.includes('生存现金流'));
+      if (runwayBtn) runwayBtn.click();
+    });
+    await new Promise(r => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(screenshotsDir, 'desktop_runway.png') });
+    console.log('Saved: desktop_runway.png');
+
     console.log('All responsive UI screenshots captured successfully!');
   } finally {
     await browser.close();
