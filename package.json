@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "collect": "node scripts/collector.mjs",
+    "test:parsers": "node scripts/test_parsers.mjs",
+    "test:freshness": "node ./node_modules/tsx/dist/cli.mjs scripts/test_freshness.ts",
     "test": "node scripts/test_system.mjs"
   },
   "dependencies": {
@@ -26,6 +28,7 @@
     "@vitejs/plugin-react": "^6.1.0",
     "puppeteer-core": "^25.9.0",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
   }

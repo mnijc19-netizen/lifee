@@ -217,7 +217,7 @@ export const OCCUPATIONS: Occupation[] = [
     titleEn: 'Forklift Driver & Warehouse Logistics Operator',
     category: 'Logistics & Transport',
     iscoCode: '8334',
-    anzscoCode: '721211',
+    anzscoCode: '721311',
     socCode: '53-7051',
     nocCode: '75101',
     cnSalaryGrossMonthly: 4500,

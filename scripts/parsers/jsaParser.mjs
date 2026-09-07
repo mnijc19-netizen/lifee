@@ -40,14 +40,27 @@ export function parseJsa(htmlOrDatasetText, url = 'https://www.jobsandskills.gov
     const match = htmlOrDatasetText.match(identifierRegex);
     if (!match) return null;
 
-    const snippet = htmlOrDatasetText.slice(match.index, match.index + 200);
-    const isShortage = /(?:National\s+Shortage|\bShortage\b|\bS\b|In\s+Shortage|Severe\s+Shortage)/i.test(snippet) &&
-                       !/(?:No\s+Shortage|\bNS\b|Not\s+in\s+Shortage)/i.test(snippet);
-    const isNoShortage = /(?:No\s+Shortage|\bNS\b|Not\s+in\s+Shortage)/i.test(snippet);
+    const snippet = htmlOrDatasetText.slice(match.index, match.index + 260);
+    const nsMatch = /(?:\bNS\b|\(NS\)|No\s+Shortage|Not\s+in\s+Shortage)/i.test(snippet);
+    const sMatch = /(?:\bS\b|\(S\)|National\s+Shortage|In\s+Shortage|Severe\s+Shortage)/i.test(snippet);
+
+    let isShortage = false;
+    let ratingLabel = 'No Shortage';
+
+    if (nsMatch) {
+      isShortage = false;
+      ratingLabel = 'No Shortage';
+    } else if (sMatch) {
+      isShortage = true;
+      ratingLabel = 'National Shortage';
+    } else {
+      throw new Error(`JSA parser: Unable to determine shortage status for identifier: ${identifierRegex}`);
+    }
 
     const evidenceText = extractSentence(match.index, 160);
     return {
-      isShortage: isShortage || !isNoShortage,
+      isShortage,
+      ratingLabel,
       rawSnippet: snippet.replace(/<[^>]+>/g, ' ').trim(),
       evidenceText
     };

@@ -7,6 +7,7 @@ import { parseMakeItGermany } from './parsers/makeItGermanyParser.mjs';
 import { parseInz } from './parsers/inzParser.mjs';
 import { parseJsa } from './parsers/jsaParser.mjs';
 import { diffSnapshots } from './diffEngine.mjs';
+import { validatePromptCompleteness, validateFixtureProvenance } from './rulesRegistry.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -149,8 +150,16 @@ async function runAcceptanceSuite() {
   console.log('\n[Regression REG-01] HARD-CODED-PARSER: Value mutation sensitivity...');
   try {
     const testDeHtml = `
-      <html><head><title>Opportunity Card</title></head>
-      <body><p>You must prove financial means of at least €1,234 per month in a blocked account.</p></body></html>
+<!DOCTYPE html>
+<html>
+<head><title>Opportunity Card - Make it in Germany</title></head>
+<body>
+  <h1>Opportunity card</h1>
+  <p>For the year 2026, you must prove financial means of at least €1,234 per month (€14,808 for the full 12-month period) in a blocked account.</p>
+  <p>You can also work in secondary employment for up to 20 hours per week during your job search.</p>
+  <p>For vocational training (Ausbildung): The training company pays a monthly gross training allowance (Ausbildungsvergütung) of at least €950 to €1,350 per month (approx. €760 net). German language proficiency at level B1 is required.</p>
+</body>
+</html>
     `;
     const parsedDe = parseMakeItGermany(testDeHtml);
     const valDe = parsedDe.normalizedFacts.opportunityCard.monthlyBlockedFundsEur.value;
@@ -184,8 +193,16 @@ async function runAcceptanceSuite() {
   console.log('\n[Regression REG-03] FAKE-PUBLISHED-DATE: Unstated date returns null, never guesses...');
   try {
     const noDateHtml = `
-      <html><head><title>Opportunity Card</title></head>
-      <body><p>You must prove financial means of at least €1,091 per month in a blocked account.</p></body></html>
+<!DOCTYPE html>
+<html>
+<head><title>Opportunity Card - Make it in Germany</title></head>
+<body>
+  <h1>Opportunity card</h1>
+  <p>For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.</p>
+  <p>You can also work in secondary employment for up to 20 hours per week during your job search.</p>
+  <p>For vocational training (Ausbildung): The training company pays a monthly gross training allowance (Ausbildungsvergütung) of at least €950 to €1,350 per month (approx. €760 net). German language proficiency at level B1 is required.</p>
+</body>
+</html>
     `;
     const parsedNoDate = parseMakeItGermany(noDateHtml);
     const passReg03 = parsedNoDate.sourcePublishedAt === null;
@@ -278,6 +295,186 @@ async function runAcceptanceSuite() {
     });
   } catch (err) {
     testResults.push({ name: 'REG-06: STALE_CRITICAL_FACT_CANNOT_DRIVE_TOP_RECOMMENDATION', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-73: PROMPT_COMPLETENESS_GATE (RULE-73) ---
+  console.log('\n[Regression REG-73] PROMPT_COMPLETENESS_GATE (RULE-73)...');
+  try {
+    const validPrompt = `=== LIFEE_RECOVERY_R1_START ===\nPROMPT_ID: LIFEE_RECOVERY_R1\nVERSION: 1.0\n...\n=== LIFEE_RECOVERY_R1_END ===`;
+    const checkValid = validatePromptCompleteness(validPrompt);
+    const truncatedPrompt = `=== LIFEE_RECOVERY_R1_START ===\nPROMPT_ID: LIFEE_RECOVERY_R1\nVERSION: 1.0\n... truncated without end marker`;
+    const checkTruncated = validatePromptCompleteness(truncatedPrompt);
+    const missingVersionPrompt = `=== LIFEE_RECOVERY_R1_START ===\nPROMPT_ID: LIFEE_RECOVERY_R1\n=== LIFEE_RECOVERY_R1_END ===`;
+    const checkMissingVersion = validatePromptCompleteness(missingVersionPrompt);
+
+    const passReg73 = checkValid.valid === true &&
+                      checkTruncated.valid === false &&
+                      checkTruncated.reason === 'INCOMPLETE_PROMPT' &&
+                      checkMissingVersion.valid === false;
+    console.log(`  Valid prompt passed: ${checkValid.valid}, Truncated prompt rejected: ${!checkTruncated.valid}, Missing version rejected: ${!checkMissingVersion.valid}`);
+    testResults.push({
+      name: 'REG-73: PROMPT_COMPLETENESS_GATE (RULE-73 prompts require PROMPT_ID, VERSION, START and END markers; missing markers halt with INCOMPLETE_PROMPT)',
+      pass: passReg73
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-73: PROMPT_COMPLETENESS_GATE', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-74: PREVIOUSLY_CORRECTED_FACTS_LOCKED (RULE-74 & Forklift 721311) ---
+  console.log('\n[Regression REG-74] PREVIOUSLY_CORRECTED_FACTS_LOCKED (RULE-74 & Forklift 721311)...');
+  try {
+    // 1. Obsolete code 721211 MUST be rejected by INZ parser
+    const obsoleteHtml = `
+      <html><head><title>AEWV</title></head><body>
+        <p>Employers must pay at least the legal minimum wage of $23.15 per hour.</p>
+        <p>Median wage $31.61 an hour.</p>
+        <p>3 years of relevant work experience.</p>
+        <p>For skill level 4-5 roles (such as ANZSCO 721211 Forklift Driver): The maximum continuous stay for ANZSCO skill level 4 and 5 roles is limited to 3 years.</p>
+        <p>IELTS 4.0</p>
+      </body></html>
+    `;
+    let obsoleteCodeRejected = false;
+    try {
+      parseInz(obsoleteHtml);
+    } catch (err) {
+      if (err.message.includes('REG-NZ-FORKLIFT-721311') && err.message.includes('721211')) {
+        obsoleteCodeRejected = true;
+      }
+    }
+
+    // 2. Official code 721311 MUST parse with correct structure
+    const validHtml = obsoleteHtml.replace('721211', '721311');
+    const parsedValid = parseInz(validHtml);
+    const forklift = parsedValid.normalizedFacts.monitoredOccupationForkliftDriver;
+    const isCode721311 = forklift.officialAnzscoCode === '721311';
+    const isLevel4 = forklift.baselineSkillLevel === 4;
+    const hasConditionalLevel3 = forklift.skillLevel3ConditionalRule && forklift.skillLevel3ConditionalRule.isAutomaticVisaGrant === false;
+
+    // 3. Database / code audit: no obsolete 721211 in occupations.ts or evidence.ts
+    const occupationsSrc = fs.readFileSync(path.join(rootDir, 'src/data/occupations.ts'), 'utf-8');
+    const evidenceSrc = fs.readFileSync(path.join(rootDir, 'src/data/evidence.ts'), 'utf-8');
+    const noObsoleteInSrc = !occupationsSrc.includes('721211') && !evidenceSrc.includes('721211');
+    const hasCorrectInSrc = occupationsSrc.includes('721311') && evidenceSrc.includes('721311');
+
+    const passReg74 = obsoleteCodeRejected && isCode721311 && isLevel4 && hasConditionalLevel3 && noObsoleteInSrc && hasCorrectInSrc;
+    console.log(`  Obsolete 721211 rejected: ${obsoleteCodeRejected}, Official 721311 parsed: ${isCode721311}, Level 4: ${isLevel4}, Source free of 721211: ${noObsoleteInSrc}`);
+    testResults.push({
+      name: 'REG-74: PREVIOUSLY_CORRECTED_FACTS_LOCKED (RULE-74 Forklift Driver ANZSCO 721311 locked, obsolete 721211 rejected with REG-NZ-FORKLIFT-721311, baseline Level 4 with conditional Level 3)',
+      pass: passReg74
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-74: PREVIOUSLY_CORRECTED_FACTS_LOCKED', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-75: PASSING_TESTS_DO_NOT_PROVE_FACTUAL_CORRECTNESS (RULE-75) ---
+  console.log('\n[Regression REG-75] PASSING_TESTS_DO_NOT_PROVE_FACTUAL_CORRECTNESS (RULE-75)...');
+  try {
+    const validMeta = {
+      sourceUrl: 'https://example.com/official-source',
+      sourceTitle: 'Official Gazette 2026',
+      retrievedAt: '2026-09-07T00:00:00.000Z',
+      effectiveAt: '2026-01-01',
+      evidenceExcerpt: 'Official legal statutory rate text.'
+    };
+    const validOk = validateFixtureProvenance(validMeta) === true;
+
+    // Must throw if sourceUrl missing
+    let missingUrlThrew = false;
+    try {
+      validateFixtureProvenance({ ...validMeta, sourceUrl: '' });
+    } catch (e) {
+      if (e.message.includes('sourceUrl')) missingUrlThrew = true;
+    }
+
+    // Must throw if syntheticMutation lacks mutationDescription
+    let missingMutationDescThrew = false;
+    try {
+      validateFixtureProvenance({ ...validMeta, syntheticMutation: true });
+    } catch (e) {
+      if (e.message.includes('mutationDescription')) missingMutationDescThrew = true;
+    }
+
+    const passReg75 = validOk && missingUrlThrew && missingMutationDescThrew;
+    console.log(`  Valid provenance accepted: ${validOk}, Missing URL rejected: ${missingUrlThrew}, Undocumented mutation rejected: ${missingMutationDescThrew}`);
+    testResults.push({
+      name: 'REG-75: PASSING_TESTS_DO_NOT_PROVE_FACTUAL_CORRECTNESS (RULE-75 High-impact fixtures require sourceUrl, sourceTitle, retrievedAt, effectiveAt, evidenceExcerpt; mutations require mutationDescription)',
+      pass: passReg75
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-75: PASSING_TESTS_DO_NOT_PROVE_FACTUAL_CORRECTNESS', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-76: MUTATION_DIVERGENCE_VERIFICATION (RULE-27 & RULE-76) ---
+  console.log('\n[Regression REG-76] MUTATION_DIVERGENCE_VERIFICATION (RULE-27 & RULE-76)...');
+  try {
+    // 1. Germany Parser Mutation Divergence
+    const deHtml = `
+<!DOCTYPE html>
+<html>
+<head><title>Opportunity Card - Make it in Germany</title></head>
+<body>
+  <h1>Opportunity card</h1>
+  <p>For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.</p>
+  <p>You can also work in secondary employment for up to 20 hours per week during your job search.</p>
+  <p>For vocational training (Ausbildung): The training company pays a monthly gross training allowance (Ausbildungsvergütung) of at least €950 to €1,350 per month (approx. €760 net). German language proficiency at level B1 is required.</p>
+</body>
+</html>
+    `;
+    const parsedDeOriginal = parseMakeItGermany(deHtml);
+    const parsedDeMutated = parseMakeItGermany(deHtml.replace('€1,091 per month', '€1,650 per month').replace('€13,092 for the full', '€19,800 for the full'));
+    const deDiverged = parsedDeMutated.normalizedFacts.opportunityCard.monthlyBlockedFundsEur.value === 1650 &&
+                       parsedDeOriginal.normalizedFacts.opportunityCard.monthlyBlockedFundsEur.value === 1091;
+
+    // 2. INZ Parser Mutation Divergence
+    const nzHtml = `
+<!DOCTYPE html>
+<html>
+<head><title>Accredited Employer Work Visa | Immigration New Zealand</title></head>
+<body>
+  <h1>Accredited Employer Work Visa</h1>
+  <p>Employers must pay at least the legal minimum wage of $23.15 per hour and ensure pay meets the market rate for the role so overseas workers are not exploited.</p>
+  <p>Note on median wage: The median wage of $31.61 an hour is used for Skilled Migrant Category (SMC) points, Green List and residence pathways, not as a general AEWV minimum threshold.</p>
+  <p>Applicants must have at least 3 years of relevant work experience or equivalent NZQF Level 4 qualification.</p>
+  <p>For skill level 4-5 roles (such as ANZSCO 721311 Forklift Driver): The maximum continuous stay for ANZSCO skill level 4 and 5 roles is limited to 3 years.</p>
+  <p>Applicants for ANZSCO level 4 and 5 roles must meet an English language requirement of IELTS 4.0 or equivalent.</p>
+  <p>Roles at skill level 4-5 do not have direct pathway under the Green List.</p>
+</body>
+</html>
+    `;
+    const parsedNzOriginal = parseInz(nzHtml);
+    const parsedNzMutated = parseInz(nzHtml.replace('$23.15 per hour', '$27.80 per hour'));
+    const nzDiverged = parsedNzMutated.normalizedFacts.generalAewvPayRequirement.legalMinimumWageNzd.value === 27.80 &&
+                       parsedNzOriginal.normalizedFacts.generalAewvPayRequirement.legalMinimumWageNzd.value === 23.15;
+
+    // 3. JSA Parser Mutation Divergence
+    const jsaText = `
+Release: 2026-08-01
+Jobs and Skills Australia - Skills Priority List (SPL)
+ANZSCO 2022/2023 Standard Classification
+
+ANZSCO 341111: Electrician (General) - National Shortage (S)
+Rating: National Shortage across NSW, VIC, QLD, WA, SA, TAS, NT, ACT.
+Assessing Authority: Trades Recognition Australia (TRA). Requires 4-year apprenticeship or overseas equivalent with trade test.
+
+ANZSCO 261313: Software Engineer - National Shortage (S)
+Rating: National Shortage in specialised software engineering domains.
+Assessing Authority: Australian Computer Society (ACS). Non-ICT diploma qualifications require 6 years RPL.
+
+Crucial Legal Distinction: Domestic occupational shortage identifies employer hiring difficulty within Australia, but does not grant automatic visa rights to foreign candidates. Overseas candidates must independently qualify for Migration points and pass formal skills assessments.
+    `;
+    const parsedJsaOriginal = parseJsa(jsaText);
+    const parsedJsaMutated = parseJsa(jsaText.replace('Software Engineer - National Shortage (S)', 'Software Engineer - No Shortage (NS)'));
+    const jsaDiverged = parsedJsaOriginal.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === true &&
+                        parsedJsaMutated.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === false;
+
+    const passReg76 = deDiverged && nzDiverged && jsaDiverged;
+    console.log(`  DE Parser diverged on mutation: ${deDiverged}, NZ Parser diverged: ${nzDiverged}, JSA Parser diverged: ${jsaDiverged}`);
+    testResults.push({
+      name: 'REG-76: MUTATION_DIVERGENCE_VERIFICATION (Parsers dynamically alter normalized output on input change, proving zero hardcoded constants)',
+      pass: passReg76
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-76: MUTATION_DIVERGENCE_VERIFICATION', pass: false, error: err.message });
   }
 
   // =========================================================================

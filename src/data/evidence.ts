@@ -77,7 +77,7 @@ export const EVIDENCE_BASE: Evidence[] = [
     country: '新西兰',
     occupationId: 'occ-forklift-logistics',
     isOfficial: true,
-    summary: '新西兰 AEWV 政策规定：ANZSCO Skill Level 4 与 5 的岗位（如叉车驾驶员 721211）要求申请人具备至少雅思 4.0 英语能力，工签最长居留年限压缩至 2~3 年，且完全不属于 Green List 绿名单职位，无直接转技术永居通道。',
+    summary: '新西兰 AEWV 政策规定：ANZSCO 721311 叉车驾驶员（基准 Skill Level 4）要求申请人具备至少雅思 4.0 英语能力，工签最长居留年限压缩至 3 年且无绿名单直接永居；仅在雇主 Job Check 要求 3 年经验或 NZQCF Level 4 资格时方可按 Level 3 审理，绝非自动获签或移民。',
     keyFactQuotes: [
       'ANZSCO level 4 and 5 roles now require an English language requirement of at least IELTS 4.0 or equivalent.',
       'The maximum continuous stay on an AEWV for level 4 and 5 roles is limited and they do not have direct pathway under the Green List.'

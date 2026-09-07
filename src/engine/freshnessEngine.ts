@@ -51,6 +51,14 @@ export const FRESHNESS_POLICIES: Record<string, FreshnessPolicy> = {
     expectedSourceCadence: '民间避坑与经验信标 (24-72h 巡检)',
     isNonOfficial: true
   },
+  INDUSTRY_SIGNAL: {
+    dataType: 'INDUSTRY_SIGNAL',
+    targetRefreshHours: 72,  // 3 days
+    agingAfterHours: 168,    // 7 days
+    staleAfterHours: 720,    // 30 days
+    expireAfterHours: 2160,  // 90 days
+    expectedSourceCadence: '行业平台与自由职业市场报告 (周度/月度动态)'
+  },
   DEFAULT: {
     dataType: 'DEFAULT',
     targetRefreshHours: 24,
@@ -61,27 +69,63 @@ export const FRESHNESS_POLICIES: Record<string, FreshnessPolicy> = {
   }
 };
 
+// RULE-72: Pathway-to-Fact-Type SLA Mapping (No uniform immigration policy for all)
+export const PATHWAY_DATA_TYPE_MAP: Record<string, string> = {
+  'path-de-ausbildung': 'CRITICAL_IMMIGRATION_POLICY',
+  'path-nz-whv': 'CRITICAL_IMMIGRATION_POLICY',
+  'path-jp-ssw': 'CRITICAL_IMMIGRATION_POLICY',
+  'path-cn-remote-studio': 'INDUSTRY_SIGNAL',
+  'path-my-digital-nomad': 'CRITICAL_IMMIGRATION_POLICY'
+};
+
 export function getFreshnessPolicy(dataType: string = 'DEFAULT'): FreshnessPolicy {
   return FRESHNESS_POLICIES[dataType] || FRESHNESS_POLICIES.DEFAULT;
 }
 
+export type FreshnessAnchor = 'fetchedAt' | 'sourcePublishedAt';
+
+export interface FreshnessCalculationOptions {
+  dataType?: string;
+  asOfTimeMs?: number;
+  anchor?: FreshnessAnchor;
+}
+
 /**
- * RULE-48: Calculate freshness purely based on Source Dates (sourcePublishedAt, fetchedAt),
- * NEVER on browser session / reload time.
+ * RULE-48 & REG-12: Calculate freshness with explicit anchor semantics.
+ * 1. fetchedAt: When our system retrieved and verified the page (Collector verification freshness).
+ * 2. sourcePublishedAt: When the issuing agency officially released the document (Publication age).
+ * 3. effectiveAt: When the policy legally takes effect in the real world (In force vs Upcoming enforcement).
  */
 export function calculateFactFreshness(
   snapshot: { sourcePublishedAt?: string | null; fetchedAt: string; effectiveAt?: string | null },
-  dataType: string = 'CRITICAL_IMMIGRATION_POLICY',
-  asOfTimeMs?: number
+  optionsOrDataType: string | FreshnessCalculationOptions = 'CRITICAL_IMMIGRATION_POLICY',
+  legacyAsOfTimeMs?: number
 ): FreshnessEvaluation {
+  let dataType = 'CRITICAL_IMMIGRATION_POLICY';
+  let asOfTimeMs: number | undefined = legacyAsOfTimeMs;
+  let anchorChoice: FreshnessAnchor = 'fetchedAt';
+
+  if (typeof optionsOrDataType === 'object' && optionsOrDataType !== null) {
+    dataType = optionsOrDataType.dataType || 'CRITICAL_IMMIGRATION_POLICY';
+    asOfTimeMs = optionsOrDataType.asOfTimeMs !== undefined ? optionsOrDataType.asOfTimeMs : legacyAsOfTimeMs;
+    if (optionsOrDataType.anchor) {
+      anchorChoice = optionsOrDataType.anchor;
+    }
+  } else if (typeof optionsOrDataType === 'string') {
+    dataType = optionsOrDataType;
+  }
+
   const policy = getFreshnessPolicy(dataType);
   const now = asOfTimeMs !== undefined ? asOfTimeMs : Date.now();
-  
-  // Anchor date for freshness SLA (RULE-47 & RULE-48):
-  // Check retrieval & verification timeliness based on fetchedAt, with fallback to sourcePublishedAt.
-  const anchorDateStr = snapshot.fetchedAt || snapshot.sourcePublishedAt || '';
+
+  let anchorDateStr = '';
+  if (anchorChoice === 'sourcePublishedAt') {
+    anchorDateStr = snapshot.sourcePublishedAt || snapshot.fetchedAt || '';
+  } else {
+    anchorDateStr = snapshot.fetchedAt || snapshot.sourcePublishedAt || '';
+  }
+
   const anchorTime = new Date(anchorDateStr).getTime();
-  
   if (isNaN(anchorTime)) {
     return {
       status: 'UNKNOWN',
@@ -89,6 +133,9 @@ export function calculateFactFreshness(
       sourcePublishedAt: snapshot.sourcePublishedAt,
       effectiveAt: snapshot.effectiveAt,
       fetchedAt: snapshot.fetchedAt,
+      anchorUsed: anchorChoice,
+      anchorDate: anchorDateStr,
+      legalStatus: 'UNKNOWN',
       policy,
       isProvisional: true,
       excludeFromScoring: false,
@@ -98,6 +145,15 @@ export function calculateFactFreshness(
 
   const ageMs = Math.max(0, now - anchorTime);
   const ageHours = Math.round(ageMs / (1000 * 60 * 60));
+
+  // Determine legal enforcement status based on effectiveAt
+  let legalStatus: 'IN_FORCE' | 'UPCOMING_ENFORCEMENT' | 'UNKNOWN' = 'UNKNOWN';
+  if (snapshot.effectiveAt) {
+    const effTime = new Date(snapshot.effectiveAt).getTime();
+    if (!isNaN(effTime)) {
+      legalStatus = effTime > now ? 'UPCOMING_ENFORCEMENT' : 'IN_FORCE';
+    }
+  }
 
   let status: FreshnessStatus = 'FRESH';
   let isProvisional = false;
@@ -130,6 +186,9 @@ export function calculateFactFreshness(
     sourcePublishedAt: snapshot.sourcePublishedAt,
     effectiveAt: snapshot.effectiveAt,
     fetchedAt: snapshot.fetchedAt,
+    anchorUsed: anchorChoice,
+    anchorDate: anchorDateStr,
+    legalStatus,
     policy,
     isProvisional,
     excludeFromScoring,
@@ -149,13 +208,8 @@ export interface PathwayFreshnessGateResult {
 }
 
 /**
- * RULE-50: Freshness Gate before Top Recommendations
- * 5 Checks:
- * 1. Key evidence exists
- * 2. Freshness SLA check (not STALE or EXPIRED)
- * 3. Trustworthy source (Tier A/B)
- * 4. No major unknown gap
- * 5. Profile hard constraints alignment
+ * RULE-50 & RULE-72: Freshness Gate before Top Recommendations
+ * Evaluates fact-specific SLA based on actual pathway data type (no uniform policy)
  */
 export function evaluatePathwayFreshnessGate(
   pathway: Pathway,
@@ -182,8 +236,9 @@ export function evaluatePathwayFreshnessGate(
     };
   }
 
-  // Evaluate freshness
-  const evalResult = calculateFactFreshness(snapshot, 'CRITICAL_IMMIGRATION_POLICY', asOfTimeMs);
+  // RULE-72: Fact-specific SLA evaluation
+  const pathwayDataType = PATHWAY_DATA_TYPE_MAP[pathway.id] || 'CRITICAL_IMMIGRATION_POLICY';
+  const evalResult = calculateFactFreshness(snapshot, pathwayDataType, asOfTimeMs);
 
   let gatePassed = true;
   let excludeFromTop = false;

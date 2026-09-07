@@ -155,9 +155,35 @@ export interface FreshnessEvaluation {
   isProvisional: boolean;
   excludeFromScoring: boolean;
   historicalNotice?: string;
+  anchorUsed?: 'fetchedAt' | 'sourcePublishedAt';
+  anchorDate?: string;
+  legalStatus?: 'IN_FORCE' | 'UPCOMING_ENFORCEMENT' | 'UNKNOWN';
 }
 
 export type DecisionMode = 'EXPLORE' | 'EXECUTE';
+
+export interface BehavioralModeState {
+  currentMode: DecisionMode;
+  modeActivatedAt: string;
+  pinnedPathwayId?: string;
+  exitCriteria: {
+    description: string;
+    targetMetric: string;
+    deadlineMonths: number;
+    killThreshold?: string;
+  };
+  filterNonPinned: boolean;
+}
+
+export interface DerivedActionItem {
+  id: string | number;
+  title: string;
+  reason: string;
+  badge: string;
+  badgeColor: string;
+  actionTab: string;
+  derivationSource: 'PROFILE_RUNWAY' | 'PATHWAY_NEXT_GATE' | 'MINI_EXPERIMENT' | 'POLICY_EVIDENCE' | 'STATIC_FALLBACK';
+}
 
 export interface NextGate {
   title: string;
@@ -339,6 +365,7 @@ export interface UserProfile {
   preferences?: UserPreferences;
   activeDecisionMode?: DecisionMode;
   pinnedPathwayId?: string;
+  behavioralModeState?: BehavioralModeState;
 }
 
 export type SourceStatus = 
