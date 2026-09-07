@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN" class="dark">
   <head>
     <meta charset="UTF-8" />
@@ -9,10 +9,23 @@
     <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#020617" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   </head>
   <body class="bg-slate-950 text-slate-100 min-h-screen">
-    <div id="root"></div>
+    <div id="root">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background-color:#020617;color:#94a3b8;font-family:system-ui,-apple-system,sans-serif;text-align:center;padding:24px;">
+        <div style="width:36px;height:36px;border:3px solid #1e293b;border-top:3px solid #10b981;border-radius:50%;animation:lifee-spin 0.8s linear infinite;margin-bottom:20px;"></div>
+        <div style="font-size:16px;font-weight:600;color:#f8fafc;margin-bottom:8px;">Lifee 正在加载决策情报系统...</div>
+        <div style="font-size:12px;color:#64748b;max-width:320px;line-height:1.6;margin-bottom:20px;">若首次打开或网络版本更新中，请稍候；如遇旧版缓存未刷新，可点击下方强制清除。</div>
+        <button onclick="if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(w=>w.unregister()));}if('caches' in window){caches.keys().then(k=>Promise.all(k.map(c=>caches.delete(c))));}localStorage.clear();location.reload(true);" style="background:#059669;color:#ffffff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 4px 12px rgba(5,150,105,0.25);">
+          一键清除缓存并刷新
+        </button>
+      </div>
+      <style>
+        @keyframes lifee-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      </style>
+    </div>
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

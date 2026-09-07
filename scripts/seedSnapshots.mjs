@@ -222,6 +222,12 @@ saveSnapshot('src-inz-gov', {
   sourcePublishedAt: '2026-07-28',
   normalizedFacts: {
     aewv: {
+      aewv_general_median_wage_requirement: {
+        value: 35.00,
+        unit: 'NZD/hour',
+        scope: 'SMC & Green List (not general AEWV)',
+        evidenceText: 'The New Zealand median wage of $35.00 an hour applies to Skilled Migrant Category and Green List residence applications.'
+      },
       medianWageUsedInOtherMigrationSettings: {
         value: 35.00,
         unit: 'NZD/hour',
