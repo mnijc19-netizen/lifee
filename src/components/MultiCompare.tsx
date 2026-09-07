@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Scale, Check, X, ShieldAlert, ArrowRight } from 'lucide-react';
 import { OCCUPATIONS } from '../data/occupations';
 import { COUNTRIES } from '../data/countries';
@@ -58,11 +58,15 @@ export const MultiCompare: React.FC = () => {
       {/* 1. Country Comparison Table */}
       {compareMode === 'countries' && (
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+            <span>横向对比矩阵</span>
+            <span>← 左右滑动查看全部国家 →</span>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-950/80 text-slate-400">
-                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44">对比指标</th>
+                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44 border-r border-slate-800 shadow-xs">对比指标</th>
                   {COUNTRIES.map(c => (
                     <th key={c.id} className="p-3.5 font-semibold text-white min-w-[170px]">
                       <div className="flex items-center space-x-1.5">
@@ -76,7 +80,7 @@ export const MultiCompare: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-800/80 text-slate-300">
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">大专学历友好度</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">大专学历友好度</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
@@ -89,7 +93,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">最低启动资本要求</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">最低启动资本要求</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 font-mono font-bold text-amber-400">
                       ¥{c.minStartupCapitalRmb.toLocaleString()}
@@ -98,7 +102,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">小时可支配购买力指数</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">小时可支配购买力指数</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 font-mono text-emerald-400 font-bold">
                       {c.netHourlyPurchasingPowerIndex} <span className="text-[10px] text-slate-500 font-normal">(中国一线=100)</span>
@@ -107,7 +111,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">典型周工时 / 法定年假</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">典型周工时 / 法定年假</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 font-mono">
                       {c.typicalWeeklyHours}h / 周 · <span className="text-emerald-400">{c.paidLeaveDaysYear}天</span>
@@ -116,7 +120,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">单人月均租金预估</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">单人月均租金预估</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 font-mono text-slate-300">
                       约 ¥{c.monthlyRentRmbEstimate}
@@ -125,7 +129,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">第二语言学习成本</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">第二语言学习成本</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 text-slate-400">
                       {c.secondLanguageCost}
@@ -134,7 +138,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">网络自由与AI可用性</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">网络自由与AI可用性</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 text-emerald-400">
                       {c.aiServiceAccessibility} ({c.internetFreedomScore}/10)
@@ -143,7 +147,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">对华外国人现实难度</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">对华外国人现实难度</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[11px] ${
@@ -157,7 +161,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">核心官方结论摘要</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">核心官方结论摘要</td>
                   {COUNTRIES.map(c => (
                     <td key={c.id} className="p-3.5 text-slate-400 leading-relaxed text-[11px]">
                       {c.summaryVerdict}
@@ -173,11 +177,15 @@ export const MultiCompare: React.FC = () => {
       {/* 2. Career Comparison Table */}
       {compareMode === 'careers' && (
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+            <span>横向对比矩阵</span>
+            <span>← 左右滑动查看全部职业 →</span>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-950/80 text-slate-400">
-                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44">对比指标</th>
+                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44 border-r border-slate-800 shadow-xs">对比指标</th>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <th key={occ.id} className="p-3.5 font-semibold text-white min-w-[180px]">
                       <div className="font-bold text-sm">{occ.title}</div>
@@ -188,7 +196,7 @@ export const MultiCompare: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-800/80 text-slate-300">
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">综合匹配度 (针对你)</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">综合匹配度 (针对你)</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 font-mono font-bold text-emerald-400 text-sm">
                       {occ.feasibilityScore}%
@@ -197,7 +205,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">远程弹性 (自由时间)</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">远程弹性 (自由时间)</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${
@@ -210,7 +218,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">中国月薪与时薪预估</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">中国月薪与时薪预估</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 font-mono">
                       ¥{occ.cnSalaryGrossMonthly} (约¥{occ.cnSalaryHourlyEstimate}/h)
@@ -219,7 +227,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">海外时薪水平</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">海外时薪水平</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 font-mono font-semibold text-emerald-400">
                       {occ.overseasSalaryHourlyEstimate}
@@ -228,7 +236,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">资格互认摩擦力</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">资格互认摩擦力</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
@@ -243,7 +251,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">入门学历要求</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">入门学历要求</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 text-slate-300">
                       {occ.entryDegree}
@@ -252,7 +260,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">入门学习周期与成本</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">入门学习周期与成本</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 font-mono text-slate-300">
                       {occ.learningMonths} 个月 · ¥{occ.learningCostRmb}
@@ -261,7 +269,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">AI替代风险与增强潜力</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">AI替代风险与增强潜力</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 text-[11px]">
                       风险: {occ.aiReplacementRisk} / <span className="text-emerald-400">杠杆: {occ.aiEnhancementLeverage}</span>
@@ -270,7 +278,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">最大失败原因预警</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">最大失败原因预警</td>
                   {OCCUPATIONS.slice(0, 6).map(occ => (
                     <td key={occ.id} className="p-3.5 text-rose-300/90 leading-relaxed text-[11px]">
                       {occ.eightQuestions.q8_topFailureReason}
@@ -286,11 +294,15 @@ export const MultiCompare: React.FC = () => {
       {/* 3. Pathway Comparison Table */}
       {compareMode === 'pathways' && (
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+          <div className="md:hidden flex items-center justify-between px-4 py-2 bg-slate-950/60 border-b border-slate-800/80 text-[11px] text-slate-400">
+            <span>横向对比矩阵</span>
+            <span>← 左右滑动查看全部路线 →</span>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-950/80 text-slate-400">
-                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44">对比指标</th>
+                  <th className="p-3.5 font-semibold sticky left-0 bg-slate-950 z-10 w-44 border-r border-slate-800 shadow-xs">对比指标</th>
                   {PATHWAYS.map(p => (
                     <th key={p.id} className="p-3.5 font-semibold text-white min-w-[200px]">
                       <div className="font-bold text-sm">{p.targetCountry}</div>
@@ -301,7 +313,7 @@ export const MultiCompare: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-800/80 text-slate-300">
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">当前可行性评分</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">当前可行性评分</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 font-mono font-bold text-emerald-400 text-sm">
                       {p.feasibilityScore}%
@@ -310,7 +322,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">起步最低资金要求</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">起步最低资金要求</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 font-mono font-bold text-amber-400">
                       ¥{p.minCapitalRmb.toLocaleString()}
@@ -319,7 +331,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">预计落地总周期</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">预计落地总周期</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 font-mono text-slate-300">
                       {p.totalMonthsEst} 个月
@@ -328,7 +340,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">核心入选理由</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">核心入选理由</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 text-slate-300 leading-relaxed text-[11px]">
                       {p.whyRecommended}
@@ -337,7 +349,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">致命失效条件 (Kill Criteria)</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">致命失效条件 (Kill Criteria)</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 text-rose-400 leading-relaxed text-[11px]">
                       {p.killCriteria}
@@ -346,7 +358,7 @@ export const MultiCompare: React.FC = () => {
                 </tr>
 
                 <tr className="hover:bg-slate-800/30">
-                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-900/90 z-10">当前应迈出的第一步</td>
+                  <td className="p-3.5 font-medium text-slate-400 sticky left-0 bg-slate-950 z-10 border-r border-slate-800/80 shadow-xs">当前应迈出的第一步</td>
                   {PATHWAYS.map(p => (
                     <td key={p.id} className="p-3.5 text-emerald-300 leading-relaxed text-[11px]">
                       {p.nextImmediateStep}

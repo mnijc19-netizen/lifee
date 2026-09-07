@@ -175,7 +175,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
               <div className="flex items-center space-x-2 text-emerald-400 font-medium">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <span>RULE-57 刚性客观约束准则</span>
+                <span>刚性客观约束准则</span>
               </div>
               <p className="text-slate-400 leading-relaxed">
                 刚性约束（年龄、学历、可用资金、语言、刚性支出）直接决定法律签证准入与可行性底线，无法用主观意志覆盖。若不满足（如资金缺口或年龄超限），系统会自动施加准入降权或排除。
@@ -302,7 +302,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="text-[11px] text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
               <div className="flex items-center space-x-2 text-sky-400 font-medium">
                 <span className="h-2 w-2 rounded-full bg-sky-400" />
-                <span>RULE-57 主观偏好与权重调谐</span>
+                <span>主观偏好与权重调谐</span>
               </div>
               <p className="text-slate-400 leading-relaxed">
                 主观偏好决定当多条路线在刚性约束上均可行时，系统如何进行个性化排序。可根据你对自由时间、现金流安全或海外永居的重视程度调整。

@@ -18,6 +18,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
   onSelectPathway,
   onNavigateTab
 }) => {
+  const [isMobileInputOpen, setIsMobileInputOpen] = React.useState(false);
   const runway = calculateRunway(profile);
 
   const handleInputChange = (field: keyof UserProfile, val: number) => {
@@ -39,7 +40,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
         <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
           生存现金流测算器 (Runway Intelligence)
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
           因为你目前存款较少、家庭无法承担几十万留学费用，现金流自给能力是所有路线的第一前置过滤器。
         </p>
       </div>
@@ -48,9 +49,19 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Inputs */}
         <div className="lg:col-span-1 rounded-xl border border-slate-800 bg-slate-900/40 p-5 space-y-4">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-            输入你的真实财务数字 (元 / RMB)
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              输入你的真实财务数字 (元 / RMB)
+            </h3>
+            <button
+              onClick={() => setIsMobileInputOpen(!isMobileInputOpen)}
+              className="lg:hidden text-xs text-emerald-400 hover:text-emerald-300 font-medium py-1 px-2.5 rounded-lg border border-slate-700 bg-slate-800 touch-target-min"
+            >
+              {isMobileInputOpen ? '收起输入' : '展开调参'}
+            </button>
+          </div>
+
+          <div className={`space-y-4 ${isMobileInputOpen ? 'block' : 'hidden lg:block'}`}>
 
           <div>
             <label className="block text-xs text-slate-400 mb-1">当前手头可用存款储备</label>
@@ -106,6 +117,7 @@ export const RunwayCalculator: React.FC<RunwayCalculatorProps> = ({
 
           <div className="pt-2 text-[11px] text-slate-500 leading-relaxed border-t border-slate-800">
             * 提示：数据保存在本地浏览器 LocalStorage，不会上传至任何公开服务器，安全无泄露风险。
+          </div>
           </div>
         </div>
 

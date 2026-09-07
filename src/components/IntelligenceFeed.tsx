@@ -48,7 +48,7 @@ export const IntelligenceFeed: React.FC<IntelligenceFeedProps> = ({
             <h1 className="text-2xl font-bold tracking-tight text-white mt-1">
               情报流 (Intelligence Stream)
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
               拒绝水文资讯。系统持续监控官方移民局、统计局、大厂外包管线与社区避坑反馈。任何政策门槛变更或名单调整，均直接给出“旧实情 → 新实情 → 对我有什么改变”。
             </p>
           </div>
@@ -93,8 +93,9 @@ export const IntelligenceFeed: React.FC<IntelligenceFeedProps> = ({
         {filteredEvents.map(event => (
           <div
             key={event.id}
-            className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-slate-700 hover:bg-slate-900/80 transition-all space-y-4"
+            className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 hover:border-slate-700 hover:bg-slate-900/80 transition-all space-y-3.5"
           >
+            {/* 1. Header Badges */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div className="flex items-center space-x-2 flex-wrap gap-1">
                 <span className="rounded bg-amber-500/10 px-2 py-0.5 text-xs font-bold text-amber-400 border border-amber-500/20">
@@ -122,45 +123,47 @@ export const IntelligenceFeed: React.FC<IntelligenceFeedProps> = ({
               <span className="text-xs font-mono text-slate-500">{event.date}</span>
             </div>
 
+            {/* 2. What Happened (发生了什么) */}
             <div>
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold text-white leading-snug">
                 {event.title}
               </h3>
-              <p className="mt-1 text-xs text-slate-400 leading-relaxed">
+              <p className="mt-1.5 text-xs text-slate-300 leading-relaxed">
                 {event.summary}
               </p>
             </div>
 
-            {/* Structured Before/After Delta Dashboard */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            {/* 3. Top Prominence: Direct Impact on Me (对我有何影响) */}
+            <div className="rounded-lg bg-emerald-950/30 border border-emerald-800/40 p-3.5 flex items-start space-x-2.5 text-xs text-emerald-300 shadow-xs">
+              <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold text-emerald-400">对我的直接决策影响与行动转向：</span>
+                <span className="ml-1 text-emerald-200/95 leading-relaxed">{event.whatToChangeForMe}</span>
+              </div>
+            </div>
+
+            {/* 4. Secondary: Structured Before/After Delta Dashboard */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
               <div className="rounded-lg bg-slate-950/80 p-3 border border-slate-800/80">
                 <span className="text-[10px] text-slate-500 font-semibold uppercase block mb-1">
                   旧事实 / 往期基准 (Old Fact)
                 </span>
-                <p className="text-slate-400">{event.oldFact}</p>
+                <p className="text-slate-400 leading-relaxed">{event.oldFact}</p>
               </div>
 
               <div className="rounded-lg bg-slate-950/80 p-3 border border-emerald-900/40">
                 <span className="text-[10px] text-emerald-400 font-semibold uppercase block mb-1">
                   最新生效事实 (New Fact Verified)
                 </span>
-                <p className="text-slate-200 font-medium">{event.newFact}</p>
+                <p className="text-slate-200 font-medium leading-relaxed">{event.newFact}</p>
               </div>
             </div>
 
-            {/* Direct Impact on My Life Decision */}
-            <div className="rounded-lg bg-emerald-950/30 border border-emerald-800/40 p-3 flex items-start space-x-2 text-xs text-emerald-300">
-              <Sparkles className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold">对我的直接决策影响与行动转向：</span>
-                <span className="ml-1 text-emerald-200/90">{event.whatToChangeForMe}</span>
-              </div>
-            </div>
-
+            {/* 5. Footer: View Evidence */}
             <div className="flex justify-end pt-1">
               <button
                 onClick={() => onSelectEvidence(event.evidenceId)}
-                className="flex items-center space-x-1 text-xs text-slate-400 hover:text-emerald-400 transition-colors"
+                className="flex items-center space-x-1.5 text-xs text-slate-400 hover:text-emerald-400 transition-colors touch-target-min"
               >
                 <FileText className="h-3.5 w-3.5" />
                 <span>查看支撑法条与官方源证据</span>

@@ -177,13 +177,13 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
           </div>
         </div>
 
-        {/* RULE-62 Anti-Anxiety Directive Banner */}
+        {/* Anti-Anxiety Directive Banner */}
         <div className="mt-4 rounded-lg border border-sky-500/30 bg-sky-950/20 p-3 text-xs text-sky-200/90 flex items-start space-x-2.5">
           <ShieldCheck className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <div className="font-semibold text-sky-300 flex items-center space-x-1.5">
-              <span>🛡️ RULE-62 决策防焦虑铁律：做减法、找盲区、锁门槛、防沉没</span>
-              <span className="rounded bg-sky-500/20 px-1.5 py-0.2 text-[10px] text-sky-300">宪法强制</span>
+              <span>🛡️ 决策防焦虑机制：做减法、找盲区、锁门槛、防沉没</span>
+              <span className="rounded bg-sky-500/20 px-1.5 py-0.2 text-[10px] text-sky-300 font-semibold">专注保障</span>
             </div>
             <p className="text-slate-300 text-[11px] leading-relaxed">
               AI 顾问的使命是帮您【排除不可行路线】、定位【官方关键未知盲区】、聚焦【当期唯一的 Next Gate】并设计【7 天最小验证实验】，坚决不向您兜售更多制造信息过载与行动瘫痪的空洞选择。

@@ -18,6 +18,7 @@ import { AiContextModal } from './components/AiContextModal';
 import { SettingsModal } from './components/SettingsModal';
 import { ManualInbox } from './components/ManualInbox';
 import { ResearchModal } from './components/ResearchModal';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { INTELLIGENCE_STREAM } from './data/intelligence';
 import { COUNTRIES } from './data/countries';
 
@@ -101,7 +102,7 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 pb-24 md:pb-12">
         {activeTab === 'today' && (
           <TodayDashboard
             profile={profile}
@@ -234,6 +235,14 @@ export function App() {
         isOpen={isManualInboxOpen}
         onClose={() => setIsManualInboxOpen(false)}
         onAddEvidence={addEvidence}
+      />
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
       {/* Footer */}
