@@ -142,7 +142,7 @@ saveSnapshot('src-make-it-germany', {
     },
     {
       evidenceId: 'ev-de-ausbildung-stipend',
-      claim: '德国双元制职业培训由企业全额资助免学费，按月领取培训津贴（950~1350欧），免除自保金要求。',
+      claim: '德国双元制职业培训由企业全额资助免学费，按月领取培训津贴（950~1350欧），津贴达标可免自保金要求；不足部分需补足自保金。',
       quotes: ['Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich.'],
       sourceUrl: 'https://www.arbeitsagentur.de/bildung/ausbildung'
     }
@@ -154,7 +154,7 @@ saveSnapshot('src-make-it-germany', {
   summary: '2026 Statutory increase update'
 });
 
-// 2. Immigration New Zealand (INZ): v1 (Old wage: $29.66) -> v2 (Current wage: $31.61)
+// 2. Immigration New Zealand (INZ): v1 (Old wage: $29.66) -> v2 (Current median: $35.00, legal min: $23.95)
 const nzDir = ensureSnapshotsDir('src-inz-gov');
 if (fs.existsSync(nzDir)) {
   fs.rmSync(nzDir, { recursive: true, force: true });
@@ -222,19 +222,20 @@ saveSnapshot('src-inz-gov', {
   sourcePublishedAt: '2026-07-28',
   normalizedFacts: {
     aewv: {
-      aewv_general_median_wage_requirement: {
-        value: 31.61,
+      medianWageUsedInOtherMigrationSettings: {
+        value: 35.00,
         unit: 'NZD/hour',
         sourceId: 'src-inz-gov',
         sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
         sourceTitle: 'Immigration New Zealand - AEWV 2026 Standards',
         fetchedAt: '2026-09-06T19:00:00.000Z',
         sourcePublishedAt: '2026-07-28',
-        effectiveAt: '2026-02-28',
-        evidenceText: 'You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.',
+        effectiveAt: '2026-03-09',
+        evidenceText: 'The New Zealand median wage of $35.00 an hour applies to Skilled Migrant Category and Green List residence applications.',
         parserVersion: '2.0.0'
       },
-      medianWageHourlyNzd: 31.61,
+      legalMinimumWageHourlyNzd: 23.95,
+      medianWageHourlyNzd: 35.00,
       currency: 'NZD'
     },
     anzscoLevel45Restrictions: {

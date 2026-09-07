@@ -97,11 +97,11 @@ export function localEvidenceRag(query: string, profile: UserProfile): AiRespons
   if (q.includes('德国') || q.includes('双元制') || q.includes('机会卡') || q.includes('ausbildung') || q.includes('chancenkarte')) {
     return {
       conclusion: '【极力推荐双元制，暂缓机会卡】德国是目前大专学历最友好的发达国家；但因你零积蓄，应走“0学费带薪双元制 Ausbildung”，而非需锁定 10 万自保金的机会卡。',
-      why: '德国联邦劳工局规定双元制学徒免学费且企业每月支付 950~1350 欧元津贴，直接免除 13,092 欧元 Sperrkonto 限制性账户要求。大专文凭在德国受认可，毕业工作满 2~3 年即可申请欧盟永居。',
+      why: '德国联邦劳工局规定双元制学徒免学费且企业每月支付 950~1350 欧元津贴；若企业实训津贴满足法定基本生活标准（毛额 €1,048/净额约 €822 起），可免除自保金；若津贴存在差额则仅需补足差额证明。大专文凭在德国受认可，毕业工作满 2~3 年即可申请欧盟永居。',
       relevanceToUser: '完美匹配你“无启动大额本金”、“大专学历在英语国家移民打分不够”的底层痛点。工时严格 38.5 小时，年假 30 天，网络完全自由。',
       evidenceQuotes: [
         {
-          title: '德国双元制职业培训津贴与免自保金法条',
+          title: '德国双元制职业培训津贴与生计差额自保金规定',
           tier: 'Tier A (德国联邦劳工局)',
           text: 'Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich.',
           source: 'https://www.arbeitsagentur.de'

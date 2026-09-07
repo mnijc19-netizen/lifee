@@ -31,3 +31,30 @@ Therefore:
 
 ## RULE-76 Builder Classification Is Not Independent Approval
 Labels in builder reports such as `SAFE_TO_KEEP`, `PASS`, and `VALIDATED` represent the builder's self-assessment only. They cannot be used to declare a batch "approved" or "completed". Only an explicit `APPROVED` ruling from an independent reviewer fulfills the gate.
+
+## RULE-77 Provenance Excerpt Verifiability
+Provenance metadata must prove that `evidenceExcerpt` genuinely exists in the fetched raw source payload. Simply providing a `sourceUrl` does not constitute valid Provenance. The excerpt must be an exact verbatim substring of the raw payload.
+
+## RULE-78 Missing Evidence Yields UNKNOWN/null (No Binary Speculation)
+When evidence is not found in the payload, the field must strictly be set to `UNKNOWN` or `null`. A parser must NEVER deduce `true` because "no negation sentence was found", nor deduce `false` because "no affirmative sentence was found".
+
+## RULE-79 Single Source Domain Boundary & Dedicated Adapters
+A single official source page can only prove the facts it actually contains. Different policy domains (e.g. Opportunity Card vs Vocational Training, AEWV vs Minimum Wage vs Median Wage vs Forklift rules) must be collected via dedicated adapters and then unified via an Aggregator.
+
+## RULE-80 Explicit Demarcation of Synthetic Fixtures
+Manually written or altered test fixtures must be explicitly flagged with `fixtureType: 'SYNTHETIC_MUTATION'` and `syntheticMutation: true`. They must never masquerade as `CAPTURED_OFFICIAL` fixtures.
+
+## RULE-81 Official Source Supremacy Over Outdated Fixtures
+When a test fixture conflicts with current official statutory sources, the current official source takes absolute priority and the fixture must be refreshed to reflect current law.
+
+## RULE-82 Zero Parallel Hardcoded Policy Constants in Pipelines
+Once `LIVE_DATA` enters the system, the Collector, scoring engine, and UI must consume dynamic extracted facts rather than maintaining parallel hardcoded benchmarks (e.g. obsolete 23.15, 31.61, 1150).
+
+## RULE-83 Release Authenticity Gate
+Any report name, release year, or dataset version must verify that the official agency has genuinely published it. Fabricating future or non-existent releases (e.g. fabricating 2026 releases when only 2025 exists) is strictly prohibited.
+
+## RULE-84 Multi-Source Aggregation Preserves Atomic Fact Provenance
+Facts collected across multiple official pages must be ingested separately, preserving individual `sourceUrl`, `retrievedAt`, `sourcePublishedAt`/`effectiveAt`, and `evidenceExcerpt` per fact, before being combined in an Aggregator.
+
+## RULE-85 Zero Business Default Constants on Missing Fields
+When a required or optional field cannot be extracted from the source content, the parser must return `null`, `UNKNOWN`, or `PARTIAL`. Defaulting to business assumptions (e.g. defaulting experience to 3 years) is strictly prohibited.

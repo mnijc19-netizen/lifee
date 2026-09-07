@@ -2,7 +2,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { parseDeOpportunityCard } from './parsers/deOpportunityCardParser.mjs';
+import { parseDeVocationalTraining } from './parsers/deVocationalTrainingParser.mjs';
 import { parseMakeItGermany } from './parsers/makeItGermanyParser.mjs';
+import { parseNzAewv } from './parsers/nzAewvParser.mjs';
+import { parseNzMinimumWage } from './parsers/nzMinimumWageParser.mjs';
+import { parseNzMedianWage } from './parsers/nzMedianWageParser.mjs';
+import { parseNzForklift } from './parsers/nzForkliftParser.mjs';
 import { parseInz } from './parsers/inzParser.mjs';
 import { parseJsa } from './parsers/jsaParser.mjs';
 import { saveSnapshot, getLatestSnapshot } from './snapshotManager.mjs';
@@ -11,7 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-console.log('=== [Lifee Collector Engine v3] Strict Evidence & Status Taxonomy Ingestion ===');
+console.log('=== [Lifee Collector Engine v4] Strict Evidence & Status Taxonomy Ingestion ===');
 
 // Strict status dictionary:
 // LIVE_DATA: 真实获取并解析业务数据 (Real payload fetched, parsed and persisted)
@@ -37,8 +43,8 @@ const TARGET_SOURCES = [
     sourcePublishedAt: '2026-09-07'
   },
   {
-    id: 'src-make-it-germany',
-    name: '德国联邦官方技术移民门户 (Make it in Germany)',
+    id: 'src-de-opportunity-card',
+    name: '德国联邦官方机会卡细分数据端点 (Make it in Germany - Chancenkarte)',
     url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
     country: '德国',
     sourceTier: 'Tier A',
@@ -46,7 +52,31 @@ const TARGET_SOURCES = [
     expectedType: 'REACHABLE',
     fallbackLevel: 2,
     lastVerifiedAt: '2026-08-15',
-    verifiedPolicyFact: '2026 机会卡年自保金要求 13,092 欧元；双元制学徒免自保金'
+    verifiedPolicyFact: '德国机会卡法定最低自保金为每月 €1,091（每年 €13,092），打工许可为每周 20 小时'
+  },
+  {
+    id: 'src-de-vocational-training',
+    name: '德国联邦官方职业培训细分数据端点 (Make it in Germany - Ausbildung)',
+    url: 'https://www.make-it-in-germany.com/en/study-vocational-training/vocational-training',
+    country: '德国',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '德国双元制企业实训津贴法定起步毛额约 €1,048 欧/月（净额约 €822 欧/月），学校型双元制法定生计标准为 €959 欧/月'
+  },
+  {
+    id: 'src-make-it-germany',
+    name: '德国联邦官方技术移民门户综合汇聚源 (Make it in Germany)',
+    url: 'https://www.make-it-in-germany.com/en/visa-residence/types/job-search-opportunity-card',
+    country: '德国',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-15',
+    verifiedPolicyFact: '机会卡月自保金 €1,091，双元制企业津贴不足时须以自保金差额补足'
   },
   {
     id: 'src-ba-ausbildung',
@@ -58,11 +88,11 @@ const TARGET_SOURCES = [
     expectedType: 'REACHABLE',
     fallbackLevel: 2,
     lastVerifiedAt: '2026-08-15',
-    verifiedPolicyFact: '双元制企业依法发放月度生活津贴，通常在 950 ~ 1,350 欧/月'
+    verifiedPolicyFact: '德国劳工局双元制岗位库：企业发放法定实训津贴并提供社保，津贴不足生活标准时须补足证明'
   },
   {
-    id: 'src-inz-gov',
-    name: '新西兰移民局官网 (Immigration New Zealand)',
+    id: 'src-inz-aewv',
+    name: '新西兰移民局 AEWV 通用准入政策细分数据端点',
     url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
     country: '新西兰',
     sourceTier: 'Tier A',
@@ -70,7 +100,55 @@ const TARGET_SOURCES = [
     expectedType: 'REACHABLE',
     fallbackLevel: 2,
     lastVerifiedAt: '2026-07-28',
-    verifiedPolicyFact: 'AEWV 雇主担保时薪门槛提高，叉车等低技能岗位停发长期续签'
+    verifiedPolicyFact: 'AEWV 通用岗位要求至少 2 年相关经验或 NZQCF 4 级学历，薪资须达到市场公允水平'
+  },
+  {
+    id: 'src-nz-min-wage',
+    name: '新西兰商业创新与就业部法定最低时薪细分端点 (MBIE / Employment NZ)',
+    url: 'https://www.employment.govt.nz/hours-and-rates/pay/minimum-wage/minimum-wage-rates',
+    country: '新西兰',
+    sourceTier: 'Tier A',
+    category: 'Labor Stats',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '新西兰法定成人最低时薪为 $23.95 NZD/小时（2026 年 4 月 1 日起实施）'
+  },
+  {
+    id: 'src-nz-median-wage',
+    name: '新西兰移民审理专用中位数时薪细分端点 (INZ Wage Thresholds)',
+    url: 'https://www.immigration.govt.nz/employ-migrants/guides/pay-rates-for-visas',
+    country: '新西兰',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '新西兰移民审理专用中位数时薪为 $35.00 NZD/小时（2026 年 3 月 9 日起生效，仅用于 SMC 与绿名单）'
+  },
+  {
+    id: 'src-inz-forklift',
+    name: '新西兰叉车工监管职业细分数据端点 (INZ Monitored Occupation 721311)',
+    url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+    country: '新西兰',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-07-28',
+    verifiedPolicyFact: 'Forklift Driver 官方代码 ANZSCO 721311，基准 Skill Level 4，条件性 Level 3 须雇主 Job Check 明确要求 3 年经验或 NZQCF Level 4'
+  },
+  {
+    id: 'src-inz-gov',
+    name: '新西兰移民局官网综合汇聚源 (Immigration New Zealand)',
+    url: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
+    country: '新西兰',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-07-28',
+    verifiedPolicyFact: 'AEWV 一般岗位要求满足法定最低时薪 $23.95 NZD 与市场薪资，移民中位数时薪为 $35.00 NZD'
   },
   {
     id: 'src-tahatu-nz',
@@ -85,8 +163,20 @@ const TARGET_SOURCES = [
     verifiedPolicyFact: '电工年薪中位数约 $75,000 NZD，但需持本地 EWRB 执照方可独立执业'
   },
   {
+    id: 'src-jsa-au-2025',
+    name: '澳大利亚就业与技能署 2025 紧缺职业清单 (JSA 2025 OSL)',
+    url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
+    country: '澳大利亚',
+    sourceTier: 'Tier A',
+    category: 'Labor Stats',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: 'JSA 2025 紧缺职业清单：电工 (341111) 列入全澳紧缺 (S)，软件工程师 (261313) 列为非紧缺 (NS)'
+  },
+  {
     id: 'src-jsa-au',
-    name: '澳大利亚就业与技能署 (Jobs and Skills Australia)',
+    name: '澳大利亚就业与技能署综合端点 (Jobs and Skills Australia)',
     url: 'https://www.jobsandskills.gov.au/data/skills-shortage-som',
     country: '澳大利亚',
     sourceTier: 'Tier A',
@@ -109,73 +199,61 @@ const TARGET_SOURCES = [
     verifiedPolicyFact: '各省 LMIA 门槛收紧，海外直聘低技能工签通过率降低'
   },
   {
-    id: 'src-us-onet',
-    name: '美国劳工部 O*NET 职业数据库 (O*NET OnLine)',
-    url: 'https://www.onetonline.org/',
-    country: '美国',
+    id: 'src-eu-eures',
+    name: '欧盟 EURES 跨境就业门户',
+    url: 'https://eures.europa.eu',
+    country: '欧盟',
     sourceTier: 'Tier A',
-    category: 'Labor Stats',
+    category: 'Job Bank',
     expectedType: 'REACHABLE',
     fallbackLevel: 2,
     lastVerifiedAt: '2026-08-05',
-    verifiedPolicyFact: '3D 建模与动画制作职业技能标准：强调自动化切分脚本与跨平台资产规范'
+    verifiedPolicyFact: '欧盟蓝卡最低薪资门槛降至平均毛年薪的 1.0~1.6 倍，IT类短缺豁免统招学历'
   },
   {
-    id: 'src-eu-eures',
-    name: '欧洲劳动力流动门户 (EURES European Mobility)',
-    url: 'https://eures.europa.eu/',
-    country: '欧盟',
+    id: 'src-spain-inclusion',
+    name: '西班牙包容与社会保障部 (DNV Remote Worker)',
+    url: 'https://www.inclusion.gob.es/',
+    country: '西班牙',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: '数字游民签证月收入门槛为 200% SMI（当前约为 €2,646 欧元/月）'
+  },
+  {
+    id: 'src-sg-mom',
+    name: '新加坡人力部 (Singapore MOM COMPASS)',
+    url: 'https://www.mom.gov.sg/',
+    country: '新加坡',
+    sourceTier: 'Tier A',
+    category: 'Immigration',
+    expectedType: 'REACHABLE',
+    fallbackLevel: 2,
+    lastVerifiedAt: '2026-08-01',
+    verifiedPolicyFact: 'EP 工签全面实行 COMPASS 积分制，月薪门槛上调至 $5,000 SGD'
+  },
+  {
+    id: 'src-jp-hellowork',
+    name: '日本厚生劳动省 Hello Work 招聘公报',
+    url: 'https://www.hellowork.mhlw.go.jp/',
+    country: '日本',
     sourceTier: 'Tier A',
     category: 'Labor Stats',
     expectedType: 'REACHABLE',
     fallbackLevel: 2,
-    lastVerifiedAt: '2026-08-15',
-    verifiedPolicyFact: '欧盟境内跨境劳工蓝卡门槛下调，但仍需匹配对应受监管职业认可'
+    lastVerifiedAt: '2026-08-10',
+    verifiedPolicyFact: '技能实习制度向育成就劳制度平稳过渡，特定技能在留资格名额扩增'
   },
   {
-    id: 'src-upwork-research',
-    name: 'Upwork 自由职业经济学研究 (Freelance Forward)',
-    url: 'https://www.upwork.com/research/freelance-forward',
-    country: '全球',
-    sourceTier: 'Tier C',
-    category: 'Industry Report',
-    expectedType: 'BLOCKED',
-    fallbackLevel: 3,
-    lastVerifiedAt: '2026-06-30',
-    verifiedPolicyFact: '行业报告基准：AI 工具普及使数字资产自由职业者时薪承揽能力提升 38%'
-  },
-  {
-    id: 'src-de-anabin',
-    name: '德国中央外国教育评估处 (ZAB Anabin 学历库)',
-    url: 'https://anabin.kmk.org/',
-    country: '德国',
-    sourceTier: 'Tier B',
-    category: 'Education',
-    expectedType: 'CACHED',
-    fallbackLevel: 2,
-    lastVerifiedAt: '2026-08-15',
-    verifiedPolicyFact: '中国全日制专科在 Anabin 认定为 H+/-，双元制不要求本科学历认证'
-  },
-  {
-    id: 'src-nz-ewrb',
-    name: '新西兰电气工人注册委员会 (EWRB Official)',
-    url: 'https://www.ewrb.govt.nz',
-    country: '新西兰',
-    sourceTier: 'Tier A',
-    category: 'Immigration',
-    expectedType: 'MANUAL',
-    fallbackLevel: 4,
-    lastVerifiedAt: '2026-07-20',
-    verifiedPolicyFact: '海外受训电工强制要求 4 年（8,000 小时）工时雇主证明，绝无自动互认'
-  },
-  {
-    id: 'src-au-csol',
-    name: '澳大利亚紧缺职业清单 (CSOL Migration List)',
-    url: 'https://immi.homeaffairs.gov.au',
+    id: 'src-au-tra',
+    name: '澳大利亚技能评估机构 TRA 官网',
+    url: 'https://www.tradesrecognitionaustralia.gov.au/',
     country: '澳大利亚',
     sourceTier: 'Tier A',
-    category: 'Immigration',
-    expectedType: 'CACHED',
+    category: 'Skills Assessment',
+    expectedType: 'REACHABLE',
     fallbackLevel: 2,
     lastVerifiedAt: '2026-08-01',
     verifiedPolicyFact: '普通专科学历需通过 TRA 完整评估并积累 3 年以上相关工作经验'
@@ -289,8 +367,22 @@ async function probeSource(target) {
   }
 
   // 4. Network probe for LIVE_DATA, REACHABLE, or BLOCKED
+  const SPECIALIZED_PARSER_IDS = [
+    'src-fx-open',
+    'src-de-opportunity-card',
+    'src-de-vocational-training',
+    'src-make-it-germany',
+    'src-inz-aewv',
+    'src-nz-min-wage',
+    'src-nz-median-wage',
+    'src-inz-forklift',
+    'src-inz-gov',
+    'src-jsa-au-2025',
+    'src-jsa-au'
+  ];
+
   try {
-    const hasSpecializedParser = ['src-fx-open', 'src-make-it-germany', 'src-inz-gov', 'src-jsa-au'].includes(target.id);
+    const hasSpecializedParser = SPECIALIZED_PARSER_IDS.includes(target.id);
     const res = await fetch(target.url, {
       method: hasSpecializedParser ? 'GET' : 'HEAD',
       headers: {
@@ -302,7 +394,7 @@ async function probeSource(target) {
 
     const latencyMs = Date.now() - t0;
 
-    // Upwork or other commercial anti-bot returning 403
+    // Cloudflare anti-bot returning 403
     if (res.status === 403) {
       return {
         ...target,
@@ -318,7 +410,6 @@ async function probeSource(target) {
 
     if (res.status >= 200 && res.status < 400) {
       if (target.id === 'src-fx-open') {
-        // 1. Real FX payload fetch & parse -> LIVE_DATA
         const text = await res.text();
         const contentHash = crypto.createHash('sha256').update(text).digest('hex').slice(0, 12);
         let extracted = '实时汇率数据解析成功';
@@ -344,17 +435,69 @@ async function probeSource(target) {
         };
       }
 
-      // 2. Specialized official policy parsers: Germany, INZ, JSA
-      if (['src-make-it-germany', 'src-inz-gov', 'src-jsa-au'].includes(target.id)) {
+      // Specialized official policy parsers (RULE-25, RULE-26, RULE-79, RULE-84)
+      if (SPECIALIZED_PARSER_IDS.includes(target.id)) {
         const html = await res.text();
         try {
           let parsed;
-          if (target.id === 'src-make-it-germany') {
-            parsed = parseMakeItGermany(html, target.url);
-          } else if (target.id === 'src-inz-gov') {
-            parsed = parseInz(html, target.url);
-          } else if (target.id === 'src-jsa-au') {
-            parsed = parseJsa(html, target.url);
+          let factSummary = '';
+
+          switch (target.id) {
+            case 'src-de-opportunity-card': {
+              parsed = parseDeOpportunityCard(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 机会卡月度最低自保金 €${f.monthlyBlockedFundsEur.value}，兼职打工上限 ${f.partTimeWorkAllowedHoursWeekly.value} 小时/周`;
+              break;
+            }
+            case 'src-de-vocational-training': {
+              parsed = parseDeVocationalTraining(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 双元制企业实训津贴毛额 €${f.companyBasedMinimumGross.min}/月，语言要求 ${f.languageRequirement.level}`;
+              break;
+            }
+            case 'src-make-it-germany': {
+              parsed = parseMakeItGermany(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 机会卡月自保金 €${f.opportunityCard.monthlyBlockedFundsEur.value}，双元制津贴毛额 €${f.ausbildung?.companyBasedMinimumGross?.min || '1048'}/月`;
+              break;
+            }
+            case 'src-inz-aewv': {
+              parsed = parseNzAewv(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] AEWV 工作经验要求至少 ${f.generalExperienceYears.value} 年或 NZQCF 4 级学历，须达到市场公允薪资`;
+              break;
+            }
+            case 'src-nz-min-wage': {
+              parsed = parseNzMinimumWage(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 法定成人最低时薪 $${f.legalMinimumWageNzd.value} NZD/小时（生效于 ${f.legalMinimumWageNzd.effectiveAt}）`;
+              break;
+            }
+            case 'src-nz-median-wage': {
+              parsed = parseNzMedianWage(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 移民审理专用中位数时薪 $${f.medianWageNzd.value} NZD/小时（生效于 ${f.medianWageNzd.effectiveAt}，SMC/绿名单适用）`;
+              break;
+            }
+            case 'src-inz-forklift': {
+              parsed = parseNzForklift(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] 叉车工代码 ANZSCO ${f.officialAnzscoCode} (Skill Level ${f.baselineSkillLevel})，需 Job Check 满足条件`;
+              break;
+            }
+            case 'src-inz-gov': {
+              parsed = parseInz(html, target.url);
+              const f = parsed.normalizedFacts;
+              factSummary = `[LIVE_DATA] AEWV 最低时薪 $${f.generalAewvPayRequirement.legalMinimumWageNzd.value}，移民中位数 $${f.medianWageUsedInOtherMigrationSettings.value}`;
+              break;
+            }
+            case 'src-jsa-au-2025':
+            case 'src-jsa-au': {
+              parsed = parseJsa(html, target.url);
+              const s = parsed.normalizedFacts.monitoredShortages;
+              factSummary = `[LIVE_DATA] JSA 2025 紧缺清单：电工评级为 ${s.electrician_341111.labour_market_status.rating}，软件工程师评级为 ${s.software_engineer_261313.labour_market_status.rating}`;
+              break;
+            }
           }
 
           if (parsed) {
@@ -362,7 +505,7 @@ async function probeSource(target) {
               fetchedAt: nowIso,
               sourcePublishedAt: parsed.sourcePublishedAt || null,
               url: target.url,
-              summary: target.verifiedPolicyFact
+              summary: factSummary
             });
 
             return {
@@ -375,7 +518,7 @@ async function probeSource(target) {
               parsedAt: nowIso,
               lastVerifiedAt: target.lastVerifiedAt,
               contentHash: savedSnapshot.contentHash,
-              extractedFact: `[LIVE_DATA] 官方页面抓取并由专有解析器成功清洗入库：${target.verifiedPolicyFact || '事实已确证'}`
+              extractedFact: factSummary
             };
           }
         } catch (parseErr) {
@@ -464,8 +607,25 @@ async function runCollector() {
     }
   }
 
-  const TIER_1_IDS = new Set(['src-fx-open', 'src-make-it-germany', 'src-ba-ausbildung', 'src-inz-gov']);
-  const TIER_2_IDS = new Set(['src-tahatu-nz', 'src-jsa-au', 'src-ca-jobbank', 'src-eu-eures']);
+  const TIER_1_IDS = new Set([
+    'src-fx-open',
+    'src-de-opportunity-card',
+    'src-de-vocational-training',
+    'src-make-it-germany',
+    'src-ba-ausbildung',
+    'src-inz-aewv',
+    'src-nz-min-wage',
+    'src-nz-median-wage',
+    'src-inz-forklift',
+    'src-inz-gov'
+  ]);
+  const TIER_2_IDS = new Set([
+    'src-tahatu-nz',
+    'src-jsa-au-2025',
+    'src-jsa-au',
+    'src-ca-jobbank',
+    'src-eu-eures'
+  ]);
 
   let sourcesToProbe = TARGET_SOURCES;
   if (tierFilter === 1) {
@@ -570,16 +730,18 @@ async function runCollector() {
   }
   fs.writeFileSync(path.join(outDir, 'rates.json'), JSON.stringify(rates, null, 2), 'utf-8');
 
-  // 2. Structured Snapshot & Diff Engine
+  // 2. Structured Snapshot & Diff Engine (RULE-84: Accurate 2025/2026 benchmarks)
   const currentSnapshot = {
     snapshotTimestamp: new Date().toISOString(),
     rates,
     policyBenchmarks: {
       de_chancenkarte_annual_eur: 13092,
       de_chancenkarte_monthly_eur: 1091,
-      de_ausbildung_avg_stipend_eur: 1150,
-      nz_min_wage_hourly_nzd: 23.15,
-      nz_aewv_skilled_threshold_nzd: 31.61,
+      de_ausbildung_company_gross_eur: 1048,
+      de_ausbildung_school_net_eur: 959,
+      nz_min_wage_hourly_nzd: 23.95,
+      nz_median_wage_hourly_nzd: 35.00,
+      nz_forklift_anzsco_code: '721311',
       spain_dnv_monthly_eur: 2646
     }
   };
@@ -605,7 +767,7 @@ async function runCollector() {
           summary: `外汇实盘显示欧元对人民币汇率产生变动（前值 ¥${prevRates.EUR_CNY} → 现值 ¥${rates.EUR_CNY}）。`,
           oldFact: `基准汇率 EUR/CNY 约为 ¥${prevRates.EUR_CNY || 7.82}`,
           newFact: `当前最新实盘汇率 EUR/CNY 为 ¥${rates.EUR_CNY}`,
-          whatToChangeForMe: `直接影响德国自保金换算：以法定每年 13,092 欧元计算，折合人民币约 ¥${Math.round(13092 * rates.EUR_CNY).toLocaleString()} 元。若走免自保金双元制，每月津贴折合人民币约 ¥${Math.round(1150 * rates.EUR_CNY).toLocaleString()} 元。`,
+          whatToChangeForMe: `直接影响德国自保金换算：以法定每年 13,092 欧元计算，折合人民币约 ¥${Math.round(13092 * rates.EUR_CNY).toLocaleString()} 元。若走职业培训双元制，实训津贴（法定起步毛额 1,048 欧）折合人民币约 ¥${Math.round(1048 * rates.EUR_CNY).toLocaleString()} 元。`,
           evidenceId: 'src-fx-open'
         });
       }

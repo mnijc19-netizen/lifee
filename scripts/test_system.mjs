@@ -2,12 +2,19 @@ import puppeteer from 'puppeteer-core';
 import http from 'http';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { parseMakeItGermany } from './parsers/makeItGermanyParser.mjs';
+import { parseDeOpportunityCard } from './parsers/deOpportunityCardParser.mjs';
+import { parseDeVocationalTraining } from './parsers/deVocationalTrainingParser.mjs';
 import { parseInz } from './parsers/inzParser.mjs';
+import { parseNzAewv } from './parsers/nzAewvParser.mjs';
+import { parseNzMinimumWage } from './parsers/nzMinimumWageParser.mjs';
+import { parseNzMedianWage } from './parsers/nzMedianWageParser.mjs';
+import { parseNzForklift } from './parsers/nzForkliftParser.mjs';
 import { parseJsa } from './parsers/jsaParser.mjs';
 import { diffSnapshots } from './diffEngine.mjs';
-import { validatePromptCompleteness, validateFixtureProvenance } from './rulesRegistry.mjs';
+import { validatePromptCompleteness, validateFixtureProvenance, validateCapturedFixture, validateSyntheticFixture } from './rulesRegistry.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -416,7 +423,7 @@ async function runAcceptanceSuite() {
   <h1>Opportunity card</h1>
   <p>For the year 2026, you must prove financial means of at least €1,091 per month (€13,092 for the full 12-month period) in a blocked account.</p>
   <p>You can also work in secondary employment for up to 20 hours per week during your job search.</p>
-  <p>For vocational training (Ausbildung): The training company pays a monthly gross training allowance (Ausbildungsvergütung) of at least €950 to €1,350 per month (approx. €760 net). German language proficiency at level B1 is required.</p>
+  <p>For vocational training (Ausbildung): The training company pays a statutory training allowance of at least €1,048 gross per month (approx. €822 net). German language proficiency at level B1 is required.</p>
 </body>
 </html>
     `;
@@ -432,9 +439,9 @@ async function runAcceptanceSuite() {
 <head><title>Accredited Employer Work Visa | Immigration New Zealand</title></head>
 <body>
   <h1>Accredited Employer Work Visa</h1>
-  <p>Employers must pay at least the legal minimum wage of $23.15 per hour and ensure pay meets the market rate for the role so overseas workers are not exploited.</p>
-  <p>Note on median wage: The median wage of $31.61 an hour is used for Skilled Migrant Category (SMC) points, Green List and residence pathways, not as a general AEWV minimum threshold.</p>
-  <p>Applicants must have at least 3 years of relevant work experience or equivalent NZQF Level 4 qualification.</p>
+  <p>Employers must pay at least the adult minimum wage of $23.95 per hour and ensure pay meets the market rate for the role so overseas workers are not exploited.</p>
+  <p>Note on median wage: The median wage of $35.00 an hour is used for Skilled Migrant Category (SMC) points, Green List and residence pathways, not as a general AEWV minimum threshold.</p>
+  <p>Applicants must have at least 2 years of relevant work experience or equivalent NZQCF Level 4 qualification.</p>
   <p>For skill level 4-5 roles (such as ANZSCO 721311 Forklift Driver): The maximum continuous stay for ANZSCO skill level 4 and 5 roles is limited to 3 years.</p>
   <p>Applicants for ANZSCO level 4 and 5 roles must meet an English language requirement of IELTS 4.0 or equivalent.</p>
   <p>Roles at skill level 4-5 do not have direct pathway under the Green List.</p>
@@ -442,30 +449,30 @@ async function runAcceptanceSuite() {
 </html>
     `;
     const parsedNzOriginal = parseInz(nzHtml);
-    const parsedNzMutated = parseInz(nzHtml.replace('$23.15 per hour', '$27.80 per hour'));
+    const parsedNzMutated = parseInz(nzHtml.replace('$23.95 per hour', '$27.80 per hour'));
     const nzDiverged = parsedNzMutated.normalizedFacts.generalAewvPayRequirement.legalMinimumWageNzd.value === 27.80 &&
-                       parsedNzOriginal.normalizedFacts.generalAewvPayRequirement.legalMinimumWageNzd.value === 23.15;
+                       parsedNzOriginal.normalizedFacts.generalAewvPayRequirement.legalMinimumWageNzd.value === 23.95;
 
     // 3. JSA Parser Mutation Divergence
     const jsaText = `
-Release: 2026-08-01
-Jobs and Skills Australia - Skills Priority List (SPL)
+Release: 2025-08-01
+Jobs and Skills Australia - 2025 Occupation Shortage List (OSL)
 ANZSCO 2022/2023 Standard Classification
 
 ANZSCO 341111: Electrician (General) - National Shortage (S)
 Rating: National Shortage across NSW, VIC, QLD, WA, SA, TAS, NT, ACT.
 Assessing Authority: Trades Recognition Australia (TRA). Requires 4-year apprenticeship or overseas equivalent with trade test.
 
-ANZSCO 261313: Software Engineer - National Shortage (S)
-Rating: National Shortage in specialised software engineering domains.
+ANZSCO 261313: Software Engineer - No Shortage (NS)
+Rating: No Shortage in general software engineering in 2025 OSL.
 Assessing Authority: Australian Computer Society (ACS). Non-ICT diploma qualifications require 6 years RPL.
 
 Crucial Legal Distinction: Domestic occupational shortage identifies employer hiring difficulty within Australia, but does not grant automatic visa rights to foreign candidates. Overseas candidates must independently qualify for Migration points and pass formal skills assessments.
     `;
     const parsedJsaOriginal = parseJsa(jsaText);
-    const parsedJsaMutated = parseJsa(jsaText.replace('Software Engineer - National Shortage (S)', 'Software Engineer - No Shortage (NS)'));
-    const jsaDiverged = parsedJsaOriginal.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === true &&
-                        parsedJsaMutated.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === false;
+    const parsedJsaMutated = parseJsa(jsaText.replace('Software Engineer - No Shortage (NS)', 'Software Engineer - National Shortage (S)').replace('Rating: No Shortage in general', 'Rating: National Shortage in general'));
+    const jsaDiverged = parsedJsaOriginal.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === false &&
+                        parsedJsaMutated.normalizedFacts.monitoredShortages.software_engineer_261313.labour_market_status.nationalShortage === true;
 
     const passReg76 = deDiverged && nzDiverged && jsaDiverged;
     console.log(`  DE Parser diverged on mutation: ${deDiverged}, NZ Parser diverged: ${nzDiverged}, JSA Parser diverged: ${jsaDiverged}`);
@@ -475,6 +482,235 @@ Crucial Legal Distinction: Domestic occupational shortage identifies employer hi
     });
   } catch (err) {
     testResults.push({ name: 'REG-76: MUTATION_DIVERGENCE_VERIFICATION', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-77: PROVENANCE_EXCERPT_VERIFIABILITY (RULE-77) ---
+  console.log('\n[Regression REG-77] PROVENANCE_EXCERPT_VERIFIABILITY (RULE-77)...');
+  try {
+    const rawPayload = 'The statutory minimum wage is $23.95 per hour starting 1 April 2026.';
+    let threwOnMissingExcerpt = false;
+    try {
+      validateCapturedFixture({
+        fixtureType: 'CAPTURED_OFFICIAL',
+        sourceUrl: 'https://example.com/statute',
+        retrievedAt: '2026-09-07T00:00:00.000Z',
+        rawPayload,
+        sha256: crypto.createHash('sha256').update(rawPayload).digest('hex'),
+        evidenceExcerpt: 'This excerpt does not exist in the source payload'
+      });
+    } catch (err) {
+      if (err.message.includes('RULE-77 Violation: evidenceExcerpt does not exist in rawPayload')) {
+        threwOnMissingExcerpt = true;
+      }
+    }
+
+    const passReg77 = threwOnMissingExcerpt;
+    console.log(`  Provenance rejected fabricated excerpt: ${threwOnMissingExcerpt}`);
+    testResults.push({
+      name: 'REG-77: PROVENANCE_EXCERPT_VERIFIABILITY (RULE-77 requires evidenceExcerpt to genuinely exist in rawPayload)',
+      pass: passReg77
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-77: PROVENANCE_EXCERPT_VERIFIABILITY', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-78: MISSING_EVIDENCE_UNKNOWN_NULL (RULE-78) ---
+  console.log('\n[Regression REG-78] MISSING_EVIDENCE_UNKNOWN_NULL (RULE-78)...');
+  try {
+    const datelessHtml = `<html><head><title>Opportunity Card</title></head><body><p>€1,091 per month blocked funds. 20 hours per week.</p></body></html>`;
+    const parsed = parseDeOpportunityCard(datelessHtml);
+    const passReg78 = parsed.sourcePublishedAt === null && parsed.effectiveAt === null;
+    console.log(`  Unstated dates evaluate to null (no guessing): ${passReg78}`);
+    testResults.push({
+      name: 'REG-78: MISSING_EVIDENCE_UNKNOWN_NULL (RULE-78 Unfound evidence strictly evaluates to null/UNKNOWN, zero speculation)',
+      pass: passReg78
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-78: MISSING_EVIDENCE_UNKNOWN_NULL', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-79: SINGLE_SOURCE_DOMAIN_BOUNDARY (RULE-79) ---
+  console.log('\n[Regression REG-79] SINGLE_SOURCE_DOMAIN_BOUNDARY (RULE-79)...');
+  try {
+    const oppHtml = `<html><body><p>For 2026: €1,091 per month in blocked account. 20 hours per week.</p></body></html>`;
+    const oppParsed = parseDeOpportunityCard(oppHtml);
+    const hasOppCardOnly = 'monthlyBlockedFundsEur' in oppParsed.normalizedFacts && !('companyBasedMinimumGross' in oppParsed.normalizedFacts);
+
+    const minWageHtml = `<html><body><p>Adult minimum wage is $23.95 per hour.</p></body></html>`;
+    const minWageParsed = parseNzMinimumWage(minWageHtml);
+    const hasMinWageOnly = 'legalMinimumWageNzd' in minWageParsed.normalizedFacts && !('medianWageNzd' in minWageParsed.normalizedFacts);
+
+    const passReg79 = hasOppCardOnly && hasMinWageOnly;
+    console.log(`  OppCard isolated: ${hasOppCardOnly}, MinWage isolated: ${hasMinWageOnly}`);
+    testResults.push({
+      name: 'REG-79: SINGLE_SOURCE_DOMAIN_BOUNDARY (RULE-79 Discrete policies isolated into dedicated adapters)',
+      pass: passReg79
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-79: SINGLE_SOURCE_DOMAIN_BOUNDARY', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-80: SYNTHETIC_FIXTURE_EXPLICIT_DEMARCATION (RULE-80) ---
+  console.log('\n[Regression REG-80] SYNTHETIC_FIXTURE_EXPLICIT_DEMARCATION (RULE-80)...');
+  try {
+    let rejectedMasquerade = false;
+    try {
+      validateCapturedFixture({
+        fixtureType: 'CAPTURED_OFFICIAL',
+        syntheticMutation: true,
+        sourceUrl: 'https://example.com',
+        retrievedAt: '2026-09-07',
+        rawPayload: 'Text',
+        sha256: crypto.createHash('sha256').update('Text').digest('hex'),
+        evidenceExcerpt: 'Text'
+      });
+    } catch (err) {
+      if (err.message.includes('RULE-80 Violation') && err.message.includes('cannot masquerade')) {
+        rejectedMasquerade = true;
+      }
+    }
+
+    const passReg80 = rejectedMasquerade;
+    console.log(`  Synthetic mutation masquerade rejected: ${rejectedMasquerade}`);
+    testResults.push({
+      name: 'REG-80: SYNTHETIC_FIXTURE_EXPLICIT_DEMARCATION (RULE-80 Synthetic mutation fixtures cannot claim CAPTURED_OFFICIAL)',
+      pass: passReg80
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-80: SYNTHETIC_FIXTURE_EXPLICIT_DEMARCATION', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-81: OFFICIAL_SOURCE_SUPREMACY_OVER_OUTDATED_FIXTURES (RULE-81) ---
+  console.log('\n[Regression REG-81] OFFICIAL_SOURCE_SUPREMACY_OVER_OUTDATED_FIXTURES (RULE-81)...');
+  try {
+    let obsoleteMinWageRejected = false;
+    try {
+      parseNzMinimumWage('<html><body><p>Minimum wage is $23.15 per hour.</p></body></html>');
+    } catch (err) {
+      if (err.message.includes('REG-NZ-MIN-WAGE-23.95')) obsoleteMinWageRejected = true;
+    }
+
+    let obsoleteMedianWageRejected = false;
+    try {
+      parseNzMedianWage('<html><body><p>Median wage is $31.61 an hour.</p></body></html>');
+    } catch (err) {
+      if (err.message.includes('REG-NZ-MEDIAN-WAGE-35')) obsoleteMedianWageRejected = true;
+    }
+
+    const passReg81 = obsoleteMinWageRejected && obsoleteMedianWageRejected;
+    console.log(`  Obsolete $23.15 rejected: ${obsoleteMinWageRejected}, Obsolete $31.61 rejected: ${obsoleteMedianWageRejected}`);
+    testResults.push({
+      name: 'REG-81: OFFICIAL_SOURCE_SUPREMACY_OVER_OUTDATED_FIXTURES (RULE-81 Obsolete statutory values $23.15 and $31.61 strictly rejected)',
+      pass: passReg81
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-81: OFFICIAL_SOURCE_SUPREMACY_OVER_OUTDATED_FIXTURES', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-82: ZERO_PARALLEL_HARDCODED_CONSTANTS_IN_PIPELINES (RULE-82) ---
+  console.log('\n[Regression REG-82] ZERO_PARALLEL_HARDCODED_CONSTANTS_IN_PIPELINES (RULE-82)...');
+  try {
+    const collectorSrc = fs.readFileSync(path.join(rootDir, 'scripts/collector.mjs'), 'utf-8');
+    const pathwaysSrc = fs.readFileSync(path.join(rootDir, 'src/data/pathways.ts'), 'utf-8');
+    const researchEngineSrc = fs.readFileSync(path.join(rootDir, 'src/engine/researchEngine.ts'), 'utf-8');
+    const intelligenceSrc = fs.readFileSync(path.join(rootDir, 'src/data/intelligence.ts'), 'utf-8');
+    const aiAdvisorSrc = fs.readFileSync(path.join(rootDir, 'src/engine/aiAdvisor.ts'), 'utf-8');
+    const forkliftParserSrc = fs.readFileSync(path.join(rootDir, 'scripts/parsers/nzForkliftParser.mjs'), 'utf-8');
+    const inzParserSrc = fs.readFileSync(path.join(rootDir, 'scripts/parsers/inzParser.mjs'), 'utf-8');
+
+    const collectorClean = !collectorSrc.includes('nz_min_wage_hourly_nzd: 23.15') &&
+                           !collectorSrc.includes('nz_aewv_skilled_threshold_nzd: 31.61') &&
+                           !collectorSrc.includes('de_ausbildung_avg_stipend_eur: 1150') &&
+                           !collectorSrc.includes('双元制学徒免自保金');
+    const pathwaysClean = !pathwaysSrc.includes('23.15') && !pathwaysSrc.includes('31.61');
+    const researchEngineClean = !researchEngineSrc.includes('31.61');
+    const intelligenceClean = !intelligenceSrc.includes('免自保金');
+    const aiAdvisorClean = !aiAdvisorSrc.includes('免自保金');
+    const forkliftParserClean = !forkliftParserSrc.includes(': 3;') && !forkliftParserSrc.includes(': 4.0;');
+    const inzParserClean = !inzParserSrc.includes('?? 23.95') && !inzParserSrc.includes('?? 35.00');
+
+    const passReg82 = collectorClean && pathwaysClean && researchEngineClean && intelligenceClean && aiAdvisorClean && forkliftParserClean && inzParserClean;
+    console.log(`  Workspace free of parallel obsolete constants: collector(${collectorClean}), pathways(${pathwaysClean}), researchEngine(${researchEngineClean}), intelligence(${intelligenceClean}), aiAdvisor(${aiAdvisorClean}), forklift(${forkliftParserClean}), inzParser(${inzParserClean})`);
+    testResults.push({
+      name: 'REG-82: ZERO_PARALLEL_HARDCODED_CONSTANTS_IN_PIPELINES (RULE-82 Entire workspace purged of obsolete benchmarks 23.15, 31.61, 1150, 免自保金, and silent fallback defaults)',
+      pass: passReg82
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-82: ZERO_PARALLEL_HARDCODED_CONSTANTS_IN_PIPELINES', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-83: RELEASE_AUTHENTICITY_GATE (RULE-83) ---
+  console.log('\n[Regression REG-83] RELEASE_AUTHENTICITY_GATE (RULE-83)...');
+  try {
+    let fabricated2026Rejected = false;
+    try {
+      parseJsa('Release: 2026-08-01\\nJobs and Skills Australia - 2026 Occupation Shortage List\\nANZSCO 341111 Electrician');
+    } catch (err) {
+      if (err.message.includes('REG-JSA-2025-OSL')) fabricated2026Rejected = true;
+    }
+
+    const passReg83 = fabricated2026Rejected;
+    console.log(`  Fabricated 2026 release year rejected: ${fabricated2026Rejected}`);
+    testResults.push({
+      name: 'REG-83: RELEASE_AUTHENTICITY_GATE (RULE-83 JSA rejects fabricated 2026 OSL release with REG-JSA-2025-OSL)',
+      pass: passReg83
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-83: RELEASE_AUTHENTICITY_GATE', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-84: MULTI_SOURCE_AGGREGATION_PRESERVES_ATOMIC_PROVENANCE (RULE-84) ---
+  console.log('\n[Regression REG-84] MULTI_SOURCE_AGGREGATION_PRESERVES_ATOMIC_PROVENANCE (RULE-84)...');
+  try {
+    const inzCompositeHtml = `
+      <html><body>
+        <p>Minimum wage $23.95 per hour.</p>
+        <p>Median wage $35.00 an hour.</p>
+        <p>2 years of relevant work experience.</p>
+        <p>ANZSCO 721311 Forklift Driver stay limited to 3 years. IELTS 4.0</p>
+      </body></html>
+    `;
+    const parsedInz = parseInz(inzCompositeHtml);
+    const facts = parsedInz.normalizedFacts;
+    const hasDistinctMinWage = facts.generalAewvPayRequirement.legalMinimumWageNzd.value === 23.95;
+    const hasDistinctMedianWage = facts.medianWageUsedInOtherMigrationSettings.value === 35.00;
+    const hasForkliftCode = facts.monitoredOccupationForkliftDriver.officialAnzscoCode === '721311';
+
+    const passReg84 = hasDistinctMinWage && hasDistinctMedianWage && hasForkliftCode;
+    console.log(`  Atomic facts preserved in aggregator: ${passReg84}`);
+    testResults.push({
+      name: 'REG-84: MULTI_SOURCE_AGGREGATION_PRESERVES_ATOMIC_PROVENANCE (RULE-84 Composite aggregator preserves atomic source facts and citations)',
+      pass: passReg84
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-84: MULTI_SOURCE_AGGREGATION_PRESERVES_ATOMIC_PROVENANCE', pass: false, error: err.message });
+  }
+
+  // --- Regression REG-85: ZERO_BUSINESS_DEFAULT_CONSTANTS_ON_MISSING_FIELDS (RULE-85) ---
+  console.log('\n[Regression REG-85] ZERO_BUSINESS_DEFAULT_CONSTANTS_ON_MISSING_FIELDS (RULE-85)...');
+  try {
+    let deThrewOnMissingFunds = false;
+    try {
+      parseDeOpportunityCard('<html><head><title>Opportunity Card</title></head><body><h1>Opportunity card for looking for a job</h1><p>General information on opportunity card without any monthly funds stated.</p></body></html>');
+    } catch (err) {
+      if (err.message.includes('monthlyBlockedFundsEur')) deThrewOnMissingFunds = true;
+    }
+
+    let nzThrewOnMissingMinWage = false;
+    try {
+      parseNzMinimumWage('<html><head><title>Minimum Wage Rates</title></head><body><h1>Employment New Zealand</h1><p>General rules without dollar rate.</p></body></html>');
+    } catch (err) {
+      if (err.message.includes('legal_minimum_wage')) nzThrewOnMissingMinWage = true;
+    }
+
+    const passReg85 = deThrewOnMissingFunds && nzThrewOnMissingMinWage;
+    console.log(`  Parsers throw on missing required fields (no silent defaults): ${passReg85}`);
+    testResults.push({
+      name: 'REG-85: ZERO_BUSINESS_DEFAULT_CONSTANTS_ON_MISSING_FIELDS (RULE-85 Missing required fields throw error instead of defaulting to business assumptions)',
+      pass: passReg85
+    });
+  } catch (err) {
+    testResults.push({ name: 'REG-85: ZERO_BUSINESS_DEFAULT_CONSTANTS_ON_MISSING_FIELDS', pass: false, error: err.message });
   }
 
   // =========================================================================

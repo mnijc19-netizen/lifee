@@ -11,7 +11,7 @@ export const INTELLIGENCE_STREAM: IntelligenceEvent[] = [
     summary: '德国联邦劳工部调高机会卡月度生活费证明门槛至 1,091 欧元/月，全年需锁定约 10.2 万元人民币。',
     oldFact: '旧规自保金要求为每月约 1,027 欧元（年计 12,324 欧元）。',
     newFact: '现行最新要求为每月 1,091 欧元（年计 13,092 欧元，折合人民币约 102,000 元）。',
-    whatToChangeForMe: '明确排除了当前阶段自费申请机会卡求职的可行性（需预先锁定逾 10 万元自保金）；将德国低资金路径聚焦在【免自保金带薪双元制 Ausbildung】上，降低资金沉没成本。',
+    whatToChangeForMe: '明确排除了当前阶段自费申请机会卡求职的可行性（需预先锁定逾 10 万元自保金）；将德国低资金路径聚焦在【带薪双元制 Ausbildung（津贴达标可免/减自保金）】上，降低资金沉没成本。',
     evidenceId: 'ev-de-chancenkarte-blocked',
     eventOrigin: 'HISTORICAL_SEED'
   },

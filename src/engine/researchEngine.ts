@@ -255,19 +255,20 @@ export const BUNDLED_SNAPSHOTS: Record<string, { v1: NormalizedSnapshot; latest:
       parserVersion: '2.0.0',
       normalizedFacts: {
         aewv: {
-          aewv_general_median_wage_requirement: {
-            value: 31.61,
+          medianWageUsedInOtherMigrationSettings: {
+            value: 35.00,
             unit: 'NZD/hour',
             sourceId: 'src-inz-gov',
             sourceUrl: 'https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa',
             sourceTitle: 'Immigration New Zealand - AEWV 2026 Standards',
             fetchedAt: '2026-09-06T19:00:00.000Z',
             sourcePublishedAt: '2026-07-28',
-            effectiveAt: '2026-02-28',
-            evidenceText: 'You must be paid at least the median wage of $31.61 an hour unless your role is on an exempt list.',
+            effectiveAt: '2026-03-09',
+            evidenceText: 'The New Zealand median wage of $35.00 an hour applies to Skilled Migrant Category and Green List residence applications.',
             parserVersion: '2.0.0'
           },
-          medianWageHourlyNzd: 31.61,
+          legalMinimumWageHourlyNzd: 23.95,
+          medianWageHourlyNzd: 35.00,
           currency: 'NZD'
         },
         anzscoLevel45Restrictions: {

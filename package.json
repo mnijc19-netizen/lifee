@@ -10,7 +10,8 @@
     "collect": "node scripts/collector.mjs",
     "test:parsers": "node scripts/test_parsers.mjs",
     "test:freshness": "node ./node_modules/tsx/dist/cli.mjs scripts/test_freshness.ts",
-    "test": "node scripts/test_system.mjs"
+    "test": "node scripts/test_system.mjs",
+    "quality-gate": "npm run test:parsers && npm run test:freshness && npm test && npm run build"
   },
   "dependencies": {
     "clsx": "^2.1.1",

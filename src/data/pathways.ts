@@ -281,7 +281,7 @@ export const PATHWAYS: Pathway[] = [
         risk: '抵纽后前两周找不到工，房租持续消耗',
         killCriteria: '抵达 1 个月仍无任何打工收入',
         fallbackPlan: '先去北岛/南岛奇异果园或肉类包装厂接应急工快速回血',
-        rationale: '每小时法定最低 23.15 纽币，每周打工 40 小时即可自负盈亏并存钱。'
+        rationale: '每小时法定最低 23.95 纽币（2026年4月起现行标准），每周打工 40 小时即可自负盈亏并存钱。'
       },
       {
         id: 'node-nz-3',
@@ -294,7 +294,7 @@ export const PATHWAYS: Pathway[] = [
         skillsToLearn: ['雇主谈判技巧与工作签证申请合规'],
         certsToAcquire: ['新西兰 AEWV 认证雇主工签 (1-3年)'],
         englishMilestone: '雅思达到 6.0 满足工签续签新政',
-        risk: '雇主不愿出具担保或薪资未达官方中位数标准 ($31.61/hr)',
+        risk: '雇主不愿出具担保或薪资未达市场公允水平 (Market Rate，技术移民中位数标准已上调至 $35.00/hr)',
         killCriteria: '签证到期前 2 个月仍无任何雇主担保意向',
         fallbackPlan: '结束打工度假，带着赚取的 5~10 万元纽币储蓄回国或转战欧洲',
         rationale: '即使最终未能留纽，你的英语和海外实操履历已发生质的蜕变。'

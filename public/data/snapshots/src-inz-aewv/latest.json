@@ -1,0 +1,43 @@
+{
+  "sourceId": "src-inz-aewv",
+  "version": 1,
+  "fetchedAt": "2026-09-07T06:40:20.346Z",
+  "lastCheckedAt": "2026-09-07T06:40:20.346Z",
+  "sourcePublishedAt": null,
+  "url": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa",
+  "contentHash": "9c570631d885",
+  "parserVersion": "3.1.0",
+  "normalizedFacts": {
+    "generalExperienceYears": {
+      "value": 2,
+      "unit": "years",
+      "alternativeQualificationLevel": "NZQCF Level 4 or higher relevant qualification",
+      "evidenceText": "mployer's address and contact details. Your 2 years of work experience does not need to be consecutive, and it does not have to be full time. It must amount to a total of 2 years equivalent full-time wor"
+    },
+    "marketRateRequirement": {
+      "required": true,
+      "evidenceText": "id at least the <glossary-tooltip button-text=\"market rate\" :id=\"221\" content=\"PHA+VGhlIE5ldyBaZWFsYW5kIG1hcmtldCByYXRlIGlzIGEgcmFuZ2Ugb2YgcGF5IHRoYXQgYSBOZXcgWmVhbGFuZGVyIG9yIHJlc2lkZW50IHdvdWxkIGJlIHBhaWQg"
+    },
+    "anzscoLevel45Rules": {
+      "maxContinuousStayYears": {
+        "value": 3,
+        "unit": "years",
+        "evidenceText": "nglish. If your job is ANZSCO or NOL skill level 4 or 5 the total time you can stay in New Zealand on one or more AEWVs may be 3 years instead of 5 years. <a href=\"/work/requirements-for-work-visas/how-long-you-can-w"
+      },
+      "minEnglishIelts": null,
+      "directGreenListPathway": true
+    }
+  },
+  "evidence": [
+    {
+      "evidenceId": "ev-nz-aewv-rules",
+      "claim": "新西兰 AEWV 申请要求：通常须具备至少 2 年相关工作经验或 NZQCF 4 级及以上同等学历；雇主须确保薪资达到市场公允水平 (Market Rate)。ANZSCO 4-5 级岗位最长连续工作居留上限为 3 年，英语门槛为雅思 4 分。",
+      "quotes": [
+        "mployer's address and contact details. Your 2 years of work experience does not need to be consecutive, and it does not have to be full time. It must amount to a total of 2 years equivalent full-time wor",
+        "id at least the <glossary-tooltip button-text=\"market rate\" :id=\"221\" content=\"PHA+VGhlIE5ldyBaZWFsYW5kIG1hcmtldCByYXRlIGlzIGEgcmFuZ2Ugb2YgcGF5IHRoYXQgYSBOZXcgWmVhbGFuZGVyIG9yIHJlc2lkZW50IHdvdWxkIGJlIHBhaWQg",
+        "nglish. If your job is ANZSCO or NOL skill level 4 or 5 the total time you can stay in New Zealand on one or more AEWVs may be 3 years instead of 5 years. <a href=\"/work/requirements-for-work-visas/how-long-you-can-w"
+      ],
+      "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/accredited-employer-work-visa"
+    }
+  ]
+}

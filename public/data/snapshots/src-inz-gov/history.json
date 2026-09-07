@@ -14,5 +14,13 @@
     "sourcePublishedAt": "2026-07-28",
     "contentHash": "a3e43110b081",
     "summary": "2026 AEWV Wage Threshold and Low Skill restrictions update"
+  },
+  {
+    "version": 3,
+    "file": "v3.json",
+    "fetchedAt": "2026-09-07T06:40:29.048Z",
+    "sourcePublishedAt": null,
+    "contentHash": "cddeebf1268b",
+    "summary": "[LIVE_DATA] AEWV 最低时薪 $23.95，移民中位数 $35"
   }
 ]
