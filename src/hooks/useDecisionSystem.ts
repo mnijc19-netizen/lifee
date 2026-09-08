@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { UserProfile, UserPlanTask, Evidence, Occupation, Country, Pathway } from '../types';
 import { DEFAULT_USER_PROFILE, DEFAULT_INITIAL_TASKS } from '../data/defaultProfile';
 import { OCCUPATIONS } from '../data/occupations';
@@ -8,91 +8,110 @@ import { EVIDENCE_BASE } from '../data/evidence';
 import { calculateRunway } from '../engine/runway';
 import { rankPathways, calculateOccupationMatchScore } from '../engine/scoring';
 import { decompressPayload } from '../engine/syncEngine';
+import { 
+  loadStoredProfile, 
+  saveStoredProfile, 
+  loadStoredTasks, 
+  saveStoredTasks, 
+  loadStoredCustomEvidence, 
+  saveStoredCustomEvidence, 
+  loadStoredWatchlist, 
+  saveStoredWatchlist,
+  validateImportBundle,
+  LifeeExportBundle,
+  normalizeUserProfile
+} from '../utils/storageEngine';
+import { isUserSyncEnabled, getUserSyncSlotId } from '../config/cloudSyncConfig';
 
-const PROFILE_KEY = 'lifee_user_profile_v1';
-const TASKS_KEY = 'lifee_user_tasks_v1';
-const CUSTOM_EVIDENCE_KEY = 'lifee_custom_evidence_v1';
-const WATCHLIST_KEY = 'lifee_watchlist_v1';
+const VALID_TABS = new Set([
+  'today',
+  'careers',
+  'countries',
+  'pathways',
+  'compare',
+  'intelligence',
+  'evidence',
+  'myplan',
+  'runway',
+  'lowregret',
+  'aiadvisor',
+  'datahealth'
+]);
+
+function getInitialTab(): string {
+  if (typeof window === 'undefined') return 'today';
+  const hash = window.location.hash.replace(/^#/, '');
+  const tabMatch = hash.match(/tab=([a-z0-9-]+)/i);
+  if (tabMatch && VALID_TABS.has(tabMatch[1])) {
+    return tabMatch[1];
+  }
+  if (VALID_TABS.has(hash)) {
+    return hash;
+  }
+  return 'today';
+}
 
 export function useDecisionSystem() {
-  // 1. Profile State
-  const [profile, setProfile] = useState<UserProfile>(() => {
-    try {
-      const saved = localStorage.getItem(PROFILE_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return DEFAULT_USER_PROFILE;
-  });
+  // 1. Profile State with Schema Migration and Quarantine Support
+  const [profile, setProfile] = useState<UserProfile>(() => loadStoredProfile());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-    } catch {
-      // ignore
-    }
+    saveStoredProfile(profile);
   }, [profile]);
 
-  // 2. Tasks State
-  const [tasks, setTasks] = useState<UserPlanTask[]>(() => {
-    try {
-      const saved = localStorage.getItem(TASKS_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return DEFAULT_INITIAL_TASKS;
-  });
+  // 2. Tasks State with Schema Migration and Quarantine Support
+  const [tasks, setTasks] = useState<UserPlanTask[]>(() => loadStoredTasks());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-    } catch {
-      // ignore
-    }
+    saveStoredTasks(tasks);
   }, [tasks]);
 
   // 3. Custom Evidence Inbox State
-  const [customEvidence, setCustomEvidence] = useState<Evidence[]>(() => {
-    try {
-      const saved = localStorage.getItem(CUSTOM_EVIDENCE_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return [];
-  });
+  const [customEvidence, setCustomEvidence] = useState<Evidence[]>(() => loadStoredCustomEvidence());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(CUSTOM_EVIDENCE_KEY, JSON.stringify(customEvidence));
-    } catch {
-      // ignore
-    }
+    saveStoredCustomEvidence(customEvidence);
   }, [customEvidence]);
 
   // 4. Watchlist State
-  const [watchlist, setWatchlist] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem(WATCHLIST_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return ['occ-ai-3d-asset', 'occ-german-ausbildung-tech', 'country-de', 'country-my'];
-  });
+  const [watchlist, setWatchlist] = useState<string[]>(() => loadStoredWatchlist());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(WATCHLIST_KEY, JSON.stringify(watchlist));
-    } catch {
-      // ignore
-    }
+    saveStoredWatchlist(watchlist);
   }, [watchlist]);
 
-  // 5. Active Tab Navigation
-  const [activeTab, setActiveTab] = useState<string>('today');
+  // 5. Active Tab Navigation with URL Hash Synchronization & Back/Forward Support
+  const [activeTab, setActiveTabState] = useState<string>(getInitialTab);
+
+  const setActiveTab = useCallback((newTab: string) => {
+    if (!VALID_TABS.has(newTab)) return;
+    setActiveTabState(newTab);
+    if (typeof window !== 'undefined') {
+      const targetHash = newTab === 'today' ? '' : `#tab=${newTab}`;
+      if (window.location.hash !== targetHash) {
+        try {
+          history.pushState(null, '', targetHash || window.location.pathname);
+        } catch {
+          window.location.hash = targetHash;
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleHashChange = () => {
+      const current = getInitialTab();
+      setActiveTabState(current);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
 
   // 6. Inspect Drawers / Modals
   const [selectedCareer, setSelectedCareer] = useState<Occupation | null>(null);
@@ -101,14 +120,58 @@ export function useDecisionSystem() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAiContextOpen, setIsAiContextOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
-  // 7. Computed Metrics
+  // 7. Safe Import Preview (No Auto-Overwrite)
+  const [pendingImportBundle, setPendingImportBundle] = useState<LifeeExportBundle | null>(null);
+  const [isImportPreviewOpen, setIsImportPreviewOpen] = useState(false);
+
+  // Parse sync import from URL hash with explicit preview & zero unconfirmed overwrite
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash && hash.includes('import=')) {
+      const match = hash.match(/import=([^&]+)/);
+      if (match && match[1]) {
+        decompressPayload(match[1]).then(payload => {
+          if (payload) {
+            const rawJson = JSON.stringify(payload);
+            const validation = validateImportBundle(rawJson);
+            if (validation.valid && validation.bundle) {
+              setPendingImportBundle(validation.bundle);
+              setIsImportPreviewOpen(true);
+            }
+            try {
+              // Clean import hash so reloads don't re-trigger preview
+              history.replaceState(null, '', window.location.pathname);
+            } catch {
+              // ignore
+            }
+          }
+        }).catch(err => console.warn('Sync import decompression failed:', err));
+      }
+    }
+  }, []);
+
+  const applyPendingImport = useCallback(() => {
+    if (!pendingImportBundle) return;
+    setProfile(pendingImportBundle.profile);
+    if (pendingImportBundle.tasks) setTasks(pendingImportBundle.tasks);
+    if (pendingImportBundle.watchlist) setWatchlist(pendingImportBundle.watchlist);
+    if (pendingImportBundle.customEvidence) setCustomEvidence(pendingImportBundle.customEvidence);
+    setPendingImportBundle(null);
+    setIsImportPreviewOpen(false);
+  }, [pendingImportBundle]);
+
+  const cancelPendingImport = useCallback(() => {
+    setPendingImportBundle(null);
+    setIsImportPreviewOpen(false);
+  }, []);
+
+  // 8. Computed Metrics
   const runwayAnalysis = useMemo(() => calculateRunway(profile), [profile]);
-
   const rankedPathways = useMemo(() => rankPathways(PATHWAYS, profile), [profile]);
-
   const allEvidence = useMemo(() => [...EVIDENCE_BASE, ...customEvidence], [customEvidence]);
-
   const scoredOccupations = useMemo(() => {
     return OCCUPATIONS.map(occ => ({
       ...occ,
@@ -143,33 +206,7 @@ export function useDecisionSystem() {
     setCustomEvidence(prev => [newEv, ...prev]);
   };
 
-  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
-
-  // Auto-detect and unpack sync payload from URL hash (e.g. mobile Safari opening #import=...)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const hash = window.location.hash;
-    if (hash && hash.includes('import=')) {
-      const match = hash.match(/import=([^&]+)/);
-      if (match && match[1]) {
-        decompressPayload(match[1]).then(payload => {
-          if (payload && payload.profile) {
-            setProfile(payload.profile);
-            if (payload.tasks) setTasks(payload.tasks);
-            if (payload.watchlist) setWatchlist(payload.watchlist);
-            if (payload.customEvidence) setCustomEvidence(payload.customEvidence);
-            try {
-              history.replaceState(null, '', window.location.pathname);
-            } catch {
-              // ignore
-            }
-          }
-        }).catch(err => console.warn('Sync import failed:', err));
-      }
-    }
-  }, []);
-
-  // 8. Completely Silent, Frictionless Multi-Device Auto-Sync (PC · iPhone 16 Pro · 小米 14 Pro)
+  // 9. Cloud Sync strictly gated by user permission & isolated pairing slot
   const isApplyingRemoteRef = useRef(false);
   const isInitialPullCompleteRef = useRef(false);
   const initialLocalHashRef = useRef<string>('');
@@ -177,76 +214,78 @@ export function useDecisionSystem() {
   useEffect(() => {
     let isMounted = true;
 
-    const performSilentPull = async () => {
+    const performIsolatedPull = async () => {
+      // Cloud sync ONLY runs if user explicitly opted in and has configured a slot
+      if (!isUserSyncEnabled()) {
+        isInitialPullCompleteRef.current = true;
+        return;
+      }
+
       try {
-        const { silentPullFromMaster } = await import('../engine/supabaseSync');
-        const remote = await silentPullFromMaster();
+        const { pullUserIsolatedState } = await import('../engine/supabaseSync');
+        const remote = await pullUserIsolatedState();
         if (remote && remote.profile && isMounted) {
           const localUpdated = localStorage.getItem('lifee_last_local_mod_at');
           if (!localUpdated || new Date(remote.updatedAt) > new Date(localUpdated)) {
             isApplyingRemoteRef.current = true;
-            setProfile(remote.profile);
+            setProfile(normalizeUserProfile(remote.profile));
             if (remote.tasks) setTasks(remote.tasks);
             if (remote.watchlist) setWatchlist(remote.watchlist);
             if (remote.customEvidence) setCustomEvidence(remote.customEvidence);
             localStorage.setItem('lifee_last_local_mod_at', remote.updatedAt);
           }
         }
-      } catch {
-        // silent background failure handling
+      } catch (err) {
+        console.warn('Isolated pull error:', err);
       } finally {
         isInitialPullCompleteRef.current = true;
       }
     };
 
-    // Pull immediately on app mount
-    performSilentPull();
+    performIsolatedPull();
 
-    // Pull whenever user switches back to browser tab (iOS Safari or Xiaomi browser)
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
-        performSilentPull();
+        performIsolatedPull();
       }
     };
 
-    window.addEventListener('focus', performSilentPull);
+    window.addEventListener('focus', performIsolatedPull);
     document.addEventListener('visibilitychange', handleVisibility);
 
-    // Periodic heartbeat poll every 20 seconds
-    const interval = setInterval(performSilentPull, 20000);
+    const interval = setInterval(() => {
+      if (isUserSyncEnabled()) {
+        performIsolatedPull();
+      }
+    }, 30000);
 
     return () => {
       isMounted = false;
-      window.removeEventListener('focus', performSilentPull);
+      window.removeEventListener('focus', performIsolatedPull);
       document.removeEventListener('visibilitychange', handleVisibility);
       clearInterval(interval);
     };
   }, []);
 
-  // Silent push whenever profile, tasks, watchlist, or customEvidence change locally
+  // Isolated push when state changes and sync is user-enabled
   useEffect(() => {
-    // 1. If this state update was triggered by pulling from remote, do NOT echo it back
+    if (!isUserSyncEnabled()) return;
     if (isApplyingRemoteRef.current) {
       isApplyingRemoteRef.current = false;
       return;
     }
-
-    // 2. Prevent cold mount on a new device from overwriting existing cloud state before initial pull
-    if (!isInitialPullCompleteRef.current) {
-      return;
-    }
+    if (!isInitialPullCompleteRef.current) return;
 
     const currentHash = JSON.stringify({ profile, tasks, watchlist, customEvidence });
-    if (initialLocalHashRef.current === currentHash) {
-      return;
-    }
+    if (initialLocalHashRef.current === currentHash) return;
     initialLocalHashRef.current = currentHash;
 
     const nowIso = new Date().toISOString();
     localStorage.setItem('lifee_last_local_mod_at', nowIso);
-    import('../engine/supabaseSync').then(({ silentPushToMaster }) => {
+
+    import('../engine/supabaseSync').then(({ pushUserIsolatedState }) => {
       import('../engine/syncEngine').then(({ getOrCreateDeviceId }) => {
-        silentPushToMaster({
+        pushUserIsolatedState({
           version: 1,
           updatedAt: nowIso,
           deviceId: getOrCreateDeviceId(),
@@ -297,6 +336,10 @@ export function useDecisionSystem() {
     rankedPathways,
     allEvidence,
     scoredOccupations,
-    resetToDefaultProfile
+    resetToDefaultProfile,
+    pendingImportBundle,
+    isImportPreviewOpen,
+    applyPendingImport,
+    cancelPendingImport
   };
 }

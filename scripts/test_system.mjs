@@ -21,51 +21,70 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 
-function startServer(port) {
-  return new Promise((resolve, reject) => {
-    const mimeTypes = {
-      '.html': 'text/html',
-      '.js': 'application/javascript',
-      '.css': 'text/css',
-      '.json': 'application/json',
-      '.svg': 'image/svg+xml',
-      '.png': 'image/png',
-      '.ico': 'image/x-icon'
-    };
+async function startServer(preferredPort = 4173) {
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.ico': 'image/x-icon'
+  };
 
-    const server = http.createServer((req, res) => {
-      let rawPath = req.url.split('?')[0];
-      if (rawPath === '/' || rawPath === '/lifee' || rawPath === '/lifee/') {
-        rawPath = '/index.html';
-      }
-      if (rawPath.startsWith('/lifee/')) {
-        rawPath = rawPath.replace('/lifee/', '/');
+  const handler = (req, res) => {
+    let rawPath = req.url.split('?')[0];
+    if (rawPath === '/' || rawPath === '/lifee' || rawPath === '/lifee/') {
+      rawPath = '/index.html';
+    }
+    if (rawPath.startsWith('/lifee/')) {
+      rawPath = rawPath.replace('/lifee/', '/');
+    }
+
+    const filePath = path.join(distDir, rawPath);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      const ext = path.extname(filePath).toLowerCase();
+      res.writeHead(200, {
+        'Content-Type': mimeTypes[ext] || 'application/octet-stream',
+        'Access-Control-Allow-Origin': '*'
+      });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      const ext = path.extname(rawPath).toLowerCase();
+      // Strict 404: If requesting a static file with an extension (.js, .css, .json, .svg, etc.) that doesn't exist, return real 404
+      if (ext && ext !== '.html') {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+        return;
       }
 
-      const filePath = path.join(distDir, rawPath);
-      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-        const ext = path.extname(filePath).toLowerCase();
-        res.writeHead(200, {
-          'Content-Type': mimeTypes[ext] || 'application/octet-stream',
-          'Access-Control-Allow-Origin': '*'
-        });
-        fs.createReadStream(filePath).pipe(res);
+      const indexPath = path.join(distDir, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        fs.createReadStream(indexPath).pipe(res);
       } else {
-        const indexPath = path.join(distDir, 'index.html');
-        if (fs.existsSync(indexPath)) {
-          res.writeHead(200, { 'Content-Type': 'text/html' });
-          fs.createReadStream(indexPath).pipe(res);
-        } else {
-          res.writeHead(404);
-          res.end('Not Found');
-        }
+        res.writeHead(404);
+        res.end('Not Found');
       }
-    });
+    }
+  };
 
-    server.listen(port, '127.0.0.1', () => {
-      resolve(server);
-    }).on('error', reject);
-  });
+  for (let p = preferredPort; p < preferredPort + 10; p++) {
+    try {
+      const srv = await new Promise((resolve, reject) => {
+        const s = http.createServer(handler);
+        s.listen(p, '127.0.0.1', () => resolve(s));
+        s.on('error', reject);
+      });
+      return { server: srv, port: p };
+    } catch (err) {
+      if (err.code === 'EADDRINUSE') {
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Unable to bind server to any port in range');
 }
 
 async function runAcceptanceSuite() {
@@ -717,15 +736,19 @@ Crucial Legal Distinction: Domestic occupational shortage identifies employer hi
   // Browser End-to-End Positive & Negative Tests
   // =========================================================================
 
-  const port = 4173;
-  const server = await startServer(port);
+  let server;
+  let browser;
+  let port = 4173;
+  const srvObj = await startServer(port);
+  server = srvObj.server;
+  port = srvObj.port;
   console.log(`\n[QA Server] Serving ./dist at http://127.0.0.1:${port}`);
 
   const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
   const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
   const executablePath = fs.existsSync(chromePath) ? chromePath : edgePath;
 
-  const browser = await puppeteer.launch({
+  browser = await puppeteer.launch({
     executablePath,
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -1122,8 +1145,8 @@ Crucial Legal Distinction: Domestic occupational shortage identifies employer hi
     console.error('Test Execution Error:', err);
     testResults.push({ name: 'Execution Crash Protection', pass: false, error: err.message });
   } finally {
-    await browser.close();
-    server.close();
+    if (browser) await browser.close().catch(() => {});
+    if (server) server.close();
   }
 
   console.log('\n=== FINAL SYSTEM ACCEPTANCE SUMMARY ===');

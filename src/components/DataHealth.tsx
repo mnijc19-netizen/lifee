@@ -153,8 +153,19 @@ export const DataHealth: React.FC = () => {
           </button>
         </div>
 
+        {/* Human-First Plain Language Summary */}
+        <div className="mt-4 rounded-xl bg-slate-950 p-4 border border-emerald-500/30 space-y-1.5">
+          <div className="flex items-center space-x-2 text-xs font-bold text-emerald-300">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            <span>这对我意味着什么？（人话白话说明）</span>
+          </div>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            任何出海决策都关系到普通人的多年青春与辛苦积蓄。我们绝不把网络传闻、中介口头承诺或过时旧规作为测算依据。在 Lifee 中，只有<strong>直接来自官方部门（德国内政部/劳工局、新西兰移民局、澳大利亚 JSA、实时央行与公开汇率）的法案文件</strong>才会驱动匹配分；未经验证的数据一律如实标为待确证，杜绝制造信息幻觉与不可挽回的沉没成本。
+          </p>
+        </div>
+
         {/* Semantic Integrity Warning Banner */}
-        <div className="mt-4 rounded-lg bg-blue-950/20 border border-blue-800/40 p-3 text-xs text-blue-200/90 space-y-1">
+        <div className="mt-3 rounded-lg bg-blue-950/20 border border-blue-800/40 p-3 text-xs text-blue-200/90 space-y-1">
           <div className="flex items-center space-x-1.5 font-bold text-blue-300">
             <Info className="h-4 w-4 text-blue-400 shrink-0" />
             <span>严格状态定义审计：可访问 ≠ 数据已实时接入</span>

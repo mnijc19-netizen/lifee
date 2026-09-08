@@ -202,13 +202,41 @@ export function localEvidenceRag(query: string, profile: UserProfile): AiRespons
     };
   }
 
-  // Route 3: Germany Ausbildung / Chancenkarte
+  // Route 3A: Direct Inquiry - Ausbildung graduation directly to permanent residence?
+  if (
+    (q.includes('双元制') || q.includes('ausbildung')) &&
+    (q.includes('永居') || q.includes('绿卡') || q.includes('永久居留') || q.includes('直接拿') || q.includes('毕业'))
+  ) {
+    return {
+      conclusion: '【核心事实：不能直接拿永居，毕业必须先转全职工作】完成德国双元制职业培训（Ausbildung）绝不会自动授予永久居留。培训期间持有的是职业培训居留（AufenthG §16a）。',
+      why: '德国《居留法》(AufenthG) 明确规定：双元制毕业后需凭受训专业匹配的工作合同转为专业技术工人居留许可（AufenthG §18a）。在持有技术工人工作居留并在德国合法从事匹配职业、连续缴纳 24 个月法定养老保险（Rentenvollversicherung）且具备德语 B1 水平与生活保障自足的前提下，方可根据《居留法》§18c 条款（德国受训毕业生优待通道）申请德国永久居留许可（Niederlassungserlaubnis）。若申请欧盟长久居留（§9a），培训期间折算折半，通常需累计满 5 年合法居留。',
+      relevanceToUser: `完美匹配你的大专背景，但切勿轻信中介所谓“毕业直接送绿卡”的虚假宣传。你当前可用资金约 ¥${savings.toLocaleString()} 元，双元制免学费且发工资（起步津贴约 €1,048/月），是极好的低资金出海路径；但必须做好 3 年培训 + 毕业工作纳税满 2 年（共计约 5 年）的完整时间规划。`,
+      evidenceQuotes: [
+        {
+          title: '德国《居留法》§18c 条款（德国高校与受训毕业生永居优待）',
+          tier: 'Tier A (官方联邦法规)',
+          text: 'Absolventen einer Berufsausbildung in Deutschland erhalten eine Niederlassungserlaubnis, wenn sie seit zwei Jahren eine Aufenthaltserlaubnis nach §§ 18a, 18b besitzen und 24 Monate Pflichtbeiträge zur Rentenversicherung nachweisen.',
+          source: 'https://www.gesetze-im-internet.de/aufenthg_2004/__18c.html'
+        },
+        {
+          title: '德国联邦劳工局双元制培训津贴规定',
+          tier: 'Tier A (德国联邦劳工局)',
+          text: 'Ausbildungsbetrieb zahlt eine monatliche Vergütung. Bei ausreichender Ausbildungsvergütung ist kein Sperrkonto erforderlich.',
+          source: 'https://www.arbeitsagentur.de'
+        }
+      ],
+      uncertaintiesAndRisks: '核心限制条件：必须通过德语 B1/B2 考试方能入读并顺利毕业，且毕业后必须找到与受训工种严格对口的技术全职工作并持续纳税 24 个月。',
+      nextImmediateAction: '今日启动 15 分钟德语 A1 高频核心词汇打卡，验证对德语学习的真实意志与耐受度。'
+    };
+  }
+
+  // Route 3B: Germany Ausbildung / Chancenkarte General
   if (q.includes('德国') || q.includes('双元制') || q.includes('机会卡') || q.includes('ausbildung') || q.includes('chancenkarte')) {
     const deGap = Math.max(0, 102000 - savings);
     return {
-      conclusion: `【极力推荐双元制，暂缓机会卡】德国是目前大专学历最友好的发达国家；你当前可用资金 ¥${savings.toLocaleString()} 元，距离机会卡法定自保金（€13,092 ≈ ¥10.2万）存在 ¥${deGap.toLocaleString()} 元资金缺口。应坚决走“0学费带薪双元制 Ausbildung”，而非需锁定 10 万自保金的机会卡。`,
-      why: '德国联邦劳工局规定双元制学徒免学费且企业每月支付 950~1350 欧元津贴；若企业实训津贴满足法定基本生活标准（毛额 €1,048/净额约 €822 起），可免除自保金；若津贴存在差额则仅需补足差额证明。大专文凭在德国受认可，毕业工作满 2~3 年即可申请欧盟永居。',
-      relevanceToUser: `完美匹配你“无启动大额本金（缺口 ¥${deGap.toLocaleString()} 元被双元制津贴消除）”、“大专学历在英语国家移民打分不够”的底层痛点。工时严格 38.5 小时，年假 30 天，网络完全自由。`,
+      conclusion: `【推荐评估双元制，暂缓机会卡】德国是目前大专学历最友好的发达国家之一；你当前可用资金 ¥${savings.toLocaleString()} 元，距离机会卡法定自保金（€13,092 ≈ ¥10.2万）存在 ¥${deGap.toLocaleString()} 元资金缺口。建议走“0学费带薪双元制 Ausbildung”，而非需锁定 10 万自保金的机会卡。`,
+      why: '德国联邦劳工局规定双元制学徒免学费且企业每月支付约 950~1350 欧元津贴；若企业实训津贴满足法定基本生活标准（毛额 €1,048/净额约 €822 起），可免除自保金；若津贴存在差额则仅需补足差额证明。大专文凭在德国受认可，毕业后转为 §18a 技术工人全职工作并缴纳 24 个月社保即可按 §18c 申请德国永久居留。',
+      relevanceToUser: `适合你“无启动大额本金（缺口 ¥${deGap.toLocaleString()} 元被双元制津贴消除）”、“大专学历在英语国家移民打分不够”的底层情况。工时严格 38.5 小时，年假 30 天，网络完全自由。`,
       evidenceQuotes: [
         {
           title: '德国双元制职业培训津贴与生计差额自保金规定',
@@ -223,7 +251,7 @@ export function localEvidenceRag(query: string, profile: UserProfile): AiRespons
           source: 'https://www.make-it-in-germany.com'
         }
       ],
-      uncertaintiesAndRisks: '唯一的死穴是德语。必须考过歌德德语 B1/B2 才能获批职业培训签证。',
+      uncertaintiesAndRisks: '核心要求是德语。必须考过歌德德语 B1/B2 才能获批职业培训签证。',
       nextImmediateAction: '启动【30天德语学习小实验】：每天投入 45 分钟背诵 A1 核心词汇，验证自己是否有学习意志。'
     };
   }

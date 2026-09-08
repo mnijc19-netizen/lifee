@@ -7,10 +7,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   crawl-and-audit:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,14 +45,36 @@ jobs:
         run: node scripts/sentinel_daemon.mjs --once
 
       - name: Commit & Push Updated Snapshots and Sentinel Audit
+        id: commit-step
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/data/ src/data/
           if git diff --staged --quiet; then
             echo "No policy drift or exchange rate changes detected. Everything is up to date."
+            echo "has_changes=false" >> $GITHUB_OUTPUT
           else
             echo "Changes detected, committing updated policy snapshots..."
             git commit -m "chore(sentinel): automated cloud policy & exchange rate crawl [skip ci]"
             git push origin HEAD:${{ github.ref_name }}
+            echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Build production bundle for Pages
+        if: steps.commit-step.outputs.has_changes == 'true'
+        run: npm run build
+
+      - name: Setup Pages
+        if: steps.commit-step.outputs.has_changes == 'true'
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        if: steps.commit-step.outputs.has_changes == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        if: steps.commit-step.outputs.has_changes == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -219,6 +219,12 @@ export interface NextGate {
 export interface ScoreExplanation {
   baseScore: number;
   finalScore: number;
+  preferenceScore: number;      // 1. 偏好匹配分 (0~100)
+  readinessScore: number;       // 2. 当前准备度 (0~100)
+  qualificationStatus: 'NOW_ELIGIBLE' | 'CONDITIONAL' | 'INFO_INSUFFICIENT' | 'NOT_CURRENTLY_SUITABLE'; // 3. 可核验资格状态
+  qualificationStatusLabel: string;
+  evidenceCompleteness: number; // 4. 关键证据完整度 (0~100)
+  capitalGapRmb: number;        // 启动资金缺口 (元)
   freshnessGatePassed: boolean;
   freshnessStatus: FreshnessStatus;
   isProvisional: boolean;
@@ -317,18 +323,41 @@ export interface MiniExperiment {
   goal: string;
   actionSteps: string[];
   successMetric: string;
-  killCriteria: string;
+  stopLossCriteria: string; // 止损与调整考量（替代暴力 Kill 文案）
+  killCriteria?: string;    // 向后兼容
   linkedCareerId?: string;
+  linkedPathwayId?: string;
+  maxBudgetRmb?: number;
+  reflectionQuestions?: string[];
+}
+
+export interface UserExperimentRun {
+  id: string;
+  experimentId: string;
+  title: string;
+  startDate: string;
+  targetEndDate: string;
+  durationDays: number;
+  status: 'in_progress' | 'paused' | 'completed' | 'concluded';
+  notes: Array<{ date: string; text: string }>;
+  reviewOutcome?: 'CONTINUE' | 'ADJUST' | 'PAUSE' | 'CONCLUDE';
+  reviewReflection?: string;
+  linkedPathwayId?: string;
 }
 
 export interface UserPlanTask {
   id: string;
   title: string;
   period: 'today' | 'week' | '30d' | '90d';
-  status: 'todo' | 'in_progress' | 'completed' | 'abandoned';
+  status: 'todo' | 'in_progress' | 'completed' | 'deferred' | 'abandoned';
   whyNow: string;
   linkedPathwayId?: string;
+  linkedExperimentId?: string;
   deadline?: string;
+  date?: string;               // YYYY-MM-DD
+  estimatedMinutes?: number;   // 建议耗时 (如 5~15 分钟)
+  completedAt?: string;
+  resultNote?: string;         // 完成成效或结果记录
 }
 
 export interface UserWeights {

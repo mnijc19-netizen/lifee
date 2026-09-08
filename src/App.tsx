@@ -19,6 +19,7 @@ import { SettingsModal } from './components/SettingsModal';
 import { ManualInbox } from './components/ManualInbox';
 import { ResearchModal } from './components/ResearchModal';
 import { SyncModal } from './components/SyncModal';
+import { ImportPreviewModal } from './components/ImportPreviewModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { INTELLIGENCE_STREAM } from './data/intelligence';
 import { COUNTRIES } from './data/countries';
@@ -57,7 +58,11 @@ export function App() {
     resetToDefaultProfile,
     customEvidence,
     setCustomEvidence,
-    addEvidence
+    addEvidence,
+    pendingImportBundle,
+    isImportPreviewOpen,
+    applyPendingImport,
+    cancelPendingImport
   } = useDecisionSystem();
 
   const [isManualInboxOpen, setIsManualInboxOpen] = useState(false);
@@ -118,6 +123,8 @@ export function App() {
             runway={runwayAnalysis}
             topPathways={rankedPathways}
             intelligence={INTELLIGENCE_STREAM}
+            tasks={tasks}
+            onUpdateTaskStatus={updateTaskStatus}
             onSelectPathway={(p) => {
               setSelectedPathway(p);
               setActiveTab('pathways');
@@ -258,6 +265,14 @@ export function App() {
         setWatchlist={setWatchlist}
         customEvidence={customEvidence}
         setCustomEvidence={setCustomEvidence}
+      />
+
+      <ImportPreviewModal
+        isOpen={isImportPreviewOpen}
+        bundle={pendingImportBundle}
+        currentProfile={profile}
+        onConfirm={applyPendingImport}
+        onCancel={cancelPendingImport}
       />
 
       {/* Mobile Bottom Navigation */}

@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import { Settings2, Download, Upload, RotateCcw, X, Sliders, CheckCircle2, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { Settings2, Download, Upload, RotateCcw, X, Sliders, CheckCircle2, ShieldCheck, HeartHandshake, AlertTriangle } from 'lucide-react';
 import { UserProfile, UserWeights, UserHardConstraints, UserPreferences } from '../types';
+import { 
+  validateImportBundle, 
+  exportUserData, 
+  resetAllUserData, 
+  normalizeUserProfile,
+  loadStoredTasks,
+  loadStoredWatchlist,
+  loadStoredCustomEvidence
+} from '../utils/storageEngine';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -78,14 +87,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleExportProfile = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(profile, null, 2));
+    const tasks = loadStoredTasks();
+    const watchlist = loadStoredWatchlist();
+    const customEvidence = loadStoredCustomEvidence();
+    const bundle = exportUserData(profile, tasks, watchlist, customEvidence);
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bundle, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `lifee_profile_backup_${new Date().toISOString().split('T')[0]}.json`);
+    downloadAnchor.setAttribute("download", `lifee_backup_${new Date().toISOString().split('T')[0]}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
-    setCopiedStatus('配置备份已下载！可在手机或新电脑随时导入。');
+    setCopiedStatus('全量备份已安全下载！包含画像、任务与关注清单。');
     setTimeout(() => setCopiedStatus(null), 3000);
   };
 
@@ -95,18 +108,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      try {
-        const imported = JSON.parse(event.target?.result as string);
-        if (imported && imported.weights) {
-          setProfile(imported);
-          setCopiedStatus('配置成功从备份文件还原！');
-          setTimeout(() => setCopiedStatus(null), 3000);
-        }
-      } catch {
-        alert('导入失败：文件格式不合规。');
+      const content = event.target?.result as string;
+      const validation = validateImportBundle(content);
+      if (!validation.valid || !validation.bundle) {
+        alert(`导入失败：${validation.error || '文件格式不合规'}`);
+        return;
+      }
+
+      const summary = validation.summary;
+      const confirmed = window.confirm(
+        `准备导入以下备份内容：\n- 画像名称：${summary?.profileName || '未命名'}\n- 可用储蓄：¥${(summary?.savingsRmb || 0).toLocaleString()}\n- 任务数量：${summary?.tasksCount || 0} 项\n- 自定义证据：${summary?.evidenceCount || 0} 条\n\n确认导入并更新当前设备画像？`
+      );
+
+      if (confirmed) {
+        setProfile(validation.bundle.profile);
+        setCopiedStatus('✓ 备份已成功导入并完成画像统一！');
+        setTimeout(() => setCopiedStatus(null), 3500);
       }
     };
     reader.readAsText(file);
+    // Reset input value so same file can be re-imported if needed
+    e.target.value = '';
   };
 
   return (
@@ -497,14 +519,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (confirm('确认将个人权重与基础设定重置为官方默认样例基准？')) {
+                  if (confirm('确认将个人权重与基础设定重置为官方默认样例基准？重置前将自动为您下载一份当前数据安全备份。')) {
+                    handleExportProfile();
                     onResetDefaults();
+                    setCopiedStatus('已恢复默认画像，原数据备份已自动下载至本地。');
                   }
                 }}
-                className="flex items-center space-x-1.5 rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-900/30 transition-colors"
+                className="flex items-center space-x-1.5 rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-900/30 transition-colors cursor-pointer"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                <span>恢复系统默认样例画像</span>
+                <span>安全重置为默认画像 (自动备份)</span>
               </button>
             </div>
           </div>

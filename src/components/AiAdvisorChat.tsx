@@ -31,6 +31,7 @@ import {
   queryAdvisor 
 } from '../engine/byokAdvisor';
 import { PATHWAYS } from '../data/pathways';
+import { EVIDENCE_BASE } from '../data/evidence';
 
 interface AiAdvisorChatProps {
   profile: UserProfile;
@@ -211,7 +212,7 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
               AI 决策顾问与规则引擎 (Decision Intelligence Advisor)
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-              严禁将规则引擎冒充为大模型：未配置 API Key 时系统以【本地规则引擎】纯离线运行；配置 Key 后仅在当前浏览器会话内存/sessionStorage 暂存，关闭页面自动物理擦除，严禁虚假宣传加密。
+              严禁将规则引擎冒充为大模型：未配置 API Key 时系统以【本地规则引擎】纯离线运行；配置 Key 后仅在当前浏览器会话临时暂存，关闭页面或会话结束自动清空，不在任何服务端持久化。
             </p>
           </div>
 
@@ -365,11 +366,24 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({ profile, onOpenAiC
                         四、所引用之官方证据库条目 (Evidence Citation)
                       </span>
                       {msg.structured.evidenceQuotes.map((eq, i) => {
-                        const isAiInference = eq.text.includes('AI 推理') || eq.text.includes('未挂接官方证据库');
+                        const isVerified = Boolean(
+                          eq.title &&
+                          !eq.text.includes('AI 推理') &&
+                          !eq.text.includes('未挂接') &&
+                          !eq.text.includes('未收录') &&
+                          !eq.tier.includes('Inference') &&
+                          !eq.tier.includes('Generated') &&
+                          EVIDENCE_BASE.some(eb => 
+                            eb.title.toLowerCase().includes(eq.title.toLowerCase()) ||
+                            eq.title.toLowerCase().includes(eb.title.toLowerCase()) ||
+                            (eq.source && eb.url && (eb.url.includes(eq.source) || eq.source.includes(eb.url))) ||
+                            (eq.text && eb.keyFactQuotes.some(k => k.includes(eq.text) || eq.text.includes(k)))
+                          )
+                        );
                         return (
-                          <div key={i} className={`pl-2.5 border-l-2 font-mono text-[11px] ${isAiInference ? 'border-amber-500/50 text-amber-300/90' : 'border-emerald-500/50 text-emerald-300/90'}`}>
+                          <div key={i} className={`pl-2.5 border-l-2 font-mono text-[11px] ${isVerified ? 'border-emerald-500/50 text-emerald-300/90' : 'border-amber-500/50 text-amber-300/90'}`}>
                             <div className="flex items-center space-x-1.5 mb-0.5">
-                              <span>{isAiInference ? '💭 [AI 推论]' : '✅ [官方已验证]'}</span>
+                              <span>{isVerified ? '✅ [官方已收录/已验证]' : '💭 [AI 推论/未在官方库收录]'}</span>
                               <span className="text-slate-400">[{eq.tier}] {eq.title}: </span>
                             </div>
                             <span className="italic">"{eq.text}"</span>

@@ -1,5 +1,6 @@
 import { UserProfile, UserPlanTask, Evidence } from '../types';
-import { pushToSupabase, pullFromSupabase } from './supabaseSync';
+import { pushToSupabase, pullFromSupabase, loadSupabaseConfig } from './supabaseSync';
+import { getUserSyncSlotId, setUserSyncSlotId, isUserSyncEnabled, setUserSyncEnabled } from '../config/cloudSyncConfig';
 
 export interface LifeeSyncPayload {
   version: number;
@@ -11,10 +12,18 @@ export interface LifeeSyncPayload {
   customEvidence: Evidence[];
 }
 
+export type RealSyncState = 
+  | 'DISCONNECTED'     // 未配置或已关闭云端同步
+  | 'PENDING_UPLOAD'   // 本地已修改，等待上传
+  | 'SYNCING'          // 正在与服务器通讯
+  | 'SYNCED'           // 服务器明确响应已持久化
+  | 'FAILED_RETRY'     // 网络错误或服务异常，本地数据已保全，待重试
+  | 'CONFLICT';        // 云端存在更新版本
+
 export interface SyncStatus {
   lastSyncedAt: string | null;
   syncCode: string | null;
-  isSyncing: boolean;
+  syncState: RealSyncState;
   statusMessage: string;
 }
 
@@ -47,29 +56,27 @@ export function generatePairingCode(): string {
 }
 
 export function getSavedSyncCode(): string | null {
-  try {
-    return localStorage.getItem(SYNC_CODE_KEY);
-  } catch {
-    return null;
-  }
+  return getUserSyncSlotId() || localStorage.getItem(SYNC_CODE_KEY);
 }
 
 export function saveSyncCode(code: string): void {
+  const clean = code.toUpperCase().trim();
   try {
-    localStorage.setItem(SYNC_CODE_KEY, code.toUpperCase().trim());
+    localStorage.setItem(SYNC_CODE_KEY, clean);
+    setUserSyncSlotId(clean);
   } catch {
     // ignore
   }
 }
 
-// Native Web Compression (Gzip + Base64) for URL-safe instant cross-device transfer
+// Native Web Compression (Gzip + Base64) for URL-safe cross-device transfer
+// Notice: Gzip + Base64 is transport encoding, NOT cryptographic encryption.
 export async function compressPayload(payload: LifeeSyncPayload): Promise<string> {
   const json = JSON.stringify(payload);
   const stream = new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));
   const response = new Response(stream);
   const buffer = await response.arrayBuffer();
   
-  // Convert arrayBuffer to base64url
   const bytes = new Uint8Array(buffer);
   let binary = '';
   for (let i = 0; i < bytes.byteLength; i++) {
@@ -83,7 +90,6 @@ export async function compressPayload(payload: LifeeSyncPayload): Promise<string
 
 // Native Web Decompression for URL-safe cross-device transfer
 export async function decompressPayload(base64Url: string): Promise<LifeeSyncPayload> {
-  // Convert base64url back to base64
   let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   while (base64.length % 4) {
     base64 += '=';
@@ -101,51 +107,53 @@ export async function decompressPayload(base64Url: string): Promise<LifeeSyncPay
   return JSON.parse(text) as LifeeSyncPayload;
 }
 
-export async function uploadToCloudRelay(code: string, payload: LifeeSyncPayload): Promise<boolean> {
+/**
+ * Uploads payload to the server only with real result reporting.
+ * Zero fake success: only returns true if the remote server acknowledged storage.
+ */
+export async function uploadToCloudRelay(code: string, payload: LifeeSyncPayload): Promise<{ success: boolean; message: string }> {
+  const cleanCode = code.toUpperCase().trim();
+  if (!cleanCode) {
+    return { success: false, message: '配对码无效' };
+  }
+
+  const config = loadSupabaseConfig();
+  if (!config.enabled) {
+    return { success: false, message: '云端同步未开启或未授权。数据已安全保留在本地。' };
+  }
+
   try {
-    const compressed = await compressPayload(payload);
-    localStorage.setItem(`lifee_cloud_cache_${code}`, compressed);
-    localStorage.setItem(LAST_SYNC_KEY, new Date().toISOString());
-
-    // Dual-layer: If Supabase is configured, upload to cloud database
-    try {
-      await pushToSupabase(code, payload);
-    } catch {
-      // Supabase upload optional
+    const pushed = await pushToSupabase(cleanCode, payload);
+    if (pushed) {
+      const nowIso = new Date().toISOString();
+      localStorage.setItem(LAST_SYNC_KEY, nowIso);
+      return { success: true, message: '已安全同步至云端专属槽位' };
+    } else {
+      return { success: false, message: '云端服务拒绝或写入失败，本地修改已完好保留。' };
     }
-
-    return true;
-  } catch (err) {
-    console.warn('Cloud sync relay write error, cached locally:', err);
-    return false;
+  } catch (err: any) {
+    return { success: false, message: `网络异常 (${err?.message || '无法连接'})，本地数据未受影响。` };
   }
 }
 
+/**
+ * Downloads payload from the server with validation.
+ */
 export async function downloadFromCloudRelay(code: string): Promise<LifeeSyncPayload | null> {
-  try {
-    // 1. Try Supabase cloud database first
-    try {
-      const remoteData = await pullFromSupabase(code);
-      if (remoteData) {
-        return remoteData;
-      }
-    } catch {
-      // ignore
-    }
+  const cleanCode = code.toUpperCase().trim();
+  if (!cleanCode) return null;
 
-    // 2. Fall back to local relay cache
-    const cached = localStorage.getItem(`lifee_cloud_cache_${code}`);
-    if (cached) {
-      return await decompressPayload(cached);
-    }
-    return null;
+  try {
+    return await pullFromSupabase(cleanCode);
   } catch (err) {
-    console.warn('Cloud sync relay read error:', err);
+    console.warn('[Sync Engine] Download error:', err);
     return null;
   }
 }
 
-// Generate an instant 1-click sync link for mobile (iPhone 16 Pro)
+/**
+ * Generates an instant link with transparent user notice that payload is encoded.
+ */
 export async function generateInstantMobileSyncUrl(payload: LifeeSyncPayload): Promise<string> {
   const compressed = await compressPayload(payload);
   const baseUrl = window.location.origin + window.location.pathname;

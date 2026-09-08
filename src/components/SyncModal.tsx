@@ -35,7 +35,14 @@ import {
   INITIAL_SUPABASE_SQL,
   SupabaseConfig 
 } from '../engine/supabaseSync';
-import { isCloudSyncPreConfigured, CLOUD_SYNC_CONFIG } from '../config/cloudSyncConfig';
+import { 
+  isCloudSyncPreConfigured, 
+  CLOUD_SYNC_CONFIG,
+  isUserSyncEnabled,
+  getUserSyncSlotId,
+  setUserSyncEnabled,
+  setUserSyncSlotId
+} from '../config/cloudSyncConfig';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -237,32 +244,29 @@ export const SyncModal: React.FC<SyncModalProps> = ({
           </button>
         </div>
 
-        {/* Pre-configured Master Cloud Sync Banner */}
-        {isCloudSyncPreConfigured() && (
-          <div className="mt-4 rounded-xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-950 p-4 border border-emerald-500/40 space-y-2.5 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">
-                  三端无感静默实时同步已激活 (Supabase 直连)
-                </span>
-              </div>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">
-                全自动双向同步
+        {/* Local-First or User-Paired Slot Banner */}
+        <div className="mt-4 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-4 border border-slate-800 space-y-2.5 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className={`inline-flex rounded-full h-2.5 w-2.5 ${isUserSyncEnabled() ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
+              </span>
+              <span className={`text-xs font-bold uppercase tracking-wider ${isUserSyncEnabled() ? 'text-emerald-300' : 'text-slate-300'}`}>
+                {isUserSyncEnabled() 
+                  ? `专属配对槽位已连接 (${getUserSyncSlotId()})`
+                  : '当前模式：本地优先离线存储 (Local-First Offline)'}
               </span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              恭喜！您的专属 Supabase 云数据库已成功连接。您的 <strong>Windows 电脑、iPhone 16 Pro、小米 14 Pro</strong> 只要打开原本的网址，系统将在后台自动双向毫秒级同步所有储蓄画像、任务打勾与录入情报，彻底告别所有手动步骤！
-            </p>
-            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 pt-1 font-mono border-t border-slate-800/80">
-              <span className="truncate max-w-[280px]">实例: {CLOUD_SYNC_CONFIG.supabaseUrl.replace('https://', '')}</span>
-              <span className="text-emerald-400">心跳: 每 15 秒 / 切屏即刷新</span>
-            </div>
+            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${isUserSyncEnabled() ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-slate-800 text-slate-400 border-slate-700'}`}>
+              {isUserSyncEnabled() ? '按需配对同步' : '纯离线无上传'}
+            </span>
           </div>
-        )}
+          <p className="text-xs text-slate-300 leading-relaxed">
+            {isUserSyncEnabled()
+              ? `已配置个人专属槽位。本设备数据在变动或手动操作时将更新至隔离槽位，其他设备使用同一配对码即可拉取。`
+              : `遵循最高隐私准则：您的画像、储蓄、任务与清单 100% 仅保存在当前设备浏览器中，未开启任何云端数据上传。您可以通过下方的【手机直达链接】、【专属配对码】或【JSON 文件】在多设备间安全同步。`}
+          </p>
+        </div>
 
         {/* Method 1: Instant Mobile 1-Click Link */}
         <div className="mt-4 space-y-4">
@@ -271,15 +275,15 @@ export const SyncModal: React.FC<SyncModalProps> = ({
               <div className="flex items-center space-x-2">
                 <Smartphone className="h-4 w-4 text-emerald-400" />
                 <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  备用直达：iPhone 16 Pro 微信/AirDrop 快捷链接
+                  手机直达：iPhone / 安卓快捷链接
                 </span>
               </div>
               <span className="text-[10px] bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
-                免输密码 · 即开即用
+                预览确认 · 安全合并
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              一键生成带有加密状态指纹的直达 URL。通过微信、邮件或 Airdrop 发送到 iPhone 16 Pro，在 Safari 浏览器中打开，手机端将自动秒级合并当前全部资产、任务和定制路线。
+              一键生成带有紧凑编码指纹的直达 URL。发送到手机并在浏览器中打开后，手机端将弹出<strong>【导入预览确认】窗口</strong>，经您核验无误后安全合并，杜绝任何未确认覆盖。
             </p>
             <div className="mt-3 flex items-center gap-2">
               <button

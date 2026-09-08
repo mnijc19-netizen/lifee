@@ -128,6 +128,9 @@ export async function queryAdvisor(
 
   const systemPrompt = buildSystemPrompt(profile);
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
   try {
     if (byokConfig.provider === 'gemini') {
       const model = byokConfig.model.trim() || 'gemini-2.5-flash';
@@ -136,6 +139,7 @@ export async function queryAdvisor(
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           contents: [
             {
@@ -177,6 +181,7 @@ export async function queryAdvisor(
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${byokConfig.apiKey.trim()}`
         },
+        signal: controller.signal,
         body: JSON.stringify({
           model,
           messages: [
@@ -204,13 +209,17 @@ export async function queryAdvisor(
       };
     }
   } catch (err: any) {
+    const isTimeout = err?.name === 'AbortError' || controller.signal.aborted;
+    const msg = isTimeout ? '请求超时 (超过 15 秒)' : (err?.message || '网络连接错误');
     console.error('BYOK Call failed, falling back to localEvidenceRag:', err);
     const fallbackResponse = localEvidenceRag(query, profile);
     return {
       response: fallbackResponse,
       engineUsed: 'local',
-      errorNotice: `BYOK 直连调用失败（${err?.message || '网络错误'}），已安全平滑回退至本地证据规则引擎。`
+      errorNotice: `BYOK 直连调用失败（${msg}），已安全平滑回退至本地证据规则引擎。`
     };
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -221,16 +230,16 @@ function sanitizeStructure(raw: any, query: string): AiResponseStructure {
     relevanceToUser: String(raw.relevanceToUser || '该问题直接影响你的起步门槛与时间分配。'),
     evidenceQuotes: Array.isArray(raw.evidenceQuotes) && raw.evidenceQuotes.length > 0
       ? raw.evidenceQuotes.map((e: any) => ({
-          title: String(e.title || '政策与行业公开指标'),
-          tier: String(e.tier || 'Tier B'),
-          text: String(e.text || '已参考官方公报与行业基准。'),
-          source: String(e.source || '官方公开数据')
+          title: String(e.title || 'AI 推理参考依据'),
+          tier: String(e.tier || 'AI Inference'),
+          text: String(e.text || '大模型推理生成，请对照官方原文核查。'),
+          source: String(e.source || '外部模型推演')
         }))
       : [{
-          title: '官方政策与行业标准比对',
-          tier: 'Tier A',
-          text: '已进行跨维度政策与资格标准交叉验证。',
-          source: '官方公报与统计局'
+          title: '大模型生成内容 (待官方核查)',
+          tier: 'AI-Generated',
+          text: '当前回答由大模型推理生成，未挂接本地官方证据库条目，请对照官方原文核查。',
+          source: 'LLM Inference'
         }],
     uncertaintiesAndRisks: String(raw.uncertaintiesAndRisks || '需注意当地法规突发调整或雇主担保门槛浮动。'),
     nextImmediateAction: String(raw.nextImmediateAction || '优先完成对应技能或语言的第一阶段基准测试。')
