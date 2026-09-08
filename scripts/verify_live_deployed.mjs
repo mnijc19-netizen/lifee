@@ -46,6 +46,7 @@ async function verifyLive() {
     console.log(`Page Title: "${pageTitle}"`);
 
     const bodyText = await page.evaluate(() => document.body.innerText);
+    console.log('Live body text snippet:', bodyText.slice(0, 300).replace(/\n+/g, ' '));
     const hasToday = bodyText.includes('今日最值得做的一件事') || bodyText.includes('我现在最应该做什么');
     const hasTop3 = bodyText.includes('当前最重要的 3 件事');
     const hasPathways = bodyText.includes('动态评估当前最优路线 Top 3');
