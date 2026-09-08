@@ -2,6 +2,7 @@ import React, { Component, ReactNode, ErrorInfo } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { clearApplicationCacheOnly } from './utils/storageEngine';
 
 // Automatic recovery on stale Vite bundle chunk fetch failure
 window.addEventListener('vite:preloadError', (event) => {
@@ -32,18 +33,13 @@ class RootErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
     console.error('[RootErrorBoundary] Uncaught rendering exception:', error, errorInfo);
   }
 
-  handleClearCacheAndReload = () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then((regs) => {
-        regs.forEach((reg) => reg.unregister());
-      });
+  handleClearCacheAndReload = async () => {
+    try {
+      await clearApplicationCacheOnly();
+    } catch (err) {
+      console.warn('[RootErrorBoundary] Cache cleanup warning:', err);
     }
-    if ('caches' in window) {
-      caches.keys().then((keys) => {
-        keys.forEach((key) => caches.delete(key));
-      });
-    }
-    localStorage.clear();
+    // Strictly preserve all user data in localStorage, never call localStorage.clear()
     window.location.reload();
   };
 
@@ -57,7 +53,7 @@ class RootErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState
             </div>
             <h2 className="text-xl font-bold text-white">页面渲染遇到异常</h2>
             <p className="text-sm text-slate-400 leading-relaxed">
-              可能由于浏览器旧版本 Service Worker 缓存或本地状态不匹配所致。点击下方按钮即可一键清理缓存并重载最新系统。
+              可能由于浏览器旧版本 Service Worker 缓存或网络波动所致。点击下方按钮即可一键清理应用缓存并重载最新版本（您的个人数据将完整保留）。
             </p>
             {this.state.error && (
               <div className="p-3 bg-slate-950 rounded border border-slate-800 text-xs text-red-300/80 font-mono text-left break-all max-h-32 overflow-y-auto">

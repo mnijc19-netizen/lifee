@@ -43,6 +43,7 @@ import {
   setUserSyncEnabled,
   setUserSyncSlotId
 } from '../config/cloudSyncConfig';
+import { validateImportBundle } from '../utils/storageEngine';
 
 interface SyncModalProps {
   isOpen: boolean;
@@ -176,11 +177,11 @@ export const SyncModal: React.FC<SyncModalProps> = ({
     setIsProcessing(true);
     setSyncStatus('正在更新云端快照...');
     try {
-      const ok = await uploadToCloudRelay(pairingCode, currentPayload);
-      if (ok) {
+      const res = await uploadToCloudRelay(pairingCode, currentPayload);
+      if (res && res.success) {
         setSyncStatus(`✓ 云端快照更新成功！另一台设备输入配对码【${pairingCode}】即可拉取。`);
       } else {
-        setSyncStatus('云端上传遇到轻微波动，已在本地暂存。');
+        setSyncStatus(res?.message || '云端上传遇到轻微波动，已在本地暂存。');
       }
     } catch {
       setSyncStatus('上传异常，请重试。');
@@ -203,18 +204,24 @@ export const SyncModal: React.FC<SyncModalProps> = ({
   const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 1024 * 1024) {
+      setSyncStatus('导入失败：备份文件体积超过 1MB 安全上限，已拒绝读取。');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (event) => {
-      try {
-        const parsed = JSON.parse(event.target?.result as string) as LifeeSyncPayload;
-        if (parsed.profile) setProfile(parsed.profile);
-        if (parsed.tasks) setTasks(parsed.tasks);
-        if (parsed.watchlist) setWatchlist(parsed.watchlist);
-        if (parsed.customEvidence) setCustomEvidence(parsed.customEvidence);
-        setSyncStatus('✓ 本地 JSON 备份数据已成功导入并恢复！');
-      } catch {
-        setSyncStatus('导入失败：文件格式不符合 Lifee 标准备份规范。');
+      const text = event.target?.result as string;
+      const validation = validateImportBundle(text);
+      if (!validation.valid || !validation.bundle) {
+        setSyncStatus(`导入失败: ${validation.error || '文件格式不符合 Lifee 标准备份规范'}`);
+        return;
       }
+      const bundle = validation.bundle;
+      if (bundle.profile) setProfile(bundle.profile);
+      if (bundle.tasks) setTasks(bundle.tasks);
+      if (bundle.watchlist) setWatchlist(bundle.watchlist);
+      if (bundle.customEvidence) setCustomEvidence(bundle.customEvidence);
+      setSyncStatus(`✓ 本地 JSON 备份数据已成功导入并恢复 (画像: ${validation.summary?.profileName || '已同步'})！`);
     };
     reader.readAsText(file);
   };
