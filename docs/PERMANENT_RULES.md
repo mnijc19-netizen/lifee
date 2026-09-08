@@ -58,3 +58,9 @@ Facts collected across multiple official pages must be ingested separately, pres
 
 ## RULE-85 Zero Business Default Constants on Missing Fields
 When a required or optional field cannot be extracted from the source content, the parser must return `null`, `UNKNOWN`, or `PARTIAL`. Defaulting to business assumptions (e.g. defaulting experience to 3 years) is strictly prohibited.
+
+## RULE-86 Zero Unscoped Cache/Storage Clearing in Error Boundaries
+Error recovery handlers, fallback buttons, and service worker registration cleaners must NEVER call `localStorage.clear()` or unscoped `caches.delete()`. Any cache cleanup must be strictly isolated to known cache prefixes (e.g. `lifee-cache-*`), preserving all persistent user business state (`lifee_action_history`, `lifee_user_profile`, `lifee_assessment_draft`, etc.).
+
+## RULE-87 Strict Boolean Property Validation for Network Relay Responses
+Relay, API, and cloud sync helper functions that return structured result objects (e.g. `{ success: boolean, message?: string }`) must never be evaluated directly for truthiness (e.g. `if (res)` is always true for non-null objects). Call sites must explicitly test `if (res && res.success === true)` or throw upon failure. In addition, all manual and automated import entrypoints must strictly enforce payload bundle limits (<= 1MB) before parsing.
