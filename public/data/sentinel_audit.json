@@ -1,15 +1,15 @@
 {
-  "auditTimestamp": "2026-09-13T15:32:27.269Z",
-  "durationMs": 47,
-  "healthScore": 100,
-  "auditStatus": "OPTIMAL",
+  "auditTimestamp": "2026-09-13T20:14:24.587Z",
+  "durationMs": 70,
+  "healthScore": 70,
+  "auditStatus": "DEGRADED",
   "monitoredPolicies": [
     {
       "sourceId": "src-de-opportunity-card",
       "version": 1,
       "contentHash": "5bad33661826",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     },
     {
@@ -17,7 +17,7 @@
       "version": 1,
       "contentHash": "acd95909c01b",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     },
     {
@@ -25,7 +25,7 @@
       "version": 1,
       "contentHash": "9dd9c1a73ccf",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     },
     {
@@ -33,14 +33,14 @@
       "version": 1,
       "contentHash": "15c950d458bf",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     },
     {
       "sourceId": "src-inz-aewv",
       "version": 5,
       "contentHash": "9c570631d885",
-      "lastCheckedAt": "2026-09-13T15:32:18.851Z",
+      "lastCheckedAt": "2026-09-13T20:14:18.897Z",
       "freshnessStatus": "FRESH",
       "summary": "官方已核验基准"
     },
@@ -49,7 +49,7 @@
       "version": 1,
       "contentHash": "254a84724732",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     },
     {
@@ -57,7 +57,7 @@
       "version": 1,
       "contentHash": "b9b1dd3a143c",
       "lastCheckedAt": "2026-09-06T19:00:00.000Z",
-      "freshnessStatus": "AGING",
+      "freshnessStatus": "STALE",
       "summary": "官方已核验基准"
     }
   ],
@@ -79,5 +79,12 @@
       "lastUpdated": "Sun, 13 Sep 2026 00:02:31 +0000"
     }
   },
-  "recommendations": []
+  "recommendations": [
+    "Policy source src-de-opportunity-card last checked > 7 days ago. Trigger residential crawl.",
+    "Policy source src-de-vocational-training last checked > 7 days ago. Trigger residential crawl.",
+    "Policy source src-nz-min-wage last checked > 7 days ago. Trigger residential crawl.",
+    "Policy source src-nz-median-wage last checked > 7 days ago. Trigger residential crawl.",
+    "Policy source src-inz-forklift last checked > 7 days ago. Trigger residential crawl.",
+    "Policy source src-jsa-au-2025 last checked > 7 days ago. Trigger residential crawl."
+  ]
 }
