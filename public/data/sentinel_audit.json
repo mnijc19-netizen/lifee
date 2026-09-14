@@ -1,6 +1,6 @@
 {
-  "auditTimestamp": "2026-09-14T17:34:00.936Z",
-  "durationMs": 68,
+  "auditTimestamp": "2026-09-14T21:23:22.139Z",
+  "durationMs": 63,
   "healthScore": 70,
   "auditStatus": "DEGRADED",
   "monitoredPolicies": [
@@ -40,7 +40,7 @@
       "sourceId": "src-inz-aewv",
       "version": 5,
       "contentHash": "9c570631d885",
-      "lastCheckedAt": "2026-09-14T17:33:52.791Z",
+      "lastCheckedAt": "2026-09-14T21:23:12.509Z",
       "freshnessStatus": "FRESH",
       "summary": "官方已核验基准"
     },
