@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-15T10:47:23.394Z",
+  "collectedAt": "2026-10-15T16:13:22.865Z",
   "rates": {
     "USD_CNY": 6.7065,
     "EUR_CNY": 7.4981,
@@ -11,13 +11,13 @@
   },
   "sourcesChecked": 25,
   "manifestSummary": {
-    "LIVE_DATA": 2,
+    "LIVE_DATA": 1,
     "REACHABLE": 8,
     "CACHED": 3,
     "MANUAL": 2,
     "BLOCKED": 0,
     "STATIC": 1,
-    "FAILED": 6,
+    "FAILED": 7,
     "UNKNOWN": 0
   }
 }
