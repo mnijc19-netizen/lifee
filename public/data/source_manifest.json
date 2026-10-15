@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-15T16:13:22.865Z",
+  "updatedAt": "2026-10-15T20:53:09.796Z",
   "totalSources": 25,
   "liveDataCount": 1,
   "reachableCount": 8,
@@ -23,12 +23,12 @@
       "sourcePublishedAt": "2026-09-07",
       "status": "LIVE_DATA",
       "httpStatus": 200,
-      "latencyMs": 293,
-      "lastCheck": "2026-10-15T16:13:14.477Z",
-      "fetchedAt": "2026-10-15T16:13:14.477Z",
-      "parsedAt": "2026-10-15T16:13:14.477Z",
+      "latencyMs": 144,
+      "lastCheck": "2026-10-15T20:53:01.557Z",
+      "fetchedAt": "2026-10-15T20:53:01.557Z",
+      "parsedAt": "2026-10-15T20:53:01.557Z",
       "lastVerifiedAt": "2026-10-15",
-      "contentHash": "5d0a3dc5a5a1",
+      "contentHash": "064531b6ba10",
       "extractedFact": "最新汇率实时解析成功：USD/CNY=6.706, EUR/CNY=7.498"
     },
     {
@@ -44,8 +44,8 @@
       "verifiedPolicyFact": "德国机会卡法定最低自保金为每月 €1,091（每年 €13,092），打工许可为每周 20 小时",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 721,
-      "lastCheck": "2026-10-15T16:13:14.777Z",
+      "latencyMs": 694,
+      "lastCheck": "2026-10-15T20:53:01.712Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Opportunity Card parser: Required field monthlyBlockedFundsEur could not be extracted"
     },
@@ -62,8 +62,8 @@
       "verifiedPolicyFact": "德国双元制企业实训津贴法定起步毛额约 €1,048 欧/月（净额约 €822 欧/月），学校型双元制法定生计标准为 €959 欧/月",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 160,
-      "lastCheck": "2026-10-15T16:13:15.655Z",
+      "latencyMs": 170,
+      "lastCheck": "2026-10-15T20:53:02.577Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Vocational Training parser: Required field companyBasedMinimumGross could not be extracted"
     },
@@ -80,8 +80,8 @@
       "verifiedPolicyFact": "机会卡月自保金 €1,091，双元制企业津贴不足时须以自保金差额补足",
       "status": "FAILED_PARSER",
       "httpStatus": 200,
-      "latencyMs": 157,
-      "lastCheck": "2026-10-15T16:13:15.821Z",
+      "latencyMs": 167,
+      "lastCheck": "2026-10-15T20:53:02.895Z",
       "extractedFact": "端点连通 (HTTP 200) 但结构解析器失败，拒绝冒充 LIVE_DATA",
       "error": "DE Opportunity Card parser: Required field monthlyBlockedFundsEur could not be extracted"
     },
@@ -98,8 +98,8 @@
       "verifiedPolicyFact": "德国劳工局双元制岗位库：企业发放法定实训津贴并提供社保，津贴不足生活标准时须补足证明",
       "status": "REACHABLE",
       "httpStatus": 200,
-      "latencyMs": 900,
-      "lastCheck": "2026-10-15T16:13:15.983Z",
+      "latencyMs": 1124,
+      "lastCheck": "2026-10-15T20:53:03.067Z",
       "extractedFact": "端点可达响应正常 (HTTP 200) · 政策条目采用基准核验：德国劳工局双元制岗位库：企业发放法定实训津贴并提供社保，津贴不足生活标准时须补足证明"
     },
     {
@@ -115,8 +115,8 @@
       "verifiedPolicyFact": "AEWV 通用岗位要求至少 2 年相关经验或 NZQCF 4 级学历，薪资须达到市场公允水平",
       "status": "FAILED",
       "httpStatus": 502,
-      "latencyMs": 1574,
-      "lastCheck": "2026-10-15T16:13:16.883Z",
+      "latencyMs": 1542,
+      "lastCheck": "2026-10-15T20:53:04.191Z",
       "extractedFact": "HTTP 502 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 502"
     },
@@ -133,8 +133,8 @@
       "verifiedPolicyFact": "新西兰法定成人最低时薪为 $23.95 NZD/小时（2026 年 4 月 1 日起实施）",
       "status": "FAILED",
       "httpStatus": 404,
-      "latencyMs": 945,
-      "lastCheck": "2026-10-15T16:13:18.457Z",
+      "latencyMs": 1031,
+      "lastCheck": "2026-10-15T20:53:05.734Z",
       "extractedFact": "HTTP 404 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 404"
     },
@@ -151,8 +151,8 @@
       "verifiedPolicyFact": "新西兰移民审理专用中位数时薪为 $35.00 NZD/小时（2026 年 3 月 9 日起生效，仅用于 SMC 与绿名单）",
       "status": "FAILED",
       "httpStatus": 502,
-      "latencyMs": 1301,
-      "lastCheck": "2026-10-15T16:13:19.402Z",
+      "latencyMs": 793,
+      "lastCheck": "2026-10-15T20:53:06.765Z",
       "extractedFact": "HTTP 502 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 502"
     },
@@ -169,8 +169,8 @@
       "verifiedPolicyFact": "Forklift Driver 官方代码 ANZSCO 721311，基准 Skill Level 4，条件性 Level 3 须雇主 Job Check 明确要求 3 年经验或 NZQCF Level 4",
       "status": "FAILED",
       "httpStatus": 502,
-      "latencyMs": 1265,
-      "lastCheck": "2026-10-15T16:13:20.703Z",
+      "latencyMs": 1078,
+      "lastCheck": "2026-10-15T20:53:07.558Z",
       "extractedFact": "HTTP 502 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 502"
     },
@@ -187,8 +187,8 @@
       "verifiedPolicyFact": "AEWV 一般岗位要求满足法定最低时薪 $23.95 NZD 与市场薪资，移民中位数时薪为 $35.00 NZD",
       "status": "FAILED",
       "httpStatus": 502,
-      "latencyMs": 896,
-      "lastCheck": "2026-10-15T16:13:21.968Z",
+      "latencyMs": 1159,
+      "lastCheck": "2026-10-15T20:53:08.636Z",
       "extractedFact": "HTTP 502 响应异常，降级启用本地备份",
       "error": "Remote returned HTTP 502"
     },
