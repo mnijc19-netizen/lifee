@@ -1,0 +1,22 @@
+{
+  "snapshotTimestamp": "2026-10-24T10:12:26.765Z",
+  "rates": {
+    "USD_CNY": 6.6849,
+    "EUR_CNY": 7.4877,
+    "NZD_CNY": 3.8087,
+    "AUD_CNY": 4.6981,
+    "CAD_CNY": 4.7734,
+    "JPY_CNY": 0.04262,
+    "lastUpdated": "Sat, 24 Oct 2026 00:02:31 +0000"
+  },
+  "policyBenchmarks": {
+    "de_chancenkarte_annual_eur": 13092,
+    "de_chancenkarte_monthly_eur": 1091,
+    "de_ausbildung_company_gross_eur": 1048,
+    "de_ausbildung_school_net_eur": 959,
+    "nz_min_wage_hourly_nzd": 23.95,
+    "nz_median_wage_hourly_nzd": 35,
+    "nz_forklift_anzsco_code": "721311",
+    "spain_dnv_monthly_eur": 2646
+  }
+}
