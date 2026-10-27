@@ -1,6 +1,6 @@
 {
-  "auditTimestamp": "2026-10-26T22:14:30.342Z",
-  "durationMs": 59,
+  "auditTimestamp": "2026-10-27T03:31:01.062Z",
+  "durationMs": 46,
   "healthScore": 70,
   "auditStatus": "DEGRADED",
   "monitoredPolicies": [
@@ -40,7 +40,7 @@
       "sourceId": "src-inz-aewv",
       "version": 5,
       "contentHash": "9c570631d885",
-      "lastCheckedAt": "2026-10-26T22:14:19.458Z",
+      "lastCheckedAt": "2026-10-27T03:30:51.773Z",
       "freshnessStatus": "FRESH",
       "summary": "官方已核验基准"
     },
@@ -68,15 +68,15 @@
     "fxRates": {
       "status": "ACTIVE",
       "rates": {
-        "USD_CNY": 6.6774,
-        "EUR_CNY": 7.4848,
-        "NZD_CNY": 3.8049,
-        "AUD_CNY": 4.6929,
-        "CAD_CNY": 4.7651,
-        "JPY_CNY": 0.04257,
-        "lastUpdated": "Mon, 26 Oct 2026 00:02:31 +0000"
+        "USD_CNY": 6.6838,
+        "EUR_CNY": 7.4768,
+        "NZD_CNY": 3.8004,
+        "AUD_CNY": 4.6918,
+        "CAD_CNY": 4.7687,
+        "JPY_CNY": 0.04245,
+        "lastUpdated": "Tue, 27 Oct 2026 00:02:31 +0000"
       },
-      "lastUpdated": "Mon, 26 Oct 2026 00:02:31 +0000"
+      "lastUpdated": "Tue, 27 Oct 2026 00:02:31 +0000"
     }
   },
   "recommendations": [
