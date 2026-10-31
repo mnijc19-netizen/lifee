@@ -1,13 +1,13 @@
 {
-  "collectedAt": "2026-10-30T21:54:09.695Z",
+  "collectedAt": "2026-10-31T03:52:22.858Z",
   "rates": {
-    "USD_CNY": 6.6769,
-    "EUR_CNY": 7.4524,
-    "NZD_CNY": 3.7556,
-    "AUD_CNY": 4.6926,
-    "CAD_CNY": 4.773,
-    "JPY_CNY": 0.04229,
-    "lastUpdated": "Fri, 30 Oct 2026 00:02:31 +0000"
+    "USD_CNY": 6.6696,
+    "EUR_CNY": 7.4471,
+    "NZD_CNY": 3.7565,
+    "AUD_CNY": 4.6891,
+    "CAD_CNY": 4.7756,
+    "JPY_CNY": 0.04235,
+    "lastUpdated": "Sat, 31 Oct 2026 00:02:31 +0000"
   },
   "sourcesChecked": 25,
   "manifestSummary": {
