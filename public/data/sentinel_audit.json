@@ -1,6 +1,6 @@
 {
-  "auditTimestamp": "2026-11-14T12:54:20.496Z",
-  "durationMs": 51,
+  "auditTimestamp": "2026-11-14T21:55:50.442Z",
+  "durationMs": 48,
   "healthScore": 70,
   "auditStatus": "DEGRADED",
   "monitoredPolicies": [
