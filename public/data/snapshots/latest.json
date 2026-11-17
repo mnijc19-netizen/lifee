@@ -1,13 +1,13 @@
 {
-  "snapshotTimestamp": "2026-11-16T14:37:34.975Z",
+  "snapshotTimestamp": "2026-11-17T01:29:52.544Z",
   "rates": {
-    "USD_CNY": 6.6784,
-    "EUR_CNY": 7.3662,
-    "NZD_CNY": 3.6913,
-    "AUD_CNY": 4.5258,
-    "CAD_CNY": 4.6813,
-    "JPY_CNY": 0.0418,
-    "lastUpdated": "Mon, 16 Nov 2026 00:02:31 +0000"
+    "USD_CNY": 6.6793,
+    "EUR_CNY": 7.3513,
+    "NZD_CNY": 3.6761,
+    "AUD_CNY": 4.5037,
+    "CAD_CNY": 4.6729,
+    "JPY_CNY": 0.04186,
+    "lastUpdated": "Tue, 17 Nov 2026 00:02:31 +0000"
   },
   "policyBenchmarks": {
     "de_chancenkarte_annual_eur": 13092,
